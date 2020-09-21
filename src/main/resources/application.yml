@@ -1,9 +1,9 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/evaluation?characterEncoding=UTF-8&serverTimezone=GMT%2B8&sslMode=DISABLED&allowMultiQueries=true&allowPublicKeyRetrieval=true
-    username: root
-    password: NJdt@88755
+    url: jdbc:mysql://192.168.138.37:3300/evaluation?characterEncoding=UTF-8&serverTimezone=GMT%2B8&sslMode=DISABLED&allowMultiQueries=true&allowPublicKeyRetrieval=true
+    username: nj_evaluation
+    password: hkl42yOOhduXurnF
 server:
   port: 8889
 logging:

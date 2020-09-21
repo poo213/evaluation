@@ -1,10 +1,10 @@
 package com.njmetro.evaluation.exception;
 
 /**
- * 授权异常
- *
- * @author RCNJTECH
- * @date 2020/4/12 12:45
+ * @author 牟欢
+ * @Classname AuthorizationException
+ * @Description TODO
+ * @Date 2020-09-21 15:15
  */
-public class AuthorizationException extends GlobalException {
+public class AuthorizationException extends BaseException{
 }

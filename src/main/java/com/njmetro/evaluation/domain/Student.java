@@ -6,9 +6,13 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import java.time.LocalDateTime;
 import com.baomidou.mybatisplus.annotation.TableField;
 import java.io.Serializable;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+
+import javax.validation.constraints.NotBlank;
 
 /**
  * <p>
@@ -22,6 +26,10 @@ import lombok.experimental.Accessors;
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 @TableName("student")
+/**
+ * 自动忽略不知道的json字段
+ */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Student implements Serializable {
 
     private static final long serialVersionUID=1L;
@@ -42,6 +50,7 @@ public class Student implements Serializable {
      * 考生姓名
      */
     @TableField("name")
+    @NotBlank(message = "考生姓名不能为空")
     private String name;
 
     /**

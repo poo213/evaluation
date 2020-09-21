@@ -1,10 +1,10 @@
 package com.njmetro.evaluation.exception;
 
 /**
- * 系统异常
- *
- * @author RCNJTECH
- * @date 2020/4/12 16:25
+ * @author 牟欢
+ * @Classname SystemException
+ * @Description TODO
+ * @Date 2020-09-21 15:16
  */
-public class SystemException extends com.njmetro.evaluation.exception.GlobalException {
+public class SystemException extends BaseException{
 }
