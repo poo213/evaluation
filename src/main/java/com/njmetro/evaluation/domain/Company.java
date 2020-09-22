@@ -74,5 +74,4 @@ public class Company implements Serializable {
     @TableField("update_time")
     private LocalDateTime updateTime;
 
-
 }

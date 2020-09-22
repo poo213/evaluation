@@ -1,13 +1,10 @@
 package com.njmetro.evaluation.controller;
 
-
-import com.njmetro.evaluation.exception.StudentException;
 import com.njmetro.evaluation.param.student.SaveStudentParam;
 import com.njmetro.evaluation.param.student.UpdateStudentParam;
 import com.njmetro.evaluation.service.StudentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 import javax.validation.Valid;
 
 import org.apache.ibatis.annotations.Param;

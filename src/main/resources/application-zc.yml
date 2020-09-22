@@ -1,0 +1,14 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://192.168.96.9:3306/evaluation?characterEncoding=UTF-8&serverTimezone=GMT%2B8&sslMode=DISABLED&allowMultiQueries=true&allowPublicKeyRetrieval=true
+    username: root
+    password: NJdt@88755
+server:
+  port: 8889
+logging:
+  file:
+    path: d:/log/evaluation
+  level:
+    root: info
+    com.njmetro.resignationserver.mapper: debug
