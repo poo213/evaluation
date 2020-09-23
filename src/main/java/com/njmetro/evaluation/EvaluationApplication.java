@@ -5,6 +5,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 
+/**
+ * @author mubaisama
+ */
 @SpringBootApplication
 @MapperScan("com.njmetro.evaluation.mapper")
 public class EvaluationApplication {
