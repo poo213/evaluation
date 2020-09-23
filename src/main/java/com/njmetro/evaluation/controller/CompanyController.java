@@ -36,7 +36,7 @@ public class CompanyController {
     @PostMapping("/editCompany")
     public Boolean editCompany(@Valid @RequestBody UpdateCompanyParam updateCompanyParam)
     {
-        log.info("saveCompanyParam"+updateCompanyParam);
+        log.info("updateCompanyParam"+updateCompanyParam);
         Company company = new Company();
         company.setId(updateCompanyParam.getId());
         company.setCode(updateCompanyParam.getCode());
@@ -46,6 +46,25 @@ public class CompanyController {
         company.setLeaderPhone(updateCompanyParam.getLeaderPhone());
         return  companyService.updateById(company);
 
+    }
+
+    @PostMapping("/addCompany")
+    public Boolean addCompany(@Valid @RequestBody SaveCompanyParam saveCompanyParam)
+    {
+        log.info("saveCompanyParam"+saveCompanyParam);
+        Company company = new Company();
+        company.setCode(saveCompanyParam.getCode());
+        company.setName(saveCompanyParam.getName());
+        company.setIntroduction(saveCompanyParam.getIntroduction());
+        company.setLeaderName(saveCompanyParam.getLeaderName());
+        company.setLeaderPhone(saveCompanyParam.getLeaderPhone());
+        return  companyService.save(company);
+    }
+    @DeleteMapping("/deleteCompany/{id}")
+    public Boolean deleteCompany(@PathVariable  Integer id)
+    {
+        log.info("id:{}",id);
+        return true;
     }
 }
 
