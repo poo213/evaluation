@@ -36,13 +36,13 @@ public class UpdateCompanyParam {
     /**
      * 单位简介
      */
-    @NotNull(message = "单位简介不能为空")
+    @NotBlank(message = "单位简介不能为空")
     private String introduction;
 
     /**
      * 领队姓名
      */
-    @NotNull(message = "领队姓名不能为空")
+    @NotBlank(message = "领队姓名不能为空")
     private String leaderName;
 
     /**
