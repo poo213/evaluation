@@ -2,6 +2,7 @@ package com.njmetro.evaluation.vo;
 
 import com.njmetro.evaluation.domain.Menu;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 
@@ -58,7 +59,7 @@ public class MenuVO {
         this.name = menu.getName();
         this.parentId = menu.getParentId();
         this.path = menu.getPath();
-        this.redirect = menu.getRedirect();
+        this.redirect = StringUtils.isBlank(menu.getRedirect())?null:menu.getRedirect() ;
         this.meta = new MetaVO(menu.getIcon(),menu.getTitle());
     }
 }

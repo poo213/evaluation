@@ -48,7 +48,7 @@ public class TestQuestion implements Serializable {
      * 赛位类型
      */
     @TableField("seat_type")
-    private Integer seatType;
+    private String seatType;
 
     /**
      * 考题URL

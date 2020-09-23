@@ -3,6 +3,7 @@ package com.njmetro.evaluation.vo;
 import com.baomidou.mybatisplus.annotation.TableField;
 import jdk.jfr.DataAmount;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author 牟欢
@@ -28,7 +29,7 @@ public class MetaVO {
      * @param title title
      */
     public MetaVO(String icon, String title) {
-        this.icon = icon;
+        this.icon = StringUtils.isBlank(icon)?null:icon;
         this.title = title;
     }
 }
