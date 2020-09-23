@@ -1,22 +1,17 @@
 package com.njmetro.evaluation.param.student;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.Data;
-
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
 
 /**
  * @author 牟欢
- * @Classname SavaStudentParam
+ * @Classname UpdateStudentParam
  * @Description TODO
- * @Date 2020-09-21 13:42
+ * @Date 2020-09-21 14:42
  */
-@Data
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class SaveStudentParam {
+public class UpdateStudentParam {
+    @NotNull(message = "ID 不能为空")
+    private Integer id;
     /**
      * 考生编号
      */
@@ -62,6 +57,7 @@ public class SaveStudentParam {
     /**
      * 二维码编号
      */
+    @NotBlank(message = "二维码编号不能为空")
     private String twoDimensionalCode;
 
     /**
@@ -69,5 +65,4 @@ public class SaveStudentParam {
      */
     @NotNull(message = "用户是否为领导不能为空")
     private Integer leader;
-
 }
