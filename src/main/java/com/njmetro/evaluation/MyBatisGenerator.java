@@ -39,9 +39,9 @@ public class MyBatisGenerator {
          */
         DataSourceConfig dataSourceConfig = new DataSourceConfig()
                 .setDriverName("com.mysql.cj.jdbc.Driver")
-                .setUrl("jdbc:mysql://localhost:3306/evaluation?serverTimezone=GMT%2B8")
-                .setUsername("root")
-                .setPassword("NJdt@88755");
+                .setUrl("jdbc:mysql://192.168.138.37:3300/evaluation?serverTimezone=GMT%2B8")
+                .setUsername("nj_evaluation")
+                .setPassword("hkl42yOOhduXurnF");
 
         /*
          * 数据库表配置（策略配置项），通过该配置，可指定需要生成哪些表或者排除哪些表
@@ -54,8 +54,8 @@ public class MyBatisGenerator {
                 .setEntityBooleanColumnRemoveIsPrefix(true)
                 .setRestControllerStyle(true)
                 .setControllerMappingHyphenStyle(true)
-                .setEntityTableFieldAnnotationEnable(true);
-//              .setInclude("user_info");
+                .setEntityTableFieldAnnotationEnable(true)
+                .setInclude("menu");
         /*
          * 包名配置，通过该配置，指定生成代码的包路径
          */
