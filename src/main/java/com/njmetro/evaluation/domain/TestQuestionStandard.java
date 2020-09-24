@@ -54,7 +54,7 @@ public class TestQuestionStandard implements Serializable {
      * 分值
      */
     @TableField("score")
-    private Integer score;
+    private Double score;
 
     /**
      * 评分标准
@@ -66,7 +66,7 @@ public class TestQuestionStandard implements Serializable {
      * 评分步长
      */
     @TableField("step")
-    private Integer step;
+    private double step;
 
     /**
      * 创建时间

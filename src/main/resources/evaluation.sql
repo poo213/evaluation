@@ -278,6 +278,3 @@ CREATE TABLE IF NOT EXISTS seat_draw
 
 
 
-
-
-

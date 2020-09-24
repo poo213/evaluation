@@ -60,10 +60,10 @@ public class Student implements Serializable {
     private String idCard;
 
     /**
-     * 性别 0：男 1：女
+     * 性别
      */
     @TableField("sex")
-    private Integer sex;
+    private String sex;
 
     /**
      * 年龄
@@ -106,6 +106,10 @@ public class Student implements Serializable {
      */
     @TableField("update_time")
     private LocalDateTime updateTime;
-
+    /**
+     * 签到状态
+     */
+    @TableField("sign_state")
+    private String signState;
 
 }

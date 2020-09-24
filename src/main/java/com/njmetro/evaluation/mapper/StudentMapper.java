@@ -1,7 +1,11 @@
 package com.njmetro.evaluation.mapper;
 
+import com.njmetro.evaluation.domain.Company;
 import com.njmetro.evaluation.domain.Student;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.SelectProvider;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +17,12 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface StudentMapper extends BaseMapper<Student> {
 
+    @SelectProvider(type = getHaveSighCompanyList.class,method = "getHaveSighCompanyList")
+    List<String> getHaveSighCompanyList();
+
+    class  getHaveSighCompanyList{
+        public String getHaveSighCompanyList(){
+            return "select distinct company_name  from student where sign_state = '1'";
+        }
+    }
 }

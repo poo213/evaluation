@@ -73,5 +73,10 @@ public class Company implements Serializable {
      */
     @TableField("update_time")
     private LocalDateTime updateTime;
+    /**
+     * 修改时间
+     */
+    @TableField("draw_result")
+    private Integer drawResult;
 
 }
