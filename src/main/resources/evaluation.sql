@@ -31,6 +31,7 @@ CREATE TABLE IF NOT EXISTS student
     company_name         VARCHAR(50)  NOT NULL COMMENT '考生单位名称',
     two_dimensional_code VARCHAR(20)  NOT NULL COMMENT '二维码编号',
     leader               INT UNSIGNED NOT NULL COMMENT '是否为队长 1: 是队长 0：不是队长',
+    sign_state           CHAR(1)      NOT NULL COMMENT '签到1 未签到0',
     create_time          DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     update_time          DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
     PRIMARY KEY (id)
@@ -50,7 +51,9 @@ CREATE TABLE IF NOT EXISTS judge
     phone                VARCHAR(11)  NOT NULL COMMENT '评委手机号',
     company_name         VARCHAR(20)  NOT NULL COMMENT '评委所在单位名称',
     two_dimensional_code VARCHAR(20)  NOT NULL COMMENT '二维码编号',
-    master               INT UNSIGNED NOT NULL COMMENT '是否为主裁判 1: 是主裁判 0：不是主裁判',
+    sign_state           CHAR(1)      NOT NULL COMMENT '签到1 未签到0',
+    judge_type           VARCHAR(20)  NOT NULL COMMENT '监考类型（抽签决定）',
+    master               INT UNSIGNED NOT NULL COMMENT '一般裁判1，备用裁判0',
     create_time          DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     update_time          DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
     PRIMARY KEY (id)
@@ -124,7 +127,7 @@ CREATE TABLE IF NOT EXISTS test_question_standard
   DEFAULT CHARSET = UTF8MB4;
 
 
-# 8 考生签到表 student_sign
+# 8 考生签到表 student_sign 记录进入候考区，备考区，扫码离开几个状态
 
 CREATE TABLE IF NOT EXISTS student_sign
 (
@@ -132,7 +135,7 @@ CREATE TABLE IF NOT EXISTS student_sign
     company_name  VARCHAR(20)  NOT NULL COMMENT '考生所在单位名称',
     student_id    INT UNSIGNED NOT NULL COMMENT '考生id',
     sign_time     DATETIME     NOT NULL COMMENT '考生签到时间',
-    state         INT UNSIGNED NOT NULL COMMENT '考生签到状态 1： 已签到 0： 未签到',
+    state         INT UNSIGNED NOT NULL COMMENT '考生签到，0表示进入候考区，1、进入备考区，3扫码离开',
     register_name VARCHAR(20)  NOT NULL COMMENT '登记人姓名',
     number        INT UNSIGNED NOT NULL COMMENT '第几次签到',
     `create_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -195,7 +198,7 @@ CREATE TABLE IF NOT EXISTS student_seat_sign
     student_id    INT UNSIGNED NOT NULL COMMENT '人员编号id',
     seat_id       INT UNSIGNED NOT NULL COMMENT '赛位号id',
     game_number   INT UNSIGNED NOT NULL COMMENT '比赛场次',
-    state         INT UNSIGNED NOT NULL COMMENT '报道状态',
+    state         INT UNSIGNED NOT NULL COMMENT '报道状态，0表示登录（正在考试）',
     sign_time     DATETIME     NOT NULL COMMENT '考生签到时间',
     `create_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `update_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
@@ -203,17 +206,14 @@ CREATE TABLE IF NOT EXISTS student_seat_sign
 ) ENGINE = InnoDB
   DEFAULT CHARSET = UTF8MB4;
 
-# 13 评委赛位报道表（参赛人员 开始考试）
+# 13 赛位绑定信息表
 
 CREATE TABLE IF NOT EXISTS judge_seat_sign
 (
     id            INT UNSIGNED AUTO_INCREMENT COMMENT '自增id',
-    pad_id        INT UNSIGNED NOT NULL COMMENT 'pad id',
     seat_id       INT UNSIGNED NOT NULL COMMENT '赛位号id',
+    pad_id        INT UNSIGNED NOT NULL COMMENT 'pad id',
     judge_id      INT UNSIGNED NOT NULL COMMENT '评委id',
-    state         INT UNSIGNED NOT NULL COMMENT '报道状态',
-    sign_time     DATETIME     NOT NULL COMMENT '评委签到时间',
-    game_number   INT UNSIGNED NOT NULL COMMENT '比赛场次',
     `create_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `update_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
     PRIMARY KEY (id)

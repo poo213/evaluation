@@ -1,6 +1,8 @@
 package com.njmetro.evaluation.controller;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.njmetro.evaluation.domain.Company;
 import com.njmetro.evaluation.param.company.SaveCompanyParam;
 import com.njmetro.evaluation.param.company.UpdateCompanyParam;
@@ -70,17 +72,30 @@ public class CompanyController {
         log.info("id:{}", id);
         return true;
     }
-
+    /**
+     * 获取已签到代表队
+     */
     @GetMapping("/getHaveSighCompany")
     public List<String> getHaveSighCompany() {
         log.info(studentService.getHaveSighCompanyList().toString());
         return studentService.getHaveSighCompanyList();
     }
 
+    /**
+     * 代表队顺序抽签
+     */
     @GetMapping("/drawCompany")
     public List<Company> drawCompany() {
         List<String> haveSighCompanyList = studentService.getHaveSighCompanyList();
-        return DrawUtil.getCompanyDrawResult(haveSighCompanyList);
+        List<Company> companyList = DrawUtil.getCompanyDrawResult(haveSighCompanyList);
+        for(Company item : companyList)
+        {
+            UpdateWrapper<Company> updateWrapper = new UpdateWrapper<>();
+            updateWrapper.eq("name",item.getName()).set("draw_result",item.getDrawResult());
+            companyService.update(updateWrapper);
+
+        }
+        return companyList;
     }
 }
 
