@@ -97,5 +97,18 @@ public class CompanyController {
         }
         return companyList;
     }
+
+    /**
+     * 查询抽签结果
+     */
+    @GetMapping("/getDrawResult")
+    public List<Company> getDrawResult()
+    {
+        QueryWrapper<Company> queryWrapper = new QueryWrapper<>();
+        queryWrapper.ne("draw_result",0)
+                    .orderByAsc("draw_result");
+       return companyService.list(queryWrapper);
+
+    }
 }
 

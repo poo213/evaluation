@@ -1,6 +1,6 @@
 package com.njmetro.evaluation.service;
 
-import com.njmetro.evaluation.domain.JudgeSign;
+import com.njmetro.evaluation.domain.Config;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
@@ -9,8 +9,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * </p>
  *
  * @author zc
- * @since 2020-09-21
+ * @since 2020-09-27
  */
-public interface JudgeSignService extends IService<JudgeSign> {
+public interface ConfigService extends IService<Config> {
 
 }

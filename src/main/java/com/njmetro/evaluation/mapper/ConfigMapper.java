@@ -1,6 +1,6 @@
 package com.njmetro.evaluation.mapper;
 
-import com.njmetro.evaluation.domain.MatchOrder;
+import com.njmetro.evaluation.domain.Config;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
@@ -9,8 +9,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * </p>
  *
  * @author zc
- * @since 2020-09-21
+ * @since 2020-09-27
  */
-public interface MatchOrderMapper extends BaseMapper<MatchOrder> {
+public interface ConfigMapper extends BaseMapper<Config> {
 
 }

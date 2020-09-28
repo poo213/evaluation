@@ -1,18 +1,28 @@
 package com.njmetro.evaluation.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.njmetro.evaluation.domain.Company;
+import com.njmetro.evaluation.domain.SeatDraw;
 import com.njmetro.evaluation.domain.Student;
 import com.njmetro.evaluation.param.student.SaveStudentParam;
 import com.njmetro.evaluation.param.student.UpdateStudentParam;
+import com.njmetro.evaluation.service.CompanyService;
+import com.njmetro.evaluation.service.SeatDrawService;
 import com.njmetro.evaluation.service.StudentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
 import javax.validation.Valid;
+
 import org.apache.ibatis.annotations.Param;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.njmetro.evaluation.util.KnuthUtil.result;
 
 /**
  * <p>
@@ -30,6 +40,8 @@ public class StudentController {
 
 
     private final StudentService studentService;
+    private final CompanyService companyService;
+    private final SeatDrawService seatDrawService;
 
     /**
      * 添加考生信息
@@ -99,5 +111,89 @@ public class StudentController {
         }
 
     }
+
+    /**
+     * 赛位绑定信息，包含场次，轮次等信息
+     */
+    @GetMapping("/drawSeat")
+    public void drawSeat() {
+        QueryWrapper<Company> queryWrapper = new QueryWrapper<>();
+        queryWrapper.ne("draw_result", 0).orderByAsc("draw_result");//获取已签到地铁
+
+        List<Company> companyList = companyService.list(queryWrapper);
+        log.info("签到地铁数量：" + companyList.size());
+        List<SeatDraw> seatDrawList = new ArrayList<>();
+
+        for (Company company : companyList)//遍历每个地铁
+        {
+            Integer group, game_number;//组，场次
+            if (company.getDrawResult() % 6 == 1) {
+                group = 1;
+            } else if (company.getDrawResult() % 6 == 2) {
+                group = 2;
+            } else if (company.getDrawResult() % 6 == 3) {
+                group = 3;
+            } else if (company.getDrawResult() % 6 == 4) {
+                group = 4;
+            } else if (company.getDrawResult() % 6 == 5) {
+                group = 5;
+            } else {
+                group = 6;
+            }
+            if (company.getDrawResult() >= 1 && company.getDrawResult() <= 6) {
+                game_number = 1;
+            } else if (company.getDrawResult() >= 7 && company.getDrawResult() <= 12) {
+                game_number = 2;
+            } else if (company.getDrawResult() >= 13 && company.getDrawResult() <= 18) {
+                game_number = 3;
+            } else if (company.getDrawResult() >= 19 && company.getDrawResult() <= 24) {
+                game_number = 4;
+            } else if (company.getDrawResult() >= 25 && company.getDrawResult() <= 30) {
+                game_number = 5;
+            } else if (company.getDrawResult() >= 31 && company.getDrawResult() <= 36) {
+                game_number = 6;
+            } else {
+                game_number = 7;
+            }
+
+            QueryWrapper<Student> studentQueryWrapper = new QueryWrapper<>();
+            studentQueryWrapper.eq("company_name", company.getName());
+            List<Student> studentList = studentService.list(studentQueryWrapper);//获取地铁的参赛选手
+            log.info("地铁编号：{}",company.getDrawResult());
+            log.info("考生数目：{}",studentList.size());
+            //对参赛选手进行遍历，分配轮次
+            log.info("{}", company.getName() + studentList);
+            Integer[] baseArray = new Integer[studentList.size()];//创建数组
+            for (int i = 0; i < baseArray.length; i++) {
+                baseArray[i] = i + 1;
+            }
+            baseArray = result(baseArray);//洗牌算法
+            int i = 0;
+            for (Student student : studentList) {
+                for (int j = 0; j <= 2; j++) {
+                    SeatDraw seatDraw = new SeatDraw();
+                    int m = baseArray[i] + j;
+                    if (m > 3) {
+                        m = m % 3;
+                    }
+                    seatDraw.setCompanyId(company.getId());
+                    seatDraw.setStudentId(student.getId());
+                    seatDraw.setSeatId((group - 1) * 3 + m);
+                    seatDraw.setGameNumber(game_number);//场次
+                    seatDraw.setGameRound(j + 1);
+                    seatDraw.setGroupId(group);
+                    seatDraw.setState(0);
+                    seatDraw.setDrawName("主裁");
+                    seatDraw.setDrawTime(LocalDateTime.now());
+                    seatDrawList.add(seatDraw);
+                }
+                i++;
+            }
+
+        }
+        seatDrawService.saveBatch(seatDrawList);
+
+    }
+
 }
 

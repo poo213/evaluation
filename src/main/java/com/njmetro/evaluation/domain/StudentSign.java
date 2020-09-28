@@ -62,11 +62,6 @@ public class StudentSign implements Serializable {
     @TableField("register_name")
     private String registerName;
 
-    /**
-     * 第几次签到
-     */
-    @TableField("number")
-    private Integer number;
 
     /**
      * 创建时间

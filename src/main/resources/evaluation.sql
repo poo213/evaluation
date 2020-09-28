@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS company
     introduction  VARCHAR(255) NOT NULL COMMENT '单位简介',
     leader_name   VARCHAR(20)  NOT NULL COMMENT '领队姓名',
     leader_phone  VARCHAR(11)  NOT NULL COMMENT '领队联系方式 ',
+    draw_result   INT UNSIGNED NOT NULL COMMENT '排序  初始值0',
     `create_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `update_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
     PRIMARY KEY (id)
@@ -84,7 +85,7 @@ CREATE TABLE IF NOT EXISTS pad
     code          VARCHAR(20)  NOT NULL COMMENT '平板编号',
     ip            VARCHAR(20)  NOT NULL COMMENT '平板绑定的ip地址',
     seat_id       INT UNSIGNED NOT NULL COMMENT '对应工位id',
-    type          INT UNSIGNED NOT NULL COMMENT '平板用途（1: 考生、2:评委、3:主裁）',
+    type          INT UNSIGNED NOT NULL COMMENT '平板用途（1: 考生、2:评委）',
     `create_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `update_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
     PRIMARY KEY (id)
@@ -135,9 +136,8 @@ CREATE TABLE IF NOT EXISTS student_sign
     company_name  VARCHAR(20)  NOT NULL COMMENT '考生所在单位名称',
     student_id    INT UNSIGNED NOT NULL COMMENT '考生id',
     sign_time     DATETIME     NOT NULL COMMENT '考生签到时间',
-    state         INT UNSIGNED NOT NULL COMMENT '考生签到，0表示进入候考区，1、进入备考区，3扫码离开',
+    state         INT UNSIGNED NOT NULL COMMENT '考生签到，0表示进入候考区，1、进入备考区，2、考试中，3扫码离开',
     register_name VARCHAR(20)  NOT NULL COMMENT '登记人姓名',
-    number        INT UNSIGNED NOT NULL COMMENT '第几次签到',
     `create_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `update_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
     PRIMARY KEY (id)
@@ -146,34 +146,20 @@ CREATE TABLE IF NOT EXISTS student_sign
 
 # 9 裁判签到表 student_sign
 
-CREATE TABLE IF NOT EXISTS judge_sign
-(
-    id            INT UNSIGNED AUTO_INCREMENT COMMENT '裁判签到表自增ID',
-    company_name  VARCHAR(20)  NOT NULL COMMENT '裁判所在单位名称',
-    judge_id      INT UNSIGNED NOT NULL COMMENT '裁判id',
-    sign_time     DATETIME     NOT NULL COMMENT '裁判签到时间',
-    state         INT UNSIGNED NOT NULL COMMENT '裁判签到状态 1： 已签到 0： 未签到',
-    register_name VARCHAR(20)  NOT NULL COMMENT '登记人姓名',
-    number        INT UNSIGNED NOT NULL COMMENT '第几次签到',
-    `create_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    `update_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
-    PRIMARY KEY (id)
-) ENGINE = InnoDB
-  DEFAULT CHARSET = UTF8MB4;
-
-# 10 比赛顺序表 match_order
-
-CREATE TABLE IF NOT EXISTS match_order
-(
-    id            INT UNSIGNED AUTO_INCREMENT COMMENT '比赛顺序表自增id',
-    company_id    INT UNSIGNED NOT NULL COMMENT '单位Id',
-    order_number  INT UNSIGNED NOT NULL COMMENT '顺序号',
-    `create_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    `update_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
-    PRIMARY KEY (id)
-) ENGINE = InnoDB
-  DEFAULT CHARSET = UTF8MB4;
-
+# CREATE TABLE IF NOT EXISTS judge_sign
+# (
+#     id            INT UNSIGNED AUTO_INCREMENT COMMENT '裁判签到表自增ID',
+#     company_name  VARCHAR(20)  NOT NULL COMMENT '裁判所在单位名称',
+#     judge_id      INT UNSIGNED NOT NULL COMMENT '裁判id',
+#     sign_time     DATETIME     NOT NULL COMMENT '裁判签到时间',
+#     state         INT UNSIGNED NOT NULL COMMENT '裁判签到状态 1： 已签到 0： 未签到',
+#     register_name VARCHAR(20)  NOT NULL COMMENT '登记人姓名',
+#     number        INT UNSIGNED NOT NULL COMMENT '第几次签到',
+#     `create_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+#     `update_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+#     PRIMARY KEY (id)
+# ) ENGINE = InnoDB
+#   DEFAULT CHARSET = UTF8MB4;
 
 # 11 评委抽签结果表  judge_draw_result
 
@@ -189,24 +175,25 @@ CREATE TABLE IF NOT EXISTS judge_draw_result
 ) ENGINE = InnoDB
   DEFAULT CHARSET = UTF8MB4;
 
+# 12 考生赛位报道表（参赛人员 开始考试）（和14表合并，见下方）
 
-# 12 考生赛位报道表（参赛人员 开始考试）
+# CREATE TABLE IF NOT EXISTS student_seat_sign
+# (
+#     id            INT UNSIGNED AUTO_INCREMENT COMMENT '自增id',
+#     student_id    INT UNSIGNED NOT NULL COMMENT '人员编号id',
+#     seat_id       INT UNSIGNED NOT NULL COMMENT '赛位号id',
+#
+#     game_number   INT UNSIGNED NOT NULL COMMENT '比赛场次',
+#     state         INT UNSIGNED NOT NULL COMMENT '报道状态，0表示登录（正在考试）',
+#     sign_time     DATETIME     NOT NULL COMMENT '考生签到时间',
+#     `create_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+#     `update_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+#     PRIMARY KEY (id)
+# ) ENGINE = InnoDB
+#   DEFAULT CHARSET = UTF8MB4;
 
-CREATE TABLE IF NOT EXISTS student_seat_sign
-(
-    id            INT UNSIGNED AUTO_INCREMENT COMMENT '自增id',
-    student_id    INT UNSIGNED NOT NULL COMMENT '人员编号id',
-    seat_id       INT UNSIGNED NOT NULL COMMENT '赛位号id',
-    game_number   INT UNSIGNED NOT NULL COMMENT '比赛场次',
-    state         INT UNSIGNED NOT NULL COMMENT '报道状态，0表示登录（正在考试）',
-    sign_time     DATETIME     NOT NULL COMMENT '考生签到时间',
-    `create_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    `update_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
-    PRIMARY KEY (id)
-) ENGINE = InnoDB
-  DEFAULT CHARSET = UTF8MB4;
 
-# 13 赛位绑定信息表
+# 13 赛位绑定信息表（评委）
 
 CREATE TABLE IF NOT EXISTS judge_seat_sign
 (
@@ -221,7 +208,7 @@ CREATE TABLE IF NOT EXISTS judge_seat_sign
   DEFAULT CHARSET = UTF8MB4;
 
 
-# 14 赛位抽签表
+# 14 赛位抽签结果表，赛位上的状态
 
 CREATE TABLE IF NOT EXISTS seat_draw
 (
@@ -231,13 +218,24 @@ CREATE TABLE IF NOT EXISTS seat_draw
     seat_id       INT UNSIGNED NOT NULL COMMENT '赛位号id',
     draw_name     VARCHAR(20)  NOT NULL COMMENT '抽签人姓名',
     draw_time     DATETIME     NOT NULL COMMENT '抽签时间',
-    game_number   INT UNSIGNED NOT NULL COMMENT '比赛场次',
+    game_number   INT UNSIGNED NOT NULL COMMENT '比赛场次（1-7）',
+    game_round    INT UNSIGNED NOT NULL COMMENT '比赛轮次（1，2，3）',
+    group_id      INT          NOT NULL COMMENT '组名1-6',
+    state         INT UNSIGNED NOT NULL COMMENT '状态，1表示登录（正在考试），2比赛中断，3考生就绪，4表示 考试结束',
     `create_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `update_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
     PRIMARY KEY (id)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = UTF8MB4;
-
+# 14 主裁参数配置
+CREATE TABLE IF NOT EXISTS config
+(
+    id          INT UNSIGNED AUTO_INCREMENT COMMENT '自增id',
+    game_number INT UNSIGNED NOT NULL COMMENT '比赛场次（1-7）',
+    game_round  INT UNSIGNED NOT NULL COMMENT '比赛轮次（1，2，3）',
+    PRIMARY KEY (id)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = UTF8MB4;
 
 # 15  考生得分表  student_score
 

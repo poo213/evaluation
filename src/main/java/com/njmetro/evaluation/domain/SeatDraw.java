@@ -16,7 +16,7 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author zc
- * @since 2020-09-21
+ * @since 2020-09-28
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -63,10 +63,28 @@ public class SeatDraw implements Serializable {
     private LocalDateTime drawTime;
 
     /**
-     * 比赛场次
+     * 比赛场次（1-7）
      */
     @TableField("game_number")
     private Integer gameNumber;
+
+    /**
+     * 比赛轮次（1，2，3）
+     */
+    @TableField("game_round")
+    private Integer gameRound;
+
+    /**
+     * 组名（A-F）
+     */
+    @TableField("group_id")
+    private Integer groupId;
+
+    /**
+     * 状态，1表示登录（正在考试），2比赛中断，3考生就绪，4表示考试结束
+     */
+    @TableField("state")
+    private Integer state;
 
     /**
      * 创建时间

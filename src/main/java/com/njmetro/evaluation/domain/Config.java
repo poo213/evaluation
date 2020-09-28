@@ -3,7 +3,6 @@ package com.njmetro.evaluation.domain;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import java.time.LocalDateTime;
 import com.baomidou.mybatisplus.annotation.TableField;
 import java.io.Serializable;
 import lombok.Data;
@@ -16,45 +15,33 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author zc
- * @since 2020-09-21
+ * @since 2020-09-27
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("match_order")
-public class MatchOrder implements Serializable {
+@TableName("config")
+public class Config implements Serializable {
 
     private static final long serialVersionUID=1L;
 
     /**
-     * 比赛顺序表自增id
+     * 自增id
      */
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
     /**
-     * 单位Id
+     * 比赛场次（1-7）
      */
-    @TableField("company_id")
-    private Integer companyId;
+    @TableField("game_number")
+    private Integer gameNumber;
 
     /**
-     * 顺序号
+     * 比赛轮次（1，2，3）
      */
-    @TableField("order_number")
-    private Integer orderNumber;
-
-    /**
-     * 创建时间
-     */
-    @TableField("create_time")
-    private LocalDateTime createTime;
-
-    /**
-     * 修改时间
-     */
-    @TableField("update_time")
-    private LocalDateTime updateTime;
+    @TableField("game_round")
+    private Integer gameRound;
 
 
 }
