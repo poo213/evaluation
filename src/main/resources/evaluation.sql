@@ -237,6 +237,17 @@ CREATE TABLE IF NOT EXISTS config
 ) ENGINE = InnoDB
   DEFAULT CHARSET = UTF8MB4;
 
+#主裁对题库抽签
+CREATE TABLE IF NOT EXISTS question_draw
+(
+    id          INT UNSIGNED AUTO_INCREMENT COMMENT '自增id',
+    game_number INT UNSIGNED NOT NULL COMMENT '比赛场次（1-7）',
+    seat_id     INT UNSIGNED NOT NULL COMMENT '赛位号id',
+    question_id    INT UNSIGNED NOT NULL COMMENT '题目编号',
+    PRIMARY KEY (id)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = UTF8MB4;
+
 # 15  考生得分表  student_score
 
 # CREATE TABLE IF NOT EXISTS student_score
