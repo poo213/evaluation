@@ -30,7 +30,7 @@ public class JudgeApi {
      * @param gameRound
      * @return
      */
-    @GetMapping("/getJudgeInformation")
+    @GetMapping("/getJudgeInfo")
     public JudgeInformationVO getJudgeInformation(Integer gameNumber, Integer gameRound){
         JudgeInformationVO judgeInformationVO = new JudgeInformationVO();
         Judge judge = judgeService.getById(1);
@@ -48,7 +48,7 @@ public class JudgeApi {
      * @param gameRound
      * @return
      */
-    @GetMapping("/getBeReady")
+    @GetMapping("/beReady")
     public Boolean getBeReady(Integer gameNumber, Integer gameRound){
         return true;
     }

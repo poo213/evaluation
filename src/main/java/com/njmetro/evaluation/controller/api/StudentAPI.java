@@ -136,8 +136,8 @@ public class StudentAPI {
      * @param gameRound  轮次
      * @return
      */
-    @GetMapping("/reday")
-    public Boolean reday(Integer id,Integer gameNumber,Integer gameRound)
+    @GetMapping("/beReday")
+    public Boolean beReday(Integer id,Integer gameNumber,Integer gameRound)
     {
         return true;
     }
