@@ -47,8 +47,8 @@ public class KnuthUtil {
 
     public static void main(String[] args) {
         // 初始化一维数组
-        Integer[] baseArray = new Integer[41];
-        System.out.println(baseArray.length);
+        Integer[] baseArray = new Integer[42];
+//        System.out.println(baseArray.length);
         for (int i = 0; i < baseArray.length; i++) {
             System.out.println(i);
             baseArray[i] = i;
