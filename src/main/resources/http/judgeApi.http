@@ -101,7 +101,7 @@ POST http://localhost:8889/api/judge/submitResults?gameNumber=1&gameRound=2
 Content-Type: application/json
 
 {
-  "list" : {{list}}
+  "list" : {{ list }}
 }
 
 

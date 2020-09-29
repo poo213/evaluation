@@ -16,7 +16,7 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author zc
- * @since 2020-09-21
+ * @since 2020-09-27
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -54,7 +54,7 @@ public class Judge implements Serializable {
      * 性别 0：男 1：女
      */
     @TableField("sex")
-    private String sex;
+    private Integer sex;
 
     /**
      * 年龄
@@ -75,13 +75,31 @@ public class Judge implements Serializable {
     private String companyName;
 
     /**
+     * 评委所在单位Id
+     */
+    @TableField("company_id")
+    private Integer companyId;
+
+    /**
      * 二维码编号
      */
     @TableField("two_dimensional_code")
     private String twoDimensionalCode;
 
     /**
-     * 是否为主裁判 1: 是主裁判 0：不是主裁判
+     * 签到1 未签到0
+     */
+    @TableField("sign_state")
+    private String signState;
+
+    /**
+     * 监考类型（抽签决定）
+     */
+    @TableField("judge_type")
+    private String judgeType;
+
+    /**
+     * 一般裁判1，备用裁判0
      */
     @TableField("master")
     private Integer master;
@@ -97,12 +115,6 @@ public class Judge implements Serializable {
      */
     @TableField("update_time")
     private LocalDateTime updateTime;
-
-    /**
-     * 签到状态
-     */
-    @TableField("sign_state")
-    private String signState;
 
 
 }

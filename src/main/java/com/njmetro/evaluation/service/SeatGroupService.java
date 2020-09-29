@@ -1,6 +1,6 @@
 package com.njmetro.evaluation.service;
 
-import com.njmetro.evaluation.domain.Judge;
+import com.njmetro.evaluation.domain.SeatGroup;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
@@ -9,8 +9,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * </p>
  *
  * @author zc
- * @since 2020-09-27
+ * @since 2020-09-28
  */
-public interface JudgeService extends IService<Judge> {
+public interface SeatGroupService extends IService<SeatGroup> {
 
 }

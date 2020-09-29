@@ -11,4 +11,4 @@ logging:
     path: d:/log/evaluation
   level:
     root: info
-    com.njmetro.resignationserver.mapper: debug
+    com.njmetro.evaluation.mapper: info

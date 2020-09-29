@@ -1,0 +1,108 @@
+[33mcommit 949b716369c90586a3ebf18b31e5997efdbf2d23[m[33m ([m[1;36mHEAD[m[33m, [m[1;32mmaster[m[33m)[m
+Author: zc <499147867@qq.com>
+Date:   Thu Sep 24 16:56:15 2020 +0800
+
+    代表队抽签
+
+[33mcommit cf1a5fe45a359420cb1dd6120327760295ab0bd7[m
+Author: zc <499147867@qq.com>
+Date:   Wed Sep 23 14:11:40 2020 +0800
+
+    adddata
+
+[33mcommit b718bd07874b21ccbc23ac941df26f78390894c5[m
+Merge: 4175af3 aad9271
+Author: zc <499147867@qq.com>
+Date:   Wed Sep 23 09:32:14 2020 +0800
+
+    test
+
+[33mcommit 4175af3b15eef585585df5c5dd563eec205c8ad6[m
+Author: zc <499147867@qq.com>
+Date:   Wed Sep 23 09:27:12 2020 +0800
+
+    company -zc1
+
+[33mcommit aad9271d0864cd62398d6a1926e3205fde5eae3d[m
+Author: mubaisama <2720768262@qq.com>
+Date:   Wed Sep 23 09:07:59 2020 +0800
+
+    修改menu
+
+[33mcommit 387a76d332c9839b92ce77504475e6554f05cab0[m
+Merge: a30aad7 e12d20b
+Author: mubaisama <2720768262@qq.com>
+Date:   Wed Sep 23 09:04:34 2020 +0800
+
+    menu
+
+[33mcommit a30aad7b31b58b1fbdb1a9f285a3fbbd375dc43b[m
+Author: mubaisama <2720768262@qq.com>
+Date:   Wed Sep 23 08:58:43 2020 +0800
+
+    menu
+
+[33mcommit e12d20b0aee434e54b3ec76ca3225423ef49cd90[m
+Author: zc <499147867@qq.com>
+Date:   Tue Sep 22 15:10:51 2020 +0800
+
+    company -zc
+
+[33mcommit e158202f808355b5c1900d6961a02d7765ebaead[m
+Merge: 7107ea7 999ebec
+Author: mubaisama <2720768262@qq.com>
+Date:   Tue Sep 22 15:02:57 2020 +0800
+
+    test
+
+[33mcommit 7107ea77f46f69629d0e8c558856b62c60f06e3d[m
+Author: mubaisama <2720768262@qq.com>
+Date:   Tue Sep 22 14:55:24 2020 +0800
+
+    company mh
+
+[33mcommit 999ebec4f61371e39b0b1b7d0a4992df23db155d[m
+Author: zc <499147867@qq.com>
+Date:   Tue Sep 22 14:49:21 2020 +0800
+
+    company -zc
+
+[33mcommit 244b05be8c3fef9fd134f9c3158e6daf22a917c3[m
+Merge: 83f486b 227ee93
+Author: zc <499147867@qq.com>
+Date:   Mon Sep 21 16:05:06 2020 +0800
+
+    Merge branch 'master' of https://github.com/poo213/evaluation
+    
+     Conflicts:
+    	src/main/java/com/njmetro/evaluation/controller/CompanyController.java
+
+[33mcommit 83f486be552f558fa325be7a59f0460a39412dce[m
+Author: zc <499147867@qq.com>
+Date:   Mon Sep 21 16:03:31 2020 +0800
+
+    测试
+
+[33mcommit 227ee93568b722b8fe1aecde2458de8f9c0c4e7f[m[33m ([m[1;32mdev-branch[m[33m)[m
+Author: mubaisama <2720768262@qq.com>
+Date:   Mon Sep 21 15:44:04 2020 +0800
+
+    初ä¿统ä统一封装返回结果ï$修改æä¸异常类
+
+[33mcommit 76ba7200ef534017ec34348e6090b0aacce4bb87[m[33m ([m[1;32mmh-dev[m[33m)[m
+Author: mubaisama <2720768262@qq.com>
+Date:   Mon Sep 21 10:33:00 2020 +0800
+
+    test push dev
+
+[33mcommit 8701a70703a6be02e2a051b17b35de4773b77a0a[m
+Author: mubaisama <2720768262@qq.com>
+Date:   Mon Sep 21 10:04:49 2020 +0800
+
+    change database in application.yml
+
+[33mcommit ab4ec70b8aba0dfbb96ea89c14d4bb99f1f93030[m[33m ([m[1;31morigin/zc-dev[m[33m, [m[1;31morigin/mh-dev[m[33m, [m[1;31morigin/dev[m[33m, [m[1;32mdev[m[33m)[m
+Author: zc <499147867@qq.com>
+Date:   Mon Sep 21 09:21:00 2020 +0800
+
+    新建表
