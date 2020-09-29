@@ -1,6 +1,6 @@
 package com.njmetro.evaluation.mapper;
 
-import com.njmetro.evaluation.domain.Judge;
+import com.njmetro.evaluation.domain.SeatGroup;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
@@ -9,8 +9,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * </p>
  *
  * @author zc
- * @since 2020-09-27
+ * @since 2020-09-28
  */
-public interface JudgeMapper extends BaseMapper<Judge> {
+public interface SeatGroupMapper extends BaseMapper<SeatGroup> {
 
 }
