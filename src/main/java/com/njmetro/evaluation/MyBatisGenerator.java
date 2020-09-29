@@ -55,7 +55,7 @@ public class MyBatisGenerator {
                 .setRestControllerStyle(true)
                 .setControllerMappingHyphenStyle(true)
                 .setEntityTableFieldAnnotationEnable(true)
-                .setInclude("seat_group");
+                .setInclude("test_result");
 
         /*
          * 包名配置，通过该配置，指定生成代码的包路径

@@ -4,7 +4,8 @@ CREATE DATABASE evaluation;
 
 ### 创建表
 
-USE evaluation; # 使用 evaluation 数据库
+USE evaluation;
+# 使用 evaluation 数据库
 
 # 1. 参赛单位表 company
 
@@ -75,6 +76,7 @@ CREATE TABLE IF NOT EXISTS judge_draw_result
     judge_id      INT UNSIGNED NOT NULL COMMENT '评委id',
     pad_id        INT UNSIGNED NOT NULL COMMENT '平板id',
     group_id      INT UNSIGNED NOT NULL COMMENT '所在赛组id',
+    state         INT UNSIGNED NOT NULL COMMENT '裁判就绪状态，初始值 0 ，准备就绪：1',
     type_name     CHAR(10)     NOT NULL COMMENT '监考类型 光缆接续 交换机组网 视频搭建',
     `create_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `update_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
@@ -91,6 +93,57 @@ CREATE TABLE IF NOT EXISTS seat_group
     group_name    CHAR(20) NOT NULL COMMENT '赛组名称',
     `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `update_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+    PRIMARY KEY (id)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = UTF8MB4;
+
+# 6.主裁对题库抽签
+### 考题抽签表
+CREATE TABLE IF NOT EXISTS question_draw
+(
+    id            INT UNSIGNED AUTO_INCREMENT COMMENT '自增id',
+    game_number   INT UNSIGNED NOT NULL COMMENT '比赛场次（1-7）',
+    seat_id       INT UNSIGNED NOT NULL COMMENT '考生赛位号id',
+    question_id   INT UNSIGNED NOT NULL COMMENT '题目编号',
+    `create_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间,即比赛开始时间',
+    `update_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+    PRIMARY KEY (id)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = UTF8MB4;
+
+# 7. 赛位抽签结果表，赛位上的状态
+
+CREATE TABLE IF NOT EXISTS seat_draw
+(
+    id            INT UNSIGNED AUTO_INCREMENT COMMENT '自增id',
+    company_id    INT UNSIGNED NOT NULL COMMENT '单位编码',
+    student_id    INT UNSIGNED NOT NULL COMMENT '考生编码',
+    seat_id       INT UNSIGNED NOT NULL COMMENT '赛位号id',
+    draw_name     VARCHAR(20)  NOT NULL COMMENT '抽签人姓名',
+    draw_time     DATETIME     NOT NULL COMMENT '抽签时间',
+    game_number   INT UNSIGNED NOT NULL COMMENT '比赛场次（1-7）',
+    game_round    INT UNSIGNED NOT NULL COMMENT '比赛轮次（1，2，3）',
+    group_id      INT          NOT NULL COMMENT '组名1-6',
+    state         INT UNSIGNED NOT NULL COMMENT '状态初始0，1.考生就绪，2.考试中，3.比赛中断,4。表示 考试结束',
+    use_time      INT UNSIGNED COMMENT '比赛用时',
+    `create_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间，当变为4的时候，此时间表示考试结束时间',
+    PRIMARY KEY (id)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = UTF8MB4;
+
+# 8. 打分表
+
+CREATE TABLE IF NOT EXISTS test_result
+(
+    id            INT UNSIGNED AUTO_INCREMENT COMMENT '自增id',
+    student_id     INT UNSIGNED NOT NULL COMMENT  '考生id',
+    judge_id     INT UNSIGNED NOT NULL COMMENT  '裁判id',
+    question_id     INT UNSIGNED NOT NULL COMMENT  '题目id',
+    question_standard_id  INT UNSIGNED NOT NULL COMMENT  '评分标准id',
+    cent                  INT UNSIGNED NOT NULL COMMENT   '得分',
+    `create_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间，当变为4的时候，此时间表示考试结束时间',
     PRIMARY KEY (id)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = UTF8MB4;

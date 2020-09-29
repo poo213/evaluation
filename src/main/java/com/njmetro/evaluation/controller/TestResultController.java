@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 2020-09-29
  */
 @RestController
-@RequestMapping("/judge-draw-result")
-public class JudgeDrawResultController {
+@RequestMapping("/test-result")
+public class TestResultController {
 
 }
 

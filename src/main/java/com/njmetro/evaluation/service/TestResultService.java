@@ -1,6 +1,6 @@
 package com.njmetro.evaluation.service;
 
-import com.njmetro.evaluation.domain.JudgeDrawResult;
+import com.njmetro.evaluation.domain.TestResult;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
@@ -11,6 +11,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @author zc
  * @since 2020-09-29
  */
-public interface JudgeDrawResultService extends IService<JudgeDrawResult> {
+public interface TestResultService extends IService<TestResult> {
 
 }

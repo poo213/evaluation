@@ -21,8 +21,8 @@ import lombok.experimental.Accessors;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("question_draw")
-public class QuestionDraw implements Serializable {
+@TableName("test_result")
+public class TestResult implements Serializable {
 
     private static final long serialVersionUID=1L;
 
@@ -33,22 +33,34 @@ public class QuestionDraw implements Serializable {
     private Integer id;
 
     /**
-     * 比赛场次（1-7）
+     * 考生id
      */
-    @TableField("game_number")
-    private Integer gameNumber;
+    @TableField("student_id")
+    private Integer studentId;
 
     /**
-     * 考生赛位号id
+     * 裁判id
      */
-    @TableField("seat_id")
-    private Integer seatId;
+    @TableField("judge_id")
+    private Integer judgeId;
 
     /**
-     * 题目编号
+     * 题目id
      */
     @TableField("question_id")
     private Integer questionId;
+
+    /**
+     * 评分标准id
+     */
+    @TableField("question_standard_id")
+    private Integer questionStandardId;
+
+    /**
+     * 得分
+     */
+    @TableField("cent")
+    private Integer cent;
 
     /**
      * 创建时间
@@ -57,7 +69,7 @@ public class QuestionDraw implements Serializable {
     private LocalDateTime createTime;
 
     /**
-     * 修改时间
+     * 修改时间，当变为4的时候，此时间表示考试结束时间
      */
     @TableField("update_time")
     private LocalDateTime updateTime;

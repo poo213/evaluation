@@ -98,6 +98,7 @@ public class StudentAPI {
         QueryWrapper<QuestionDraw> questionDrawQueryWrapper = new QueryWrapper<>();
         questionDrawQueryWrapper.eq("game_number", config.getGameRound()).eq("seat_id", pad.getSeatId());
         questionDrawService.getOne(questionDrawQueryWrapper).getQuestionId();//考题Id
+        //todo
         return questionDrawService.getOne(questionDrawQueryWrapper).getQuestionId().toString();
 
     }

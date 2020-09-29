@@ -1,6 +1,6 @@
 package com.njmetro.evaluation.mapper;
 
-import com.njmetro.evaluation.domain.JudgeDrawResult;
+import com.njmetro.evaluation.domain.TestResult;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
@@ -11,6 +11,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @author zc
  * @since 2020-09-29
  */
-public interface JudgeDrawResultMapper extends BaseMapper<JudgeDrawResult> {
+public interface TestResultMapper extends BaseMapper<TestResult> {
 
 }

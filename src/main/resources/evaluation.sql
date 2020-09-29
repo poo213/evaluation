@@ -221,8 +221,22 @@ CREATE TABLE IF NOT EXISTS seat_draw
     game_number   INT UNSIGNED NOT NULL COMMENT '比赛场次（1-7）',
     game_round    INT UNSIGNED NOT NULL COMMENT '比赛轮次（1，2，3）',
     group_id      INT          NOT NULL COMMENT '组名1-6',
-    state         INT UNSIGNED NOT NULL COMMENT '状态，1表示登录（正在考试），2比赛中断，3考生就绪，4表示 考试结束',
+    state         INT UNSIGNED NOT NULL COMMENT '状态初始0，1.考生就绪，2.考试中，3.比赛中断,4。表示 考试结束',
+    use_time      INT UNSIGNED COMMENT '比赛用时',
     `create_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间，当变为4的时候，此时间表示考试结束时间',
+    PRIMARY KEY (id)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = UTF8MB4;
+
+#暂停记录
+CREATE TABLE IF NOT EXISTS pause_record
+(
+    id            INT UNSIGNED AUTO_INCREMENT COMMENT '自增id',
+    seat_draw_id    INT UNSIGNED NOT NULL COMMENT 'seat_draw_id',
+    use_time      INT UNSIGNED COMMENT '比赛用时',
+    state           INT UNSIGNED COMMENT '0暂停，1开始',
+    `create_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间,即暂停时间',
     `update_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
     PRIMARY KEY (id)
 ) ENGINE = InnoDB
@@ -233,6 +247,8 @@ CREATE TABLE IF NOT EXISTS config
     id          INT UNSIGNED AUTO_INCREMENT COMMENT '自增id',
     game_number INT UNSIGNED NOT NULL COMMENT '比赛场次（1-7）',
     game_round  INT UNSIGNED NOT NULL COMMENT '比赛轮次（1，2，3）',
+    `create_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
     PRIMARY KEY (id)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = UTF8MB4;
@@ -240,10 +256,12 @@ CREATE TABLE IF NOT EXISTS config
 #主裁对题库抽签
 CREATE TABLE IF NOT EXISTS question_draw
 (
-    id          INT UNSIGNED AUTO_INCREMENT COMMENT '自增id',
-    game_number INT UNSIGNED NOT NULL COMMENT '比赛场次（1-7）',
-    seat_id     INT UNSIGNED NOT NULL COMMENT '赛位号id',
+    id             INT UNSIGNED AUTO_INCREMENT COMMENT '自增id',
+    game_number    INT UNSIGNED NOT NULL COMMENT '比赛场次（1-7）',
+    seat_id        INT UNSIGNED NOT NULL COMMENT '考生赛位号id',
     question_id    INT UNSIGNED NOT NULL COMMENT '题目编号',
+    `create_time`  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time`  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
     PRIMARY KEY (id)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = UTF8MB4;

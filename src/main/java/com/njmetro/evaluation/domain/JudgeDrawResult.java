@@ -16,7 +16,7 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author zc
- * @since 2020-09-21
+ * @since 2020-09-29
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -49,6 +49,24 @@ public class JudgeDrawResult implements Serializable {
      */
     @TableField("pad_id")
     private Integer padId;
+
+    /**
+     * 所在赛组id
+     */
+    @TableField("group_id")
+    private Integer groupId;
+
+    /**
+     * 裁判就绪状态，初始值 0 ，准备就绪：1
+     */
+    @TableField("state")
+    private Integer state;
+
+    /**
+     * 监考类型 光缆接续 交换机组网 视频搭建
+     */
+    @TableField("type_name")
+    private String typeName;
 
     /**
      * 创建时间

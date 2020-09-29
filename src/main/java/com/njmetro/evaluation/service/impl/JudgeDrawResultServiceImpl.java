@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
  * </p>
  *
  * @author zc
- * @since 2020-09-21
+ * @since 2020-09-29
  */
 @Service
 public class JudgeDrawResultServiceImpl extends ServiceImpl<JudgeDrawResultMapper, JudgeDrawResult> implements JudgeDrawResultService {
