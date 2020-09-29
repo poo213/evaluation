@@ -1,4 +1,4 @@
-package com.njmetro.evaluation.api;
+package com.njmetro.evaluation.controller.api;
 
 import com.njmetro.evaluation.domain.Judge;
 import com.njmetro.evaluation.dto.ResultDTO;
