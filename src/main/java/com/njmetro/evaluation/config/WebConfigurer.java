@@ -16,7 +16,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupp
 @Slf4j
 @Configuration
 public class WebConfigurer extends WebMvcConfigurationSupport {
-
     /**
      *  解决静态文件无法找到的问题
      * @param registry
