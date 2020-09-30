@@ -104,8 +104,19 @@ Content-Type: application/json
   "list" : {{ list }}
 }
 
-
-
+### 考生
+### api  1.获取当前考试的场次和轮次
+GET http://localhost:8889/api/student/getConfig
+### api  2.考生扫码登录，如果是当前位置的考生，返回考生信息，否则提示非此位置上的考生
+GET http://localhost:8889/api/student/getStudentInfo?QRcode=222222
+### api  3.获取题目
+GET http://localhost:8889/api/student/getUrl
+### api  4.暂停或开始   0表示暂停，记录用时  该状态 ，1表示继续，改状态
+GET http://localhost:8889/api/student/pauseOrStart?type=1&useTime=111&gameNumber=1&gameRound=1
+### api  5.考生就绪
+GET http://localhost:8889/api/student/beReday?gameNumber=1&gameRound=1
+### api  6.考生提交
+GET http://localhost:8889/api/student/finishTest?useTime=1200&gameNumber=1&gameRound=1
 
 
 

@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 2020-09-30
  */
 @RestController
-@RequestMapping("/test-result")
-public class TestResultController {
+@RequestMapping("/pause-record")
+public class PauseRecordController {
 
 }
 
