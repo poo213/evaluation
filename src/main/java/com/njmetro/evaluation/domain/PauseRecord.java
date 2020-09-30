@@ -21,46 +21,28 @@ import lombok.experimental.Accessors;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("test_result")
-public class TestResult implements Serializable {
+@TableName("pause_record")
+public class PauseRecord implements Serializable {
 
     private static final long serialVersionUID=1L;
 
     /**
-     * 自增id
+     * id
      */
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
     /**
-     * 考生id
+     * seat_draw_id id
      */
-    @TableField("student_id")
-    private Integer studentId;
+    @TableField("seat_draw_id")
+    private Integer seatDrawId;
 
     /**
-     * 裁判id
+     * 类型 0 :暂停  1：开始
      */
-    @TableField("judge_id")
-    private Integer judgeId;
-
-    /**
-     * 题目id
-     */
-    @TableField("question_id")
-    private Integer questionId;
-
-    /**
-     * 评分标准id
-     */
-    @TableField("question_standard_id")
-    private Integer questionStandardId;
-
-    /**
-     * 得分
-     */
-    @TableField("cent")
-    private Integer cent;
+    @TableField("type")
+    private Integer type;
 
     /**
      * 创建时间
@@ -69,7 +51,7 @@ public class TestResult implements Serializable {
     private LocalDateTime createTime;
 
     /**
-     * 修改时间，当变为4的时候，此时间表示考试结束时间
+     * 修改时间
      */
     @TableField("update_time")
     private LocalDateTime updateTime;

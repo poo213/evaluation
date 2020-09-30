@@ -1,6 +1,6 @@
 package com.njmetro.evaluation.service;
 
-import com.njmetro.evaluation.domain.TestResult;
+import com.njmetro.evaluation.domain.PauseRecord;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
@@ -11,6 +11,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @author zc
  * @since 2020-09-30
  */
-public interface TestResultService extends IService<TestResult> {
+public interface PauseRecordService extends IService<PauseRecord> {
 
 }

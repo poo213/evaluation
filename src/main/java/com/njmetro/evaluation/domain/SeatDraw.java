@@ -98,5 +98,9 @@ public class SeatDraw implements Serializable {
     @TableField("update_time")
     private LocalDateTime updateTime;
 
-
+    /**
+     * 比赛用时
+     */
+    @TableField("use_time")
+    private Integer useTime;
 }

@@ -1,6 +1,6 @@
 package com.njmetro.evaluation.mapper;
 
-import com.njmetro.evaluation.domain.TestResult;
+import com.njmetro.evaluation.domain.PauseRecord;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
@@ -11,6 +11,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @author zc
  * @since 2020-09-30
  */
-public interface TestResultMapper extends BaseMapper<TestResult> {
+public interface PauseRecordMapper extends BaseMapper<PauseRecord> {
 
 }
