@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.njmetro.evaluation.domain.Company;
 import com.njmetro.evaluation.domain.Judge;
 import com.njmetro.evaluation.domain.JudgeSeatSign;
+import com.njmetro.evaluation.mapper.JudgeMapper;
 import com.njmetro.evaluation.service.CompanyService;
 import com.njmetro.evaluation.service.JudgeService;
 import com.njmetro.evaluation.util.KnuthUtil;
@@ -21,6 +22,9 @@ class EvaluationApplicationTests {
 
     @Autowired
     CompanyService companyService;
+
+    @Autowired
+    JudgeMapper judgeMapper;
 
     @Test
     void contextLoads() {
@@ -51,6 +55,12 @@ class EvaluationApplicationTests {
             companyService.updateById(company);
         }
 
+    }
+
+
+    @Test
+    void mapper() {
+        System.out.println(judgeMapper.getInfo("192.168.97.7"));
     }
 
 }
