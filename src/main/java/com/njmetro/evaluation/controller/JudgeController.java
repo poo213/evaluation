@@ -3,10 +3,7 @@ package com.njmetro.evaluation.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.njmetro.evaluation.domain.*;
-import com.njmetro.evaluation.service.CompanyService;
-import com.njmetro.evaluation.service.JudgeDrawResultService;
-import com.njmetro.evaluation.service.JudgeService;
-import com.njmetro.evaluation.service.SeatGroupService;
+import com.njmetro.evaluation.service.*;
 import com.njmetro.evaluation.util.JudgeDrawAlgorithm;
 import com.njmetro.evaluation.util.KnuthUtil;
 import com.njmetro.evaluation.util.judgeDrawEntity.JudgeEntity;
@@ -20,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.print.DocFlavor;
 import javax.swing.text.html.parser.Entity;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,6 +48,9 @@ public class JudgeController {
 
     @Autowired
     SeatGroupService seatGroupService;
+
+    @Autowired
+    PadService padService;
 
     public static Integer Max_JUDGE_NUMBER = 2;
 
@@ -297,7 +298,15 @@ public class JudgeController {
                 queryWrapper.eq("seat_id", baseSeatId + change[i]);
                 JudgeDrawResult judgeDrawResult = judgeDrawResultService.getOne(queryWrapper);
                 judgeDrawResult.setJudgeId(saveJudgeEntityList.get(i).getJudgeId());
+                // 裁判就绪状态
                 judgeDrawResult.setState(0);
+                // 根据裁判Id 获取 绑定 pad id
+                QueryWrapper<Pad> padQueryWrapper = new QueryWrapper<>();
+                padQueryWrapper.eq("seat_id",baseSeatId + change[i])
+                        .eq("type",2);
+                Pad pad = padService.getOne(padQueryWrapper);
+                // todo 默认 裁判id 等于 pad id
+                judgeDrawResult.setPadId(pad.getId());
                 judgeDrawResultService.updateById(judgeDrawResult);
             }
         }

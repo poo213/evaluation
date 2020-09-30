@@ -85,7 +85,7 @@ Content-Type: application/json
 
 
 ###  api 1. 轮询接口
-GET http://localhost:8889/api/judge/getJudgeInformation?gameNumber=1&gameRound=2
+GET http://localhost:8889/api/judge/getJudgeInfo?gameNumber=1&gameRound=1
 Accept: application/json
 
 ###  api 2. 上报准备就绪

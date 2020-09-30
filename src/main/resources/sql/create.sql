@@ -148,12 +148,26 @@ CREATE TABLE IF NOT EXISTS test_result
 ) ENGINE = InnoDB
   DEFAULT CHARSET = UTF8MB4;
 
-# 9. 当 当前场次轮次 配置表
+# 9. 当前场次轮次 配置表
 CREATE TABLE IF NOT EXISTS config
 (
     id          INT UNSIGNED AUTO_INCREMENT COMMENT '自增id',
     game_number INT UNSIGNED NOT NULL COMMENT '比赛场次（1-7）',
     game_round  INT UNSIGNED NOT NULL COMMENT '比赛轮次（1，2，3）',
+    `create_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+    PRIMARY KEY (id)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = UTF8MB4;
+
+# 9. 平板ip 赛位对照表
+CREATE TABLE IF NOT EXISTS pad
+(
+    id            INT UNSIGNED AUTO_INCREMENT COMMENT '平板 自增ID',
+    code          VARCHAR(20)  NOT NULL COMMENT '平板编号',
+    ip            VARCHAR(20)  NOT NULL COMMENT '平板绑定的ip地址',
+    seat_id       INT UNSIGNED NOT NULL COMMENT '对应工位id',
+    type          INT UNSIGNED NOT NULL COMMENT '平板用途（1: 考生、2:评委）',
     `create_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `update_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
     PRIMARY KEY (id)
