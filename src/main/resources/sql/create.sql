@@ -97,7 +97,7 @@ CREATE TABLE IF NOT EXISTS seat_group
 ) ENGINE = InnoDB
   DEFAULT CHARSET = UTF8MB4;
 
-# 6.主裁对题库抽签
+# 6.主裁对题库抽签 question_draw
 ### 考题抽签表
 CREATE TABLE IF NOT EXISTS question_draw
 (
@@ -144,6 +144,18 @@ CREATE TABLE IF NOT EXISTS test_result
     cent                  INT UNSIGNED NOT NULL COMMENT   '得分',
     `create_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `update_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间，当变为4的时候，此时间表示考试结束时间',
+    PRIMARY KEY (id)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = UTF8MB4;
+
+# 9. 当 当前场次轮次 配置表
+CREATE TABLE IF NOT EXISTS config
+(
+    id          INT UNSIGNED AUTO_INCREMENT COMMENT '自增id',
+    game_number INT UNSIGNED NOT NULL COMMENT '比赛场次（1-7）',
+    game_round  INT UNSIGNED NOT NULL COMMENT '比赛轮次（1，2，3）',
+    `create_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
     PRIMARY KEY (id)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = UTF8MB4;

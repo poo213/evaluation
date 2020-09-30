@@ -10,6 +10,10 @@ TRUNCATE TABLE judge_draw_result;
 
 TRUNCATE TABLE seat_group;
 
+# 3. 重置 config 表
+
+TRUNCATE TABLE config;
+
 ### 二、 生成项目表格基础数据
 
 # 1.  初始化 judge_draw_result 表
@@ -66,4 +70,9 @@ VALUES ("A组"),
        ("D组"),
        ("E组"),
        ("F组");
+
+
+# 3. 初始化 config 表（只存放一条记录）
+
+INSERT INTO config(game_number, game_round) value (0,0);
 

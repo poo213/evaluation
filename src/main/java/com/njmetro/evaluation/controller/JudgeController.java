@@ -54,7 +54,6 @@ public class JudgeController {
     public static Integer Max_JUDGE_NUMBER = 2;
 
 
-
     /**
      * 获取裁判列表
      */
@@ -205,9 +204,10 @@ public class JudgeController {
 
     /**
      * 根据类型获取赛位信息列表
+     *
      * @return
      */
-    public List<SeatGroupEntity> getSeatGroupListByType(String type){
+    public List<SeatGroupEntity> getSeatGroupListByType(String type) {
         List<SeatGroupEntity> seatGroupListNoType = new ArrayList<>();
         // 按抽签顺序获取单位列表
         QueryWrapper<Company> companyQueryWrapper = new QueryWrapper<>();
@@ -215,7 +215,7 @@ public class JudgeController {
         List<Company> companyList = companyService.list(companyQueryWrapper);
         // 查询出6个赛组
         List<SeatGroup> seatGroupList = seatGroupService.list();
-        for (SeatGroup seatGroup : seatGroupList){
+        for (SeatGroup seatGroup : seatGroupList) {
             SeatGroupEntity seatGroupEntity = new SeatGroupEntity();
             seatGroupEntity.setGroupId(seatGroup.getId());
             seatGroupEntity.setGroupName(seatGroup.getGroupName());
@@ -241,13 +241,14 @@ public class JudgeController {
 
     /**
      * 根据监考类型获取 监考裁判列表
+     *
      * @param type 监考类型
      * @return
      */
-    public List<JudgeEntity> getJudgeEntityListByType(String type){
+    public List<JudgeEntity> getJudgeEntityListByType(String type) {
         List<JudgeEntity> judgeEntityList = new ArrayList<>();
         QueryWrapper<Judge> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("judge_type",type);
+        queryWrapper.eq("judge_type", type);
         queryWrapper.eq("master", 1);
         List<Judge> judgeList = judgeService.list(queryWrapper);
         for (Judge judge : judgeList) {
@@ -261,7 +262,47 @@ public class JudgeController {
         return judgeEntityList;
     }
 
-
+    /**
+     * 将裁判抽签结果写入 judge_draw_result 表中
+     *
+     * @param seatGroupEntityList 保存裁判抽签的 list
+     * @param type                裁判监考类型
+     * @return
+     */
+    public Boolean saveSeatGroupEntity(List<SeatGroupEntity> seatGroupEntityList, String type) {
+        // 根据groupId 给裁判随机分配[ groupId-1）*6 +1 ] 和 [ groupId-1）*6 +2 ]位置
+        Integer[] change = new Integer[2];
+        switch (type) {
+            case "光缆接续":
+                change[0] = 1;
+                change[1] = 2;
+                break;
+            case "交换机组网":
+                change[0] = 3;
+                change[1] = 4;
+                break;
+            case "视频搭建":
+                change[0] = 5;
+                change[1] = 6;
+                break;
+        }
+        for (SeatGroupEntity seatGroupEntity : seatGroupEntityList) {
+            Integer baseSeatId = (seatGroupEntity.getGroupId() - 1) * 6;
+            // 将数组内的值随机打乱
+            change = KnuthUtil.result(change);
+            List<SaveJudgeEntity> saveJudgeEntityList = seatGroupEntity.getSaveJudgeEntityList();
+            for (int i = 0; i < 2; i++) {
+                log.info("座位ID {}", baseSeatId + change[i]);
+                QueryWrapper<JudgeDrawResult> queryWrapper = new QueryWrapper<>();
+                queryWrapper.eq("seat_id", baseSeatId + change[i]);
+                JudgeDrawResult judgeDrawResult = judgeDrawResultService.getOne(queryWrapper);
+                judgeDrawResult.setJudgeId(saveJudgeEntityList.get(i).getJudgeId());
+                judgeDrawResult.setState(0);
+                judgeDrawResultService.updateById(judgeDrawResult);
+            }
+        }
+        return true;
+    }
 
     /**
      * 主裁随机分配位置
@@ -281,10 +322,14 @@ public class JudgeController {
         List<JudgeEntity> videoJudgeEntityList = getJudgeEntityListByType("视频搭建");
 
         // 调用抽签算法
-        opticalSeatGroupList = JudgeDrawAlgorithm.run(opticalSeatGroupList,opticalJudgeEntityList);
-        switchSeatGroupList = JudgeDrawAlgorithm.run(switchSeatGroupList,switchJudgeEntityList);
-        videoSeatGroupList = JudgeDrawAlgorithm.run(videoSeatGroupList,videoJudgeEntityList);
+        opticalSeatGroupList = JudgeDrawAlgorithm.run(opticalSeatGroupList, opticalJudgeEntityList);
+        switchSeatGroupList = JudgeDrawAlgorithm.run(switchSeatGroupList, switchJudgeEntityList);
+        videoSeatGroupList = JudgeDrawAlgorithm.run(videoSeatGroupList, videoJudgeEntityList);
 
+        // 将抽签结果写入数据库
+        saveSeatGroupEntity(opticalSeatGroupList, "光缆接续");
+        saveSeatGroupEntity(switchSeatGroupList, "交换机组网");
+        saveSeatGroupEntity(videoSeatGroupList, "视频搭建");
 
         /**
          * 循环抽签结果,更改数据库信息
@@ -294,7 +339,7 @@ public class JudgeController {
          *      type = "交换机组网"  m =3 或 4
          *      type = "视频搭建"  m =5 或 6
          */
-        log.info("光缆接续");
+  /*      log.info("光缆接续");
         for(SeatGroupEntity seatGroupEntity : opticalSeatGroupList){
             log.info(seatGroupEntity.toString());
             // 根据groupId 给裁判随机分配[ groupId-1）*6 +1 ] 和 [ groupId-1）*6 +2 ]位置
@@ -309,6 +354,7 @@ public class JudgeController {
 
                 JudgeDrawResult judgeDrawResult = judgeDrawResultService.getOne(queryWrapper);
                 judgeDrawResult.setJudgeId(saveJudgeEntityList.get(i).getJudgeId());
+                judgeDrawResult.setState(0);
                 judgeDrawResultService.updateById(judgeDrawResult);
             }
         }
@@ -326,6 +372,7 @@ public class JudgeController {
                 queryWrapper.eq("seat_id",baseSeatId+change[i]);
                 JudgeDrawResult judgeDrawResult = judgeDrawResultService.getOne(queryWrapper);
                 judgeDrawResult.setJudgeId(saveJudgeEntityList.get(i).getJudgeId());
+                judgeDrawResult.setState(0);
                 judgeDrawResultService.updateById(judgeDrawResult);
             }
         }
@@ -343,9 +390,10 @@ public class JudgeController {
                 queryWrapper.eq("seat_id",baseSeatId+change[i]);
                 JudgeDrawResult judgeDrawResult = judgeDrawResultService.getOne(queryWrapper);
                 judgeDrawResult.setJudgeId(saveJudgeEntityList.get(i).getJudgeId());
+                judgeDrawResult.setState(0);
                 judgeDrawResultService.updateById(judgeDrawResult);
             }
-        }
+        }*/
 
 
 
@@ -354,9 +402,9 @@ public class JudgeController {
         judgeDraw2();
         judgeDraw3();*/
         return true;
-}
+    }
 
-    public void  judgeDraw1(){
+    public void judgeDraw1() {
         // 获取赛组信息
 
         // 按抽签顺序获取单位列表
@@ -431,7 +479,8 @@ public class JudgeController {
         // 调用 裁判抽签算法
         judgeDrawUtil(seatGroupEntityList, judgeEntityList);
     }
-    public void  judgeDraw2(){
+
+    public void judgeDraw2() {
         // 获取赛组信息
 
         // 按抽签顺序获取单位列表
@@ -506,7 +555,8 @@ public class JudgeController {
         // 调用 裁判抽签算法
         judgeDrawUtil(seatGroupEntityList, judgeEntityList);
     }
-    public void  judgeDraw3(){
+
+    public void judgeDraw3() {
         // 获取赛组信息
 
         // 按抽签顺序获取单位列表
