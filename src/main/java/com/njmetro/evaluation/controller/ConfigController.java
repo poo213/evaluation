@@ -3,6 +3,7 @@ package com.njmetro.evaluation.controller;
 
 import com.njmetro.evaluation.domain.Config;
 import com.njmetro.evaluation.service.ConfigService;
+import com.njmetro.evaluation.vo.ConfigVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -28,9 +29,12 @@ public class ConfigController {
      * @return
      */
     @GetMapping("/getInfo")
-    public Config getInfo() {
-        log.info(configService.getById(1).toString());
-        return configService.getById(1);
+    public ConfigVO getInfo() {
+      Config config =   configService.getById(1);
+        ConfigVO configVO = new ConfigVO();
+        configVO.setGameNumber(config.getGameNumber());
+        configVO.setGameRound(config.getGameRound());
+        return configVO;
     }
 
     /**

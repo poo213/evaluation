@@ -33,6 +33,7 @@ CREATE TABLE IF NOT EXISTS student
     two_dimensional_code VARCHAR(20)  NOT NULL COMMENT '二维码编号',
     leader               INT UNSIGNED NOT NULL COMMENT '是否为队长 1: 是队长 0：不是队长',
     sign_state           CHAR(1)      NOT NULL COMMENT '签到1 未签到0',
+    test_day_state       INT UNSIGNED NOT NULL COMMENT '考试当天状态，初始0，进入候考区：1，进入候考区：2，进入考场：3，离开考场：4',
     create_time          DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     update_time          DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
     PRIMARY KEY (id)

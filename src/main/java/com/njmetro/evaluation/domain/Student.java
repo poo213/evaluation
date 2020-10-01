@@ -111,5 +111,9 @@ public class Student implements Serializable {
      */
     @TableField("sign_state")
     private String signState;
-
+    /**
+     * 考试当天签到状态
+     */
+    @TableField("test_day_state")
+    private Integer testDayState;
 }
