@@ -159,8 +159,8 @@ public class StudentController {
             QueryWrapper<Student> studentQueryWrapper = new QueryWrapper<>();
             studentQueryWrapper.eq("company_name", company.getName());
             List<Student> studentList = studentService.list(studentQueryWrapper);//获取地铁的参赛选手
-            log.info("地铁编号：{}",company.getDrawResult());
-            log.info("考生数目：{}",studentList.size());
+            log.info("地铁编号：{}", company.getDrawResult());
+            log.info("考生数目：{}", studentList.size());
             //对参赛选手进行遍历，分配轮次
             log.info("{}", company.getName() + studentList);
             Integer[] baseArray = new Integer[studentList.size()];//创建数组
@@ -193,6 +193,71 @@ public class StudentController {
         }
         seatDrawService.saveBatch(seatDrawList);
 
+    }
+
+    /**
+     * 签到进入候考区
+     * @param idList  选中的选手
+     * @return
+     */
+    @PostMapping("/signInOne")
+    public String signInOne(@RequestBody List<Integer> idList) {
+        List<String> errorInfo = new ArrayList<>();
+        for (Integer id : idList) {
+            UpdateWrapper<Student> updateWrapper = new UpdateWrapper<>();
+            updateWrapper.eq("id", id).set("test_day_state", "1");
+            if (!studentService.update(updateWrapper)) {
+                errorInfo.add(id + "号，签到失败!");
+            }
+        }
+        if (errorInfo.size() == 0) {
+            return "签到成功";
+        } else {
+            return errorInfo.toString();
+        }
+    }
+
+    /**
+     * 签到进入备考区
+     * @param idList  选中的选手
+     * @return
+     */
+    @PostMapping("/signInTwo")
+    public String signInTwo(@RequestBody List<Integer> idList) {
+        List<String> errorInfo = new ArrayList<>();
+        for (Integer id : idList) {
+            UpdateWrapper<Student> updateWrapper = new UpdateWrapper<>();
+            updateWrapper.eq("id", id).set("test_day_state", "2");
+            if (!studentService.update(updateWrapper)) {
+                errorInfo.add(id + "号，签到失败!");
+            }
+        }
+        if (errorInfo.size() == 0) {
+            return "签到成功";
+        } else {
+            return errorInfo.toString();
+        }
+    }
+    /**
+     * 签到进入备考区
+     * @param idList  选中的选手
+     * @return
+     */
+    @PostMapping("/signAway")
+    public String signAway(@RequestBody List<Integer> idList) {
+        List<String> errorInfo = new ArrayList<>();
+        for (Integer id : idList) {
+            UpdateWrapper<Student> updateWrapper = new UpdateWrapper<>();
+            updateWrapper.eq("id", id).set("test_day_state", "4");
+            if (!studentService.update(updateWrapper)) {
+                errorInfo.add(id + "号，签离失败!");
+            }
+        }
+        if (errorInfo.size() == 0) {
+            return "签离成功";
+        } else {
+            return errorInfo.toString();
+        }
     }
 
 }
