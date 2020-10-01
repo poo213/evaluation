@@ -12,6 +12,13 @@ import java.util.List;
  */
 @Data
 public class GroupVO {
+    /**
+     * 分组名称
+     */
     public String groupName;
-    //public List<TypeInfoVO>
+
+    /**
+     * 三个实体类型
+     */
+     public List<GroupTypeVO> groupTypeVOList;
 }

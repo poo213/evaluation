@@ -5,14 +5,19 @@ import com.njmetro.evaluation.domain.Company;
 import com.njmetro.evaluation.domain.Judge;
 import com.njmetro.evaluation.domain.JudgeSeatSign;
 import com.njmetro.evaluation.mapper.JudgeMapper;
+import com.njmetro.evaluation.mapper.SeatGroupMapper;
 import com.njmetro.evaluation.service.CompanyService;
 import com.njmetro.evaluation.service.JudgeService;
+import com.njmetro.evaluation.service.SeatGroupService;
 import com.njmetro.evaluation.util.KnuthUtil;
+import com.njmetro.evaluation.util.SeatUtil;
+import com.njmetro.evaluation.vo.GroupTypeJudgeVO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @SpringBootTest
@@ -25,6 +30,12 @@ class EvaluationApplicationTests {
 
     @Autowired
     JudgeMapper judgeMapper;
+
+    @Autowired
+    SeatGroupService seatGroupService;
+
+    @Autowired
+    SeatGroupMapper seatGroupMapper;
 
     @Test
     void contextLoads() {
@@ -62,5 +73,19 @@ class EvaluationApplicationTests {
     void mapper() {
         System.out.println(judgeMapper.getInfo("192.168.97.7"));
     }
+
+    @Test
+    void mapper1() {
+        Integer groupId = 1;
+        String type = "交换机组网";
+        Integer leftJudgeSeatId = SeatUtil.getLeftJudgeSeatIdByGroupIdAndType(groupId,type);
+        Integer rightJudgeSeatId = SeatUtil.getRightJudgeSeatIdByGroupIdAndType(groupId,type);
+        // 返回结果
+        List<GroupTypeJudgeVO> groupTypeJudgeVOList = new ArrayList<>();
+        groupTypeJudgeVOList.add(seatGroupMapper.getGroupTypeJudgeVOBySeatId(leftJudgeSeatId).get(0));
+        groupTypeJudgeVOList.add(seatGroupMapper.getGroupTypeJudgeVOBySeatId(rightJudgeSeatId).get(0));
+        System.out.println("groupTypeJudgeVOList {}" + groupTypeJudgeVOList.toString());
+    }
+
 
 }

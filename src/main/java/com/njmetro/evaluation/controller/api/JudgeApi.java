@@ -131,7 +131,8 @@ public class JudgeApi {
      * @return
      */
     @PostMapping("/submitResults")
-    public Boolean submitResults(@RequestBody List<ResultDTO> list){
+    public Boolean submitResults(@RequestBody List<ResultDTO> list,Integer studentId){
+        log.info("studentId {}",studentId);
         log.info("resultDTOList {}",list);
         return true;
     }

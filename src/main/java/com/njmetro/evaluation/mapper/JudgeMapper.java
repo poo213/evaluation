@@ -17,6 +17,12 @@ import java.util.List;
  * @since 2020-09-27
  */
 public interface JudgeMapper extends BaseMapper<Judge> {
+    /**
+     *  根据ip 获取裁判信息
+     *
+     * @param ip ip
+     * @return
+     */
     @Select("SELECT judge.id,judge.name,judge.code,judge_draw_result.seat_id,phone,judge_type FROM pad, judge_draw_result,judge WHERE pad.ip = #{ip}  and judge_draw_result.pad_id = pad.id and judge_id = judge.id")
     List<JudgeInfoDTO> getInfo(@Param("ip") String ip);
 

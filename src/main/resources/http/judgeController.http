@@ -1,0 +1,10 @@
+###  api 1. 轮询接口   type  光缆接续 视频搭建 交换机组网
+GET http://localhost:8889/judge/getJudgeDrawVOByType?type=交换机组网
+Accept: application/json
+
+
+###  api 1. 轮询接口   type  光缆接续 视频搭建 交换机组网
+GET http://localhost:8889/judge/getGroupJudgeVO
+Accept: application/json
+
+

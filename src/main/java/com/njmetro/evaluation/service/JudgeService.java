@@ -3,6 +3,7 @@ package com.njmetro.evaluation.service;
 import com.njmetro.evaluation.domain.Judge;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.njmetro.evaluation.dto.JudgeInfoDTO;
+import com.njmetro.evaluation.vo.JudgeDrawVO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -23,5 +24,12 @@ public interface JudgeService extends IService<Judge> {
      * @return
      */
     List<JudgeInfoDTO> getJudgeInfo(@Param("ip") String ip);
+
+    /**
+     * 根据教考类型查询裁判信息
+     * @param type 裁判监考类型
+     * @return
+     */
+    List<JudgeDrawVO> getJudgeDrawVOByType(@Param("type") String type);
 
 }
