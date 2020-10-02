@@ -1,0 +1,7 @@
+###  api 1. 查询签到状态表
+GET http://localhost:8889/drawState/getDrawStateList
+Accept: application/json
+
+
+
+

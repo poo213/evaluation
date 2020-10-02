@@ -187,4 +187,17 @@ CREATE TABLE IF NOT EXISTS pause_record
   DEFAULT CHARSET = UTF8MB4;
 
 
+# 考生 暂停记录表
+CREATE TABLE IF NOT EXISTS draw_state
+(
+    id            INT UNSIGNED AUTO_INCREMENT COMMENT 'id',
+    draw_name     CHAR(100) NOT NULL COMMENT '抽签名称',
+    state         BOOLEAN  NOT NULL COMMENT '抽签状态 true: 允许抽签   false: 不允许抽签',
+    `create_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+    PRIMARY KEY (id)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = UTF8MB4;
+
+
 

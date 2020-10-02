@@ -18,6 +18,9 @@ TRUNCATE TABLE config;
 
 TRUNCATE TABLE pad;
 
+# 5. 重置 draw_state 表
+TRUNCATE TABLE draw_state;
+
 ### 二、 生成项目表格基础数据
 
 # 1.  初始化 judge_draw_result 表
@@ -144,3 +147,11 @@ VALUES ("******","192.168.96.1",1,1),
        ("******","192.168.97.35",35,2),
        ("******","192.168.97.36",36,2);
 
+# 5. 初始化抽签状态表
+
+INSERT INTO draw_state(draw_name, state)
+values ('参赛队抽签', true),
+       ('考生赛位抽签', true),
+       ('裁判类型抽签', true),
+       ('执行裁判抽签', true),
+       ('裁判位置抽签', true);
