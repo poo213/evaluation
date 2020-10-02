@@ -12,5 +12,11 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since 2020-10-02
  */
 public interface DrawStateService extends IService<DrawState> {
-
+    /**
+     * 将 抽签状态表 state 状态设为 false
+     *
+     * @param id id
+     * @return
+     */
+    Integer setDrawStatusFalse(Integer id);
 }
