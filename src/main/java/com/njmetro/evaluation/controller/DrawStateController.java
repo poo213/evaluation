@@ -77,7 +77,7 @@ public class DrawStateController {
                     drawState1.setState(true);
                     drawStateService.updateById(drawState1);
                     // 更改 2 的状态
-                    seatDrawService.deleteTable();
+                    seatDrawServicegi.deleteTable();
                     // 更改3 4 状态
                     judgeService.resetTypeAndMaster();
                     // 更改5 的状态
