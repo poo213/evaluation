@@ -1,6 +1,7 @@
 package com.njmetro.evaluation.util;
 
 import com.njmetro.evaluation.domain.Company;
+import com.njmetro.evaluation.util.judgeDrawEntity.JudgeEntity;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -37,4 +38,5 @@ public class DrawUtil {
         return companyList;
 
     }
+
 }

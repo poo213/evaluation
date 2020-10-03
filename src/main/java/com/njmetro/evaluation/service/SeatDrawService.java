@@ -13,4 +13,11 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface SeatDrawService extends IService<SeatDraw> {
 
+    /**
+     * 重置 seat_draw 表格
+     *
+     * @return true
+     */
+    Boolean deleteTable();
+
 }

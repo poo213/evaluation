@@ -13,4 +13,11 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface JudgeDrawResultService extends IService<JudgeDrawResult> {
 
+    /**
+     * 重置选择12个执行裁判的结果
+     *
+     * @return
+     */
+    Boolean resetJudgeDrawResult();
+
 }

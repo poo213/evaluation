@@ -3,11 +3,13 @@ package com.njmetro.evaluation.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.njmetro.evaluation.domain.Company;
+import com.njmetro.evaluation.domain.DrawState;
 import com.njmetro.evaluation.domain.SeatDraw;
 import com.njmetro.evaluation.domain.Student;
 import com.njmetro.evaluation.param.student.SaveStudentParam;
 import com.njmetro.evaluation.param.student.UpdateStudentParam;
 import com.njmetro.evaluation.service.CompanyService;
+import com.njmetro.evaluation.service.DrawStateService;
 import com.njmetro.evaluation.service.SeatDrawService;
 import com.njmetro.evaluation.service.StudentService;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +44,7 @@ public class StudentController {
     private final StudentService studentService;
     private final CompanyService companyService;
     private final SeatDrawService seatDrawService;
+    private final DrawStateService drawStateService;
 
     /**
      * 添加考生信息
@@ -191,6 +194,10 @@ public class StudentController {
             }
 
         }
+        // 修改抽签状态
+        DrawState drawState = drawStateService.getById(2);
+        drawState.setState(false);
+        drawStateService.getById(drawState);
         seatDrawService.saveBatch(seatDrawList);
 
     }
