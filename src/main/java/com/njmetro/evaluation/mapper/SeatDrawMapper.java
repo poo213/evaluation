@@ -6,6 +6,7 @@ import com.njmetro.evaluation.dto.JudgeInfoDTO;
 import com.njmetro.evaluation.vo.SeatDrawVO;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 
@@ -18,6 +19,12 @@ import java.util.List;
  * @since 2020-09-28
  */
 public interface SeatDrawMapper extends BaseMapper<SeatDraw> {
+    /**
+     * 重置 seat_draw 表格
+     */
+    @Update("truncate table seat_draw")
+    void delete();
+
     /**
      *  获取赛位结果
      *
