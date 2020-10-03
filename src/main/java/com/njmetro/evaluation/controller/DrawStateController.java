@@ -1,8 +1,12 @@
 package com.njmetro.evaluation.controller;
 
 import com.njmetro.evaluation.domain.DrawState;
+import com.njmetro.evaluation.domain.JudgeDrawResult;
 import com.njmetro.evaluation.exception.DrawStateException;
 import com.njmetro.evaluation.service.DrawStateService;
+import com.njmetro.evaluation.service.JudgeDrawResultService;
+import com.njmetro.evaluation.service.JudgeService;
+import com.njmetro.evaluation.service.SeatDrawService;
 import com.njmetro.evaluation.vo.DrawStateVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +30,16 @@ public class DrawStateController {
 
     @Autowired
     DrawStateService drawStateService;
+
+    @Autowired
+    JudgeService judgeService;
+
+    @Autowired
+    JudgeDrawResultService judgeDrawResultService;
+
+    @Autowired
+    SeatDrawService seatDrawService;
+
 
     /**
      * 返回抽签状态列表
@@ -55,10 +69,40 @@ public class DrawStateController {
         List<String> errorInfo = new ArrayList<>();
         for (Integer id : idList) {
             DrawState drawState = drawStateService.getById(id);
-            // 设置为允许重新抽签
-            drawState.setState(true);
-            if (!drawStateService.updateById(drawState)) {
-                errorInfo.add(id + "号重置失败!");
+            // 重置抽签结果 和状态
+            switch (id) {
+                case 1:
+                    // 更改1 的状态
+                    DrawState drawState1 = drawStateService.getById(1);
+                    drawState1.setState(true);
+                    drawStateService.updateById(drawState1);
+                    // 更改 2 的状态
+                    seatDrawService.deleteTable();
+                    // 更改3 4 状态
+                    judgeService.resetTypeAndMaster();
+                    // 更改5 的状态
+                    judgeDrawResultService.resetJudgeDrawResult();
+                    break;
+                case 2:
+                    // 更改 2 的状态
+                    seatDrawService.deleteTable();
+                    break;
+                case 3:
+                    // 更改3 4 状态
+                    judgeService.resetTypeAndMaster();
+                    // 更改5 的状态
+                    judgeDrawResultService.resetJudgeDrawResult();
+                    break;
+                case 4:
+                    // 更改4 状态
+                    judgeService.resetMaster();
+                    // 更改5 的状态
+                    judgeDrawResultService.resetJudgeDrawResult();
+                    break;
+                case 5:
+                    // 更改5 的状态
+                    judgeDrawResultService.resetJudgeDrawResult();
+                    break;
             }
         }
         if (errorInfo.size() == 0) {
@@ -66,7 +110,17 @@ public class DrawStateController {
         } else {
             throw new DrawStateException("重置失败 ：" + errorInfo);
         }
+    }
 
+    /**
+     * 根据Id 获取抽签状态
+     *
+     * @param id id
+     * @return
+     */
+    @GetMapping("/getStateById")
+    Boolean getStateById(Integer id) {
+        return drawStateService.getById(id).getState();
     }
 
 }

@@ -49,6 +49,7 @@ public class JudgeController {
     private final SeatGroupEntity seatGroupEntity;
     private final SeatGroupService seatGroupService;
     private final PadService padService;
+    private final DrawStateService drawStateService;
 
     /**
      * 根据 裁判类型获取裁判列表
@@ -99,7 +100,6 @@ public class JudgeController {
         videoGroupJudgeTypeVO.setTypeName(SystemCommon.VIDEO_TYPE);
         videoGroupJudgeTypeVO.setGroupTypeJudgeVOList(seatGroupService.getGroupTypeJudgeVOByGroupId(groupId, SystemCommon.VIDEO_TYPE));
         groupJudgeTypeVOList.add(videoGroupJudgeTypeVO);
-
         return groupJudgeTypeVOList;
     }
 
@@ -177,6 +177,11 @@ public class JudgeController {
             judgeService.updateById(judge);
             judge_type++;
         }
+
+        // 修改抽签状态
+        DrawState drawState = drawStateService.getById(3);
+        drawState.setState(false);
+        drawStateService.getById(drawState);
         return true;
     }
 
@@ -252,6 +257,11 @@ public class JudgeController {
             }
             log.info("{} 南京裁判排序抽签结束", i);
         }
+
+        // 修改抽签状态
+        DrawState drawState = drawStateService.getById(4);
+        drawState.setState(false);
+        drawStateService.getById(drawState);
         return true;
     }
 
@@ -391,22 +401,27 @@ public class JudgeController {
         List<SeatGroupEntity> opticalSeatGroupList = getSeatGroupListByType("光缆接续");
         List<SeatGroupEntity> switchSeatGroupList = getSeatGroupListByType("交换机组网");
         List<SeatGroupEntity> videoSeatGroupList = getSeatGroupListByType("视频搭建");
-
         // 获取三种考试类型 对应的裁判列表
         List<JudgeEntity> opticalJudgeEntityList = getJudgeEntityListByType("光缆接续");
         List<JudgeEntity> switchJudgeEntityList = getJudgeEntityListByType("交换机组网");
         List<JudgeEntity> videoJudgeEntityList = getJudgeEntityListByType("视频搭建");
-
+        // 调用洗牌算法，重新打乱
+        opticalJudgeEntityList = KnuthUtil.getRandomJudgeEntityList(opticalJudgeEntityList);
+        switchJudgeEntityList = KnuthUtil.getRandomJudgeEntityList(switchJudgeEntityList);
+        videoJudgeEntityList= KnuthUtil.getRandomJudgeEntityList(videoJudgeEntityList);
         // 调用抽签算法
         opticalSeatGroupList = JudgeDrawAlgorithm.run(opticalSeatGroupList, opticalJudgeEntityList);
         switchSeatGroupList = JudgeDrawAlgorithm.run(switchSeatGroupList, switchJudgeEntityList);
         videoSeatGroupList = JudgeDrawAlgorithm.run(videoSeatGroupList, videoJudgeEntityList);
-
         // 将抽签结果写入数据库
         saveSeatGroupEntity(opticalSeatGroupList, "光缆接续");
         saveSeatGroupEntity(switchSeatGroupList, "交换机组网");
         saveSeatGroupEntity(videoSeatGroupList, "视频搭建");
 
+        // 修改抽签状态
+        DrawState drawState = drawStateService.getById(5);
+        drawState.setState(false);
+        drawStateService.getById(drawState);
         return true;
     }
 }

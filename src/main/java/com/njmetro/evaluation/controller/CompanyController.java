@@ -4,9 +4,11 @@ package com.njmetro.evaluation.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.njmetro.evaluation.domain.Company;
+import com.njmetro.evaluation.domain.DrawState;
 import com.njmetro.evaluation.param.company.SaveCompanyParam;
 import com.njmetro.evaluation.param.company.UpdateCompanyParam;
 import com.njmetro.evaluation.service.CompanyService;
+import com.njmetro.evaluation.service.DrawStateService;
 import com.njmetro.evaluation.service.StudentService;
 import com.njmetro.evaluation.util.DrawUtil;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +36,7 @@ import static com.njmetro.evaluation.util.KnuthUtil.result;
 public class CompanyController {
     private final CompanyService companyService;
     private final StudentService studentService;
+    private final DrawStateService drawStateService;
 
     @GetMapping("/getCompanyList")
     public List<Company> getCompanyList() {
@@ -95,6 +98,10 @@ public class CompanyController {
             companyService.update(updateWrapper);
 
         }
+        // 修改抽签状态
+        DrawState drawState = drawStateService.getById(1);
+        drawState.setState(false);
+        drawStateService.getById(drawState);
         return companyList;
     }
 

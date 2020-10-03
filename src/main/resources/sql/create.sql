@@ -136,14 +136,14 @@ CREATE TABLE IF NOT EXISTS seat_draw
 
 CREATE TABLE IF NOT EXISTS test_result
 (
-    id            INT UNSIGNED AUTO_INCREMENT COMMENT '自增id',
-    student_id     INT UNSIGNED NOT NULL COMMENT  '考生id',
-    judge_id     INT UNSIGNED NOT NULL COMMENT  '裁判id',
-    question_id     INT UNSIGNED NOT NULL COMMENT  '题目id',
-    question_standard_id  INT UNSIGNED NOT NULL COMMENT  '评分标准id',
-    cent                  INT UNSIGNED NOT NULL COMMENT   '得分',
-    `create_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    `update_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间，当变为4的时候，此时间表示考试结束时间',
+    id                   INT UNSIGNED AUTO_INCREMENT COMMENT '自增id',
+    student_id           INT UNSIGNED NOT NULL COMMENT '考生id',
+    judge_id             INT UNSIGNED NOT NULL COMMENT '裁判id',
+    question_id          INT UNSIGNED NOT NULL COMMENT '题目id',
+    question_standard_id INT UNSIGNED NOT NULL COMMENT '评分标准id',
+    cent                 INT UNSIGNED NOT NULL COMMENT '得分',
+    `create_time`        DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time`        DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间，当变为4的时候，此时间表示考试结束时间',
     PRIMARY KEY (id)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = UTF8MB4;
@@ -151,9 +151,9 @@ CREATE TABLE IF NOT EXISTS test_result
 # 9. 当前场次轮次 配置表
 CREATE TABLE IF NOT EXISTS config
 (
-    id          INT UNSIGNED AUTO_INCREMENT COMMENT '自增id',
-    game_number INT UNSIGNED NOT NULL COMMENT '比赛场次（1-7）',
-    game_round  INT UNSIGNED NOT NULL COMMENT '比赛轮次（1，2，3）',
+    id            INT UNSIGNED AUTO_INCREMENT COMMENT '自增id',
+    game_number   INT UNSIGNED NOT NULL COMMENT '比赛场次（1-7）',
+    game_round    INT UNSIGNED NOT NULL COMMENT '比赛轮次（1，2，3）',
     `create_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `update_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
     PRIMARY KEY (id)
@@ -192,9 +192,27 @@ CREATE TABLE IF NOT EXISTS draw_state
 (
     id            INT UNSIGNED AUTO_INCREMENT COMMENT 'id',
     draw_name     CHAR(100) NOT NULL COMMENT '抽签名称',
-    state         BOOLEAN  NOT NULL COMMENT '抽签状态 true: 允许抽签   false: 不允许抽签',
-    `create_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    `update_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+    state         BOOLEAN   NOT NULL COMMENT '抽签状态 true: 允许抽签   false: 不允许抽签',
+    `create_time` DATETIME  NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time` DATETIME  NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+    PRIMARY KEY (id)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = UTF8MB4;
+
+
+# 考生 暂停记录表
+CREATE TABLE IF NOT EXISTS test_result
+(
+    id                   INT UNSIGNED AUTO_INCREMENT COMMENT 'id',
+    game_number          INT UNSIGNED NOT NULL COMMENT '场次',
+    game_round           INT UNSIGNED NOT NULL COMMENT '轮次',
+    question_id          INT UNSIGNED NOT NULL COMMENT '题目id',
+    question_standard_id INT UNSIGNED NOT NULL COMMENT '评分标准Id',
+    cent                 DOUBLE       NOT NULL COMMENT '评分标准Id',
+    student_id           INT UNSIGNED NOT NULL COMMENT '考生id',
+    judge_id             INT UNSIGNED NOT NULL COMMENT '裁判id',
+    `create_time`        DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time`        DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
     PRIMARY KEY (id)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = UTF8MB4;

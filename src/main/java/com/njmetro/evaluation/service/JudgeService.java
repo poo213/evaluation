@@ -32,4 +32,18 @@ public interface JudgeService extends IService<Judge> {
      */
     List<JudgeDrawVO> getJudgeDrawVOByType(@Param("type") String type);
 
+    /**
+     * 重置选择12个执行裁判的结果
+     *
+     * @return
+     */
+    Boolean resetMaster();
+
+    /**
+     *  重置裁判监考类型
+     *
+     * @return
+     */
+    Boolean resetTypeAndMaster();
 }
+

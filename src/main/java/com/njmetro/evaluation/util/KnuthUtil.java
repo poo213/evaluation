@@ -1,8 +1,11 @@
 package com.njmetro.evaluation.util;
 
+import com.njmetro.evaluation.util.judgeDrawEntity.JudgeEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.context.support.StaticWebApplicationContext;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 
@@ -45,19 +48,22 @@ public class KnuthUtil {
         return baseArray;
     }
 
-    public static void main(String[] args) {
-        // 初始化一维数组
-        Integer[] baseArray = new Integer[42];
-//        System.out.println(baseArray.length);
-        for (int i = 0; i < baseArray.length; i++) {
-            System.out.println(i);
-            baseArray[i] = i;
+    /**
+     * 随机打乱裁判顺序
+     *
+     * @param judgeEntityList 裁判 List
+     * @return 返回洗牌后的结果
+     */
+    public static List<JudgeEntity> getRandomJudgeEntityList(List<JudgeEntity> judgeEntityList){
+        Integer[] initArray = new Integer[judgeEntityList.size()];
+        for(int i = 0 ; i < judgeEntityList.size() ; i++){
+            initArray[i] = i;
         }
-        // 抽签
-        baseArray = result(baseArray);
-        // 打印抽签内容 +1
-        for (int i = 0; i < baseArray.length; i++) {
-            System.out.print(baseArray[i] + 1 + " ");
+        Integer[] resultArray = result(initArray);
+        List<JudgeEntity> resultList =  new ArrayList<>();
+        for(int i = 0 ; i < resultArray.length ; i++){
+            resultList.add(judgeEntityList.get(resultArray[i]));
         }
+        return resultList;
     }
 }

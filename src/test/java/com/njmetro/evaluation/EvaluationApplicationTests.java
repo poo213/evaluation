@@ -4,10 +4,13 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.njmetro.evaluation.domain.Company;
 import com.njmetro.evaluation.domain.Judge;
 import com.njmetro.evaluation.domain.JudgeSeatSign;
+import com.njmetro.evaluation.domain.SeatDraw;
 import com.njmetro.evaluation.mapper.JudgeMapper;
+import com.njmetro.evaluation.mapper.SeatDrawMapper;
 import com.njmetro.evaluation.mapper.SeatGroupMapper;
 import com.njmetro.evaluation.service.CompanyService;
 import com.njmetro.evaluation.service.JudgeService;
+import com.njmetro.evaluation.service.SeatDrawService;
 import com.njmetro.evaluation.service.SeatGroupService;
 import com.njmetro.evaluation.util.KnuthUtil;
 import com.njmetro.evaluation.util.SeatUtil;
@@ -36,6 +39,9 @@ class EvaluationApplicationTests {
 
     @Autowired
     SeatGroupMapper seatGroupMapper;
+
+    @Autowired
+    SeatDrawService seatDrawService;
 
     @Test
     void contextLoads() {
@@ -85,6 +91,11 @@ class EvaluationApplicationTests {
         groupTypeJudgeVOList.add(seatGroupMapper.getGroupTypeJudgeVOBySeatId(leftJudgeSeatId).get(0));
         groupTypeJudgeVOList.add(seatGroupMapper.getGroupTypeJudgeVOBySeatId(rightJudgeSeatId).get(0));
         System.out.println("groupTypeJudgeVOList {}" + groupTypeJudgeVOList.toString());
+    }
+
+    @Test
+    void mapper3() {
+        System.out.println(seatDrawService.deleteTable());
     }
 
 
