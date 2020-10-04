@@ -27,4 +27,9 @@ public class StudentServiceImpl extends ServiceImpl<StudentMapper, Student> impl
     public List<String> getHaveSighCompanyList() {
         return studentMapper.getHaveSighCompanyList();
     }
+
+    @Override
+    public List<Integer> getStudentIdList(){
+        return studentMapper.getStudentIdList();
+    }
 }

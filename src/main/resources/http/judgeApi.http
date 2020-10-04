@@ -108,7 +108,7 @@ Content-Type: application/json
 ### api  1.获取当前考试的场次和轮次
 GET http://192.168.96.7:8889/api/student/getConfig
 ### api  2.考生扫码登录，如果是当前位置的考生，返回考生信息，否则提示非此位置上的考生
-GET http://192.168.96.7:8889/api/student/getStudentInfo?QRcode=222222
+GET http://192.168.96.9:8889/api/student/getStudentInfo?QRcode=xx1234
 ### api  3.获取题目
 GET http://192.168.96.7:8889/api/student/getUrl
 ### api  4.暂停或开始   0表示暂停，记录用时  该状态 ，1表示继续，改状态

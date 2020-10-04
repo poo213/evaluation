@@ -3,7 +3,6 @@ package com.njmetro.evaluation.service;
 
 import com.njmetro.evaluation.domain.SeatDraw;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.njmetro.evaluation.dto.JudgeInfoDTO;
 import com.njmetro.evaluation.vo.SeatDrawVO;
 
 import java.util.List;
@@ -25,4 +24,5 @@ public interface SeatDrawService extends IService<SeatDraw> {
     Boolean deleteTable();
 
     List<SeatDrawVO> getSeatDraw();
+    void cleanAll();
 }
