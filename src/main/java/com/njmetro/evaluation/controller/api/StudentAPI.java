@@ -79,6 +79,8 @@ public class StudentAPI {
         studentInfo.setCode(student.getCode());
         studentInfo.setGameNumber(config.getGameNumber());
         studentInfo.setGameRound(config.getGameRound());
+        studentInfo.setCompanyName(student.getCompanyName());
+        studentInfo.setIdCard(student.getIdCard());
         return studentInfo;
     }
 

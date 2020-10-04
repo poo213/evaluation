@@ -40,4 +40,9 @@ public class SeatDrawServiceImpl extends ServiceImpl<SeatDrawMapper, SeatDraw> i
     public List<SeatDrawVO> getSeatDraw() {
         return seatDrawMapper.getSeatDraw();
     }
+
+    @Override
+    public void cleanAll() {
+        seatDrawMapper.cleanAll();
+    }
 }

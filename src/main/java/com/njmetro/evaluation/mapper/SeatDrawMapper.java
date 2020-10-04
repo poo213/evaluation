@@ -33,4 +33,7 @@ public interface SeatDrawMapper extends BaseMapper<SeatDraw> {
      */
     @Select("select seat_draw.id, student.company_name,student.name,student.code ,seat_draw.game_number,seat_draw.game_round, seat_draw.seat_id, seat_draw.group_id from student,seat_draw ,company where seat_draw.student_id = student.id and seat_draw.company_id  = company.id")
     List<SeatDrawVO> getSeatDraw();
+
+    @Update("truncate table seat_draw")
+    void cleanAll();
 }

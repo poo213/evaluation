@@ -31,7 +31,17 @@ public class TestResult implements Serializable {
      */
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
+    /**
+     * 比赛场次（1-7）
+     */
+    @TableField("game_number")
+    private Integer gameNumber;
 
+    /**
+     * 比赛轮次（1，2，3）
+     */
+    @TableField("game_round")
+    private Integer gameRound;
     /**
      * 考生id
      */

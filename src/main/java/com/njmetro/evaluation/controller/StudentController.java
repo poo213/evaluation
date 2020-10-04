@@ -197,7 +197,8 @@ public class StudentController {
         // 修改抽签状态
         DrawState drawState = drawStateService.getById(2);
         drawState.setState(false);
-        drawStateService.updateById(drawState);
+        drawStateService.getById(drawState);
+        seatDrawService.cleanAll();
         seatDrawService.saveBatch(seatDrawList);
 
     }

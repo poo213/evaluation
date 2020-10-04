@@ -19,6 +19,14 @@ public class StudentInfo {
      */
     private String code;
     /**
+     * 考生单位
+     */
+    private String companyName;
+    /**
+     * 考生单位
+     */
+    private String idCard;
+    /**
      * 场次
      */
     private Integer gameNumber;

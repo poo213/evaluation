@@ -17,5 +17,5 @@ import java.util.List;
 public interface StudentService extends IService<Student> {
 
     List<String> getHaveSighCompanyList();
-
+    List<Integer> getStudentIdList();//获取所有考生id
 }
