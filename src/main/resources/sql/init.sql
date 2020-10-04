@@ -151,7 +151,7 @@ VALUES ("******","192.168.96.1",1,1),
 
 INSERT INTO draw_state(draw_name, state)
 values ('参赛队抽签', true),
-       ('考生赛位抽签', true),
+       ('考生赛位抽签', false),
        ('裁判类型抽签', true),
-       ('执行裁判抽签', true),
-       ('裁判位置抽签', true);
+       ('执行裁判抽签', false),
+       ('裁判位置抽签', false);

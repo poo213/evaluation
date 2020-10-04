@@ -5,8 +5,11 @@ import com.njmetro.evaluation.domain.*;
 import com.njmetro.evaluation.dto.JudgeInfoDTO;
 import com.njmetro.evaluation.dto.ResultDTO;
 import com.njmetro.evaluation.exception.JudgeApiException;
+import com.njmetro.evaluation.exception.PadException;
 import com.njmetro.evaluation.service.*;
 import com.njmetro.evaluation.util.IpUtil;
+import com.njmetro.evaluation.util.SeatUtil;
+import com.njmetro.evaluation.vo.PadSeatInfoVO;
 import com.njmetro.evaluation.vo.api.JudgeInformationVO;
 import com.njmetro.evaluation.vo.api.TestQuestionStandardVO;
 import lombok.extern.slf4j.Slf4j;
@@ -41,6 +44,8 @@ public class JudgeApi {
     JudgeDrawResultService judgeDrawResultService;
     @Autowired
     TestQuestionStandardService testQuestionStandardService;
+
+
 
 
     /**
@@ -136,4 +141,35 @@ public class JudgeApi {
         log.info("resultDTOList {}",list);
         return true;
     }
+
+    /**
+     * 根据ip 获取 赛位和赛组信息
+     * @param httpServletRequest
+     * @return
+     */
+    @GetMapping("/getPadSeatInfo")
+    public PadSeatInfoVO getPadSeatInfo(HttpServletRequest httpServletRequest){
+        String ipAddress = IpUtil.getIpAddr(httpServletRequest);
+        ipAddress = "192.168.96.7";
+        log.info("ipAddress {}",ipAddress);
+        QueryWrapper<Pad> padQueryWrapper = new QueryWrapper<>();
+        padQueryWrapper.eq("ip",ipAddress);
+        Pad pad = padService.getOne(padQueryWrapper);
+        if (pad == null){
+            throw new PadException("根据IP 未能找到匹配的pad");
+        }else {
+            PadSeatInfoVO padSeatInfoVO = new PadSeatInfoVO();
+            padSeatInfoVO.setPadId(pad.getId());
+            padSeatInfoVO.setSeatId(pad.getSeatId());
+            if(pad.getType() ==1){
+                padSeatInfoVO.setPadType("考生pad");
+                padSeatInfoVO.setGroupId(SeatUtil.getGroupIdByStudentSeatId(pad.getSeatId()));
+            }else {
+                padSeatInfoVO.setPadType("裁判pad");
+                padSeatInfoVO.setGroupId(SeatUtil.getGroupIdByJudgeSeatId(pad.getSeatId()));
+            }
+            return padSeatInfoVO;
+        }
+    }
+
 }

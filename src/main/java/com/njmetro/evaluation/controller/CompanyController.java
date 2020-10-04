@@ -101,7 +101,7 @@ public class CompanyController {
         // 修改抽签状态
         DrawState drawState = drawStateService.getById(1);
         drawState.setState(false);
-        drawStateService.getById(drawState);
+        drawStateService.updateById(drawState);
         return companyList;
     }
 

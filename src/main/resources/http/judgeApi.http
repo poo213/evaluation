@@ -104,6 +104,15 @@ Content-Type: application/json
   "list" : {{ list }}
 }
 
+###
+GET http://localhost:8889/api/judge/getPadSeatInfo
+Accept: application/json
+
+
+
+###
+      Accept: application/json
+
 ### 考生
 ### api  1.获取当前考试的场次和轮次
 GET http://192.168.96.7:8889/api/student/getConfig

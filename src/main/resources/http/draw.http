@@ -1,0 +1,49 @@
+############# 正常抽签顺序
+
+###  api 1. 参赛队抽签
+GET http://localhost:8889/company/drawCompany
+Accept: application/json
+
+###  api 2. 考生考位抽签
+GET http://localhost:8889/student/drawSeat
+Accept: application/json
+
+###  api 3. 裁判分成三组
+GET http://localhost:8889/judge/judgeGrouping
+Accept: application/json
+
+###  api 4. 挑选主裁
+GET http://localhost:8889/judge/choiceMasterJudgeFormAllJudge
+Accept: application/json
+
+###  api 5. 主裁位置抽签
+GET http://localhost:8889/judge/judgeDraw
+Accept: application/json
+
+
+
+
+
+### 6. 查看主裁抽签结果
+GET http://localhost:8889/judge/getGroupJudgeVO
+Accept: application/json
+
+
+###  api 5. 主裁位置抽签
+GET http://localhost:8889/drawState/getStateById?id=5
+Accept: application/json
+
+
+###  api 5. 主裁位置抽签
+GET http://localhost:8889/drawState/a
+Accept: application/json
+
+
+
+
+
+###  api 1. 轮询接口   type  光缆接续 视频搭建 交换机组网
+GET http://localhost:8889/judge/getJudgeDrawVOByType?type=交换机组网
+Accept: application/json
+
+

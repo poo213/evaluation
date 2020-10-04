@@ -1,7 +1,6 @@
 package com.njmetro.evaluation.controller;
 
 import com.njmetro.evaluation.domain.DrawState;
-import com.njmetro.evaluation.domain.JudgeDrawResult;
 import com.njmetro.evaluation.exception.DrawStateException;
 import com.njmetro.evaluation.service.DrawStateService;
 import com.njmetro.evaluation.service.JudgeDrawResultService;
@@ -11,7 +10,6 @@ import com.njmetro.evaluation.vo.DrawStateVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -119,9 +117,37 @@ public class DrawStateController {
      * @return
      */
     @GetMapping("/getStateById")
-    Boolean getStateById(Integer id) {
-        return drawStateService.getById(id).getState();
+    Integer getStateById(Integer id) {
+        log.info("id {}",id);
+        Boolean result = drawStateService.getById(id).getState();
+        if(result){
+            return 1;
+        }else {
+            return 0;
+        }
     }
 
+    /**
+     * 获取裁判抽签结果
+     *
+     * @return
+     */
+    @GetMapping("/getJudgeState")
+    List<Boolean> getJudgeState() {
+        List<Boolean> booleanList = new ArrayList<>();
+        Boolean state3 = drawStateService.getById(3).getState();
+        Boolean state4 = drawStateService.getById(4).getState();
+        Boolean state = false;
+        if(state3 == true && state4 == true){
+            // 都能抽签的时候，说明没有抽签结果可以公示
+            state = false;
+        }else {
+            state = true;
+        }
+        booleanList.add(state3);
+        booleanList.add(state4);
+        booleanList.add(state);
+        return booleanList;
+    }
 }
 
