@@ -109,6 +109,12 @@ GET http://localhost:8889/api/judge/getPadSeatInfo
 Accept: application/json
 
 
+### 大屏显示内容
+GET http://localhost:8889/judge/getGroupShowVO?gameNumber=1&gameRound=2
+Accept: application/json
+
+
+
 
 ###
       Accept: application/json

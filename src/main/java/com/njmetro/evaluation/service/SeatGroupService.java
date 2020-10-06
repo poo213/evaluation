@@ -2,7 +2,7 @@ package com.njmetro.evaluation.service;
 
 import com.njmetro.evaluation.domain.SeatGroup;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.njmetro.evaluation.vo.GroupTypeJudgeVO;
+import com.njmetro.evaluation.vo.JudgeShowVO;
 import com.njmetro.evaluation.vo.GroupVO;
 
 import java.util.List;
@@ -29,6 +29,6 @@ public interface SeatGroupService extends IService<SeatGroup> {
      * @param type 监考类型
      * @return
      */
-    public List<GroupTypeJudgeVO> getGroupTypeJudgeVOByGroupId(Integer groupId, String type);
+    public List<JudgeShowVO> getGroupTypeJudgeVOByGroupId(Integer groupId, String type);
 
 }

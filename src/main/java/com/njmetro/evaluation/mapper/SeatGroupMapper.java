@@ -2,7 +2,7 @@ package com.njmetro.evaluation.mapper;
 
 import com.njmetro.evaluation.domain.SeatGroup;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.njmetro.evaluation.vo.GroupTypeJudgeVO;
+import com.njmetro.evaluation.vo.JudgeShowVO;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
@@ -24,7 +24,7 @@ public interface SeatGroupMapper extends BaseMapper<SeatGroup> {
      * @return
      */
      @Select("SELECT judge.code,judge.name,judge_draw_result.state FROM judge,judge_draw_result WHERE judge.id = judge_draw_result.judge_id and judge_draw_result.seat_id = #{seatId}")
-     List<GroupTypeJudgeVO> getGroupTypeJudgeVOBySeatId(@Param("seatId") Integer seatId);
+     List<JudgeShowVO> getGroupTypeJudgeVOBySeatId(@Param("seatId") Integer seatId);
 
 
 }

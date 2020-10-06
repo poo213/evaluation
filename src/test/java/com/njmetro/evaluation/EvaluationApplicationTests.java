@@ -3,10 +3,7 @@ package com.njmetro.evaluation;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.njmetro.evaluation.domain.Company;
 import com.njmetro.evaluation.domain.Judge;
-import com.njmetro.evaluation.domain.JudgeSeatSign;
-import com.njmetro.evaluation.domain.SeatDraw;
 import com.njmetro.evaluation.mapper.JudgeMapper;
-import com.njmetro.evaluation.mapper.SeatDrawMapper;
 import com.njmetro.evaluation.mapper.SeatGroupMapper;
 import com.njmetro.evaluation.service.CompanyService;
 import com.njmetro.evaluation.service.JudgeService;
@@ -14,10 +11,9 @@ import com.njmetro.evaluation.service.SeatDrawService;
 import com.njmetro.evaluation.service.SeatGroupService;
 import com.njmetro.evaluation.util.KnuthUtil;
 import com.njmetro.evaluation.util.SeatUtil;
-import com.njmetro.evaluation.vo.GroupTypeJudgeVO;
+import com.njmetro.evaluation.vo.JudgeShowVO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
@@ -87,7 +83,7 @@ class EvaluationApplicationTests {
         Integer leftJudgeSeatId = SeatUtil.getLeftJudgeSeatIdByGroupIdAndType(groupId,type);
         Integer rightJudgeSeatId = SeatUtil.getRightJudgeSeatIdByGroupIdAndType(groupId,type);
         // 返回结果
-        List<GroupTypeJudgeVO> groupTypeJudgeVOList = new ArrayList<>();
+        List<JudgeShowVO> groupTypeJudgeVOList = new ArrayList<>();
         groupTypeJudgeVOList.add(seatGroupMapper.getGroupTypeJudgeVOBySeatId(leftJudgeSeatId).get(0));
         groupTypeJudgeVOList.add(seatGroupMapper.getGroupTypeJudgeVOBySeatId(rightJudgeSeatId).get(0));
         System.out.println("groupTypeJudgeVOList {}" + groupTypeJudgeVOList.toString());

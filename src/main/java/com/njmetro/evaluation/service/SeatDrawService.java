@@ -3,6 +3,7 @@ package com.njmetro.evaluation.service;
 
 import com.njmetro.evaluation.domain.SeatDraw;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.njmetro.evaluation.domain.Student;
 import com.njmetro.evaluation.vo.SeatDrawVO;
 
 import java.util.List;
@@ -25,4 +26,14 @@ public interface SeatDrawService extends IService<SeatDraw> {
 
     List<SeatDrawVO> getSeatDraw();
     void cleanAll();
+
+    /**
+     * 根据场次、轮次、错位号 获取学生信息
+     *
+     * @param gameNumber 场次
+     * @param gameRound 轮次
+     * @param seatId 学生座位ID
+     * @return
+     */
+    List<Student> getStudentShowBySeatId(Integer gameNumber, Integer gameRound, Integer seatId);
 }

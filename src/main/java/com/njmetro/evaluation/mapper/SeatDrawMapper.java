@@ -2,6 +2,7 @@ package com.njmetro.evaluation.mapper;
 
 import com.njmetro.evaluation.domain.SeatDraw;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.njmetro.evaluation.domain.Student;
 import com.njmetro.evaluation.dto.JudgeInfoDTO;
 import com.njmetro.evaluation.vo.SeatDrawVO;
 import org.apache.ibatis.annotations.Param;
@@ -12,7 +13,7 @@ import java.util.List;
 
 /**
  * <p>
- *  Mapper 接口
+ * Mapper 接口
  * </p>
  *
  * @author zc
@@ -26,7 +27,7 @@ public interface SeatDrawMapper extends BaseMapper<SeatDraw> {
     void delete();
 
     /**
-     *  获取赛位结果
+     * 获取赛位结果
      *
      * @param
      * @return
@@ -36,4 +37,18 @@ public interface SeatDrawMapper extends BaseMapper<SeatDraw> {
 
     @Update("truncate table seat_draw")
     void cleanAll();
+
+
+    /**
+     * 根据场次、轮次、错位号 获取学生信息
+     *
+     * @param gameNumber 场次
+     * @param gameRound 轮次
+     * @param seatId 学生座位ID
+     * @return
+     */
+    @Select("SELECT student.name,student.code,student.sign_state\n" +
+            "FROM seat_draw,student\n" +
+            "WHERE seat_draw.game_number = #{gameNumber} and seat_draw. game_round = #{gameRound} and seat_id =#{seatId} and student.id = seat_draw.student_id")
+    List<Student> selectShowStudentBySeatId(Integer gameNumber, Integer gameRound, Integer seatId);
 }

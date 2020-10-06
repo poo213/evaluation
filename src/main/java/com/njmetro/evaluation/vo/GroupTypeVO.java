@@ -1,10 +1,6 @@
 package com.njmetro.evaluation.vo;
 
-import com.njmetro.evaluation.domain.Judge;
-import com.njmetro.evaluation.domain.Student;
 import lombok.Data;
-
-import javax.servlet.http.PushBuilder;
 
 /**
  * @author 牟欢
@@ -25,9 +21,9 @@ public class GroupTypeVO {
     /**
      * 裁判 1
      */
-    public GroupTypeJudgeVO  leftGroupTypeJudgeVO;
+    public JudgeShowVO leftGroupTypeJudgeVO;
     /**
      * 裁判 2
      */
-    public GroupTypeJudgeVO rightWGroupTypeJudgeVO;
+    public JudgeShowVO rightWGroupTypeJudgeVO;
 }

@@ -2,6 +2,7 @@ package com.njmetro.evaluation.service.impl;
 
 import com.njmetro.evaluation.domain.DrawState;
 import com.njmetro.evaluation.domain.SeatDraw;
+import com.njmetro.evaluation.domain.Student;
 import com.njmetro.evaluation.mapper.DrawStateMapper;
 import com.njmetro.evaluation.mapper.SeatDrawMapper;
 import com.njmetro.evaluation.service.SeatDrawService;
@@ -44,5 +45,10 @@ public class SeatDrawServiceImpl extends ServiceImpl<SeatDrawMapper, SeatDraw> i
     @Override
     public void cleanAll() {
         seatDrawMapper.cleanAll();
+    }
+
+    @Override
+    public List<Student> getStudentShowBySeatId(Integer gameNumber, Integer gameRound, Integer seatId) {
+        return seatDrawMapper.selectShowStudentBySeatId(gameNumber,gameRound,seatId);
     }
 }
