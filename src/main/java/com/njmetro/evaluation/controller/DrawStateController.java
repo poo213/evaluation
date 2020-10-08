@@ -7,6 +7,7 @@ import com.njmetro.evaluation.service.JudgeDrawResultService;
 import com.njmetro.evaluation.service.JudgeService;
 import com.njmetro.evaluation.service.SeatDrawService;
 import com.njmetro.evaluation.vo.DrawStateVO;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -21,22 +22,15 @@ import java.util.List;
  * @author zc
  * @since 2020-10-02
  */
-@RestController
-@RequestMapping("/drawState")
 @Slf4j
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/drawState")
 public class DrawStateController {
-
-    @Autowired
-    DrawStateService drawStateService;
-
-    @Autowired
-    JudgeService judgeService;
-
-    @Autowired
-    JudgeDrawResultService judgeDrawResultService;
-
-    @Autowired
-    SeatDrawService seatDrawService;
+    private final DrawStateService drawStateService;
+    private final JudgeService judgeService;
+    private final JudgeDrawResultService judgeDrawResultService;
+    private final SeatDrawService seatDrawService;
 
 
     /**

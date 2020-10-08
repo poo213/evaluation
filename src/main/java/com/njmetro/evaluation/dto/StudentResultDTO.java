@@ -9,7 +9,7 @@ import lombok.Data;
  * @Date 2020-09-29 10:24
  */
 @Data
-public class ResultDTO {
+public class StudentResultDTO {
     public Integer id;
     public Integer result;
 }

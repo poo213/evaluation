@@ -28,7 +28,8 @@ public class GradeController {
     public List<TestQuestionStandard> getStandard()
     {
         QueryWrapper<TestQuestionStandard> questionStandardQueryWrapper = new QueryWrapper<>();
-        questionStandardQueryWrapper.eq("test_question_id",1); //后续此处题号来源于主裁判参数表
+        //后续此处题号来源于主裁判参数表
+        questionStandardQueryWrapper.eq("test_question_id",1);
         return testQuestionStandardService.list(questionStandardQueryWrapper);
     }
 }
