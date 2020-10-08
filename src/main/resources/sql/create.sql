@@ -167,7 +167,7 @@ CREATE TABLE IF NOT EXISTS pad
     code          VARCHAR(20)  NOT NULL COMMENT '平板编号',
     ip            VARCHAR(20)  NOT NULL COMMENT '平板绑定的ip地址',
     seat_id       INT UNSIGNED NOT NULL COMMENT '对应工位id',
-    type          INT UNSIGNED NOT NULL COMMENT '平板用途（1: 考生、2:评委）',
+    type          INT UNSIGNED NOT NULL COMMENT '平板用途（1: 考生、2:评委、3：进入候考区pad、4：进入备考区pad 5：离开时pad）',
     `create_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `update_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
     PRIMARY KEY (id)
@@ -217,5 +217,15 @@ CREATE TABLE IF NOT EXISTS test_result
 ) ENGINE = InnoDB
   DEFAULT CHARSET = UTF8MB4;
 
-
-
+# 二维码签到记录表
+CREATE TABLE IF NOT EXISTS code_state
+(
+    id                   INT UNSIGNED AUTO_INCREMENT COMMENT 'id',
+    two_dimensional_code VARCHAR(20)  NOT NULL COMMENT '二维码',
+    state                INT UNSIGNED NOT NULL COMMENT '状态初始0，1.已使用',
+    type                 INT UNSIGNED NOT NULL COMMENT '1：进入候考区pad、2：进入备考区pad 3：离开时pad',
+    `create_time`        DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time`        DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+    PRIMARY KEY (id)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = UTF8MB4;

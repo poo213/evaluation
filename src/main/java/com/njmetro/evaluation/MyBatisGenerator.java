@@ -55,7 +55,7 @@ public class MyBatisGenerator {
                 .setRestControllerStyle(true)
                 .setControllerMappingHyphenStyle(true)
                 .setEntityTableFieldAnnotationEnable(true)
-                .setInclude("draw_state");
+                .setInclude("code_state");
 
         /*
          * 包名配置，通过该配置，指定生成代码的包路径
@@ -63,7 +63,6 @@ public class MyBatisGenerator {
         PackageConfig packageConfig = new PackageConfig()
                 .setParent("com.njmetro.evaluation")
                 .setEntity("domain");
-
         generator.setDataSource(dataSourceConfig)
                 .setStrategy(strategyConfig)
                 .setPackageInfo(packageConfig)
