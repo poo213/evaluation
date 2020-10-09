@@ -2,22 +2,17 @@ package com.njmetro.evaluation.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.njmetro.evaluation.domain.Company;
-import com.njmetro.evaluation.domain.DrawState;
-import com.njmetro.evaluation.domain.SeatDraw;
-import com.njmetro.evaluation.domain.Student;
+import com.njmetro.evaluation.domain.*;
 import com.njmetro.evaluation.param.student.SaveStudentParam;
 import com.njmetro.evaluation.param.student.UpdateStudentParam;
-import com.njmetro.evaluation.service.CompanyService;
-import com.njmetro.evaluation.service.DrawStateService;
-import com.njmetro.evaluation.service.SeatDrawService;
-import com.njmetro.evaluation.service.StudentService;
+import com.njmetro.evaluation.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.validation.Valid;
 
 import org.apache.ibatis.annotations.Param;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -45,6 +40,7 @@ public class StudentController {
     private final CompanyService companyService;
     private final SeatDrawService seatDrawService;
     private final DrawStateService drawStateService;
+    private final CodeStateService codeStateService;
 
     /**
      * 添加考生信息
@@ -209,13 +205,24 @@ public class StudentController {
      * @return
      */
     @PostMapping("/signInOne")
+    @Transactional
     public String signInOne(@RequestBody List<Integer> idList) {
+
         List<String> errorInfo = new ArrayList<>();
         for (Integer id : idList) {
             UpdateWrapper<Student> updateWrapper = new UpdateWrapper<>();
             updateWrapper.eq("id", id).set("test_day_state", "1");
             if (!studentService.update(updateWrapper)) {
                 errorInfo.add(id + "号，签到失败!");
+            }else {
+                Student student = studentService.getById(id);
+                log.info("student详情:{}",student);
+                if(student !=null){
+                    String qrCode= student.getTwoDimensionalCode();
+                    UpdateWrapper<CodeState> codeStateUpdateWrapper =new UpdateWrapper<>();
+                    codeStateUpdateWrapper.eq("two_dimensional_code",qrCode).set("state",1);
+                    codeStateService.update(codeStateUpdateWrapper);
+                }
             }
         }
         if (errorInfo.size() == 0) {
@@ -238,6 +245,14 @@ public class StudentController {
             updateWrapper.eq("id", id).set("test_day_state", "2");
             if (!studentService.update(updateWrapper)) {
                 errorInfo.add(id + "号，签到失败!");
+            }else {
+                Student student = studentService.getById(id);
+                if(student !=null){
+                    String qrCode= student.getTwoDimensionalCode();
+                    UpdateWrapper<CodeState> codeStateUpdateWrapper =new UpdateWrapper<>();
+                    codeStateUpdateWrapper.eq("two_dimensional_code",qrCode).set("state",1);
+                    codeStateService.update(codeStateUpdateWrapper);
+                }
             }
         }
         if (errorInfo.size() == 0) {
@@ -259,6 +274,17 @@ public class StudentController {
             updateWrapper.eq("id", id).set("test_day_state", "4");
             if (!studentService.update(updateWrapper)) {
                 errorInfo.add(id + "号，签离失败!");
+            }else {
+                Student student = studentService.getById(id);
+                System.out.println(student);
+                log.info("student详情:{}",student);
+                if(student !=null){
+                    String qrCode= student.getTwoDimensionalCode();
+                    log.info("qrcode:{}",qrCode);
+                    UpdateWrapper<CodeState> codeStateUpdateWrapper =new UpdateWrapper<>();
+                    codeStateUpdateWrapper.eq("two_dimensional_code",qrCode).set("state",1);
+                    codeStateService.update(codeStateUpdateWrapper);
+                }
             }
         }
         if (errorInfo.size() == 0) {

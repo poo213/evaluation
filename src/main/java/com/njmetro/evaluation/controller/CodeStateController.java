@@ -49,7 +49,13 @@ public class CodeStateController {
         }
         ipAddress = "192.168.99.9";//模拟ip，进入候考区，备考区，离场，3台设备ip
         log.info("调用次接口的IP:{}", ipAddress);
-        if (ipAddress.equals("192.168.99.9")) {
+        List<String> ipListOne = codeStateService.getIpList(3);
+        List<String> ipListTwo = codeStateService.getIpList(4);
+        List<String> ipListAway = codeStateService.getIpList(5);
+        log.info("候考区扫码枪ip：{}",ipListOne.toString());
+        log.info("备考区扫码枪ip：{}",ipListTwo.toString());
+        log.info("离开考场扫码枪ip：{}",ipListAway.toString());
+        if (ipListOne.contains(ipAddress)){
             log.info("进入候考区pad签到:{}", ipAddress);
             QueryWrapper<CodeState> queryWrapper = new QueryWrapper<>();
             queryWrapper.eq("type", 1).eq("state", 0);
@@ -60,6 +66,10 @@ public class CodeStateController {
                 QueryWrapper<Student> studentQueryWrapper = new QueryWrapper<>();
                 studentQueryWrapper.eq("two_dimensional_code", qrCode);
                 Student student = studentService.getOne(studentQueryWrapper);//获取考生信息
+                if(student==null)
+                {
+                    return null;
+                }
                 SignVO signVO = new SignVO();
                 signVO.setId(student.getId());
                 signVO.setName(student.getName());
@@ -73,11 +83,10 @@ public class CodeStateController {
             } else {
                 return null;
             }
-        } else if (ipAddress.equals("192.168.99.10")) {
-            log.info("进入备考区pad签到:{}", ipAddress);
-            log.info("进入候考区pad签到:{}", ipAddress);
+        } else if (ipListTwo.contains(ipAddress)) {
+            log.info("进入备考考区pad签到:{}", ipAddress);
             QueryWrapper<CodeState> queryWrapper = new QueryWrapper<>();
-            queryWrapper.eq("type", 1).eq("state", 0);
+            queryWrapper.eq("type", 2).eq("state", 0);
             List<CodeState> codeStateList = codeStateService.list(queryWrapper);
             if (codeStateList.size() > 0)//每次只取一个
             {
@@ -85,6 +94,10 @@ public class CodeStateController {
                 QueryWrapper<Student> studentQueryWrapper = new QueryWrapper<>();
                 studentQueryWrapper.eq("two_dimensional_code", qrCode);
                 Student student = studentService.getOne(studentQueryWrapper);//获取考生信息
+                if(student==null)
+                {
+                    return null;
+                }
                 SignVO signVO = new SignVO();
                 signVO.setId(student.getId());
                 signVO.setName(student.getName());
@@ -93,16 +106,15 @@ public class CodeStateController {
                 signVO.setCode(student.getCode());
                 signVO.setCompanyName(student.getCompanyName());
                 signVO.setPhone(student.getPhone());
-                signVO.setType(2);//进入候考区的pad，状态标记为1
+                signVO.setType(2);//进入候考区的pad，状态标记为2
                 return signVO;
             } else {
                 return null;
             }
-        } else if (ipAddress.equals("192.168.99.11")) {
+        } else if (ipListAway.contains(ipAddress)) {
             log.info("离开考区pad签出:{}", ipAddress);
-            log.info("进入候考区pad签到:{}", ipAddress);
             QueryWrapper<CodeState> queryWrapper = new QueryWrapper<>();
-            queryWrapper.eq("type", 1).eq("state", 0);
+            queryWrapper.eq("type", 4).eq("state", 0);
             List<CodeState> codeStateList = codeStateService.list(queryWrapper);
             if (codeStateList.size() > 0)//每次只取一个
             {
@@ -110,6 +122,10 @@ public class CodeStateController {
                 QueryWrapper<Student> studentQueryWrapper = new QueryWrapper<>();
                 studentQueryWrapper.eq("two_dimensional_code", qrCode);
                 Student student = studentService.getOne(studentQueryWrapper);//获取考生信息
+                if(student==null)
+                {
+                    return null;
+                }
                 SignVO signVO = new SignVO();
                 signVO.setId(student.getId());
                 signVO.setName(student.getName());
@@ -118,7 +134,7 @@ public class CodeStateController {
                 signVO.setCode(student.getCode());
                 signVO.setCompanyName(student.getCompanyName());
                 signVO.setPhone(student.getPhone());
-                signVO.setType(3);//进入候考区的pad，状态标记为1
+                signVO.setType(4);//进入候考区的pad，状态标记为3
                 return signVO;
             } else {
                 return null;

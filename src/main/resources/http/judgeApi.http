@@ -127,7 +127,7 @@ GET http://192.168.96.9:8889/api/student/getStudentInfo?QRcode=xx1234
 ### api  3.获取题目
 GET http://192.168.96.7:8889/api/student/getUrl
 ### api  4.暂停或开始   0表示暂停，记录用时  该状态 ，1表示继续，改状态
-GET http://192.168.96.7:8889/api/student/pauseOrStart?type=1&useTime=111&gameNumber=1&gameRound=1
+GET http://192.168.96.9:8889/api/student/pauseOrStart?type=1&remainingTime=&gameNumber=1&gameRound=1
 ### api  5.考生就绪
 GET http://192.168.96.7:8889/api/student/beReday?gameNumber=1&gameRound=1
 ### api  6.考生提交
