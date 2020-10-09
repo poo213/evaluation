@@ -1,6 +1,5 @@
 package com.njmetro.evaluation.controller;
 
-
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.njmetro.evaluation.domain.Company;
@@ -14,12 +13,8 @@ import com.njmetro.evaluation.util.DrawUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
-
-import static com.njmetro.evaluation.util.KnuthUtil.result;
 
 /**
  * <p>
@@ -37,6 +32,8 @@ public class CompanyController {
     private final CompanyService companyService;
     private final StudentService studentService;
     private final DrawStateService drawStateService;
+
+
 
     @GetMapping("/getCompanyList")
     public List<Company> getCompanyList() {

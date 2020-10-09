@@ -1,6 +1,7 @@
 package com.njmetro.evaluation.util;
 
 import com.njmetro.evaluation.common.SystemCommon;
+import com.njmetro.evaluation.domain.JudgeDrawResult;
 import lombok.Data;
 
 /**
@@ -104,5 +105,36 @@ public class SeatUtil {
      */
     public static Integer getGroupIdByStudentSeatId(Integer studentSeatId) {
         return studentSeatId / 3 + 1;
+    }
+
+
+    /**
+     * 根据裁判座位id 获取 考生所在id
+     *
+     * @param judgeSeatId 裁判Id
+     * @return
+     */
+    public static Integer getStudentSeatIdByJudgeSeatId(Integer judgeSeatId) {
+        return (judgeSeatId + 1) / 2;
+    }
+
+    /**
+     * 根据考生Id 获取左侧裁判Id
+     *
+     * @param studentId 考生Id
+     * @return
+     */
+    public static Integer getLeftJudgeSeatIdByStudentSeatId(Integer studentId) {
+        return studentId * 2 - 1;
+    }
+
+    /**
+     * 根据考生Id 获取右侧裁判Id
+     *
+     * @param studentId 考生Id
+     * @return
+     */
+    public static Integer getRightJudgeSeatIdByStudentSeatId(Integer studentId) {
+        return studentId * 2;
     }
 }

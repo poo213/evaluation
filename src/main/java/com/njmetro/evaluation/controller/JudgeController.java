@@ -44,6 +44,7 @@ public class JudgeController {
     private final PadService padService;
     private final DrawStateService drawStateService;
     private final SeatDrawService seatDrawService;
+    private final ConfigService configService;
 
     /**
      * 执行裁判抽签算法的常量
@@ -144,17 +145,16 @@ public class JudgeController {
     /**
      * 大屏显示内容
      *
-     * @param gameNumber 场次
-     * @param gameRound 轮次
      * @return
      */
     @GetMapping("/getGroupShowVO")
-    public List<GroupShowVO> getGroupShowVO(Integer gameNumber, Integer gameRound) {
+    public List<GroupShowVO> getGroupShowVO() {
+        Config config = configService.getById(1);
         List<GroupShowVO> groupJudgeVOList = new ArrayList<>();
         // 遍历6个赛组
         List<SeatGroup> seatGroupList = seatGroupService.list();
         for (SeatGroup seatGroup : seatGroupList) {
-            groupJudgeVOList.add(new GroupShowVO(seatGroup.getGroupName(),getTypeShowVO(seatGroup.getId(),gameNumber,gameRound)));
+            groupJudgeVOList.add(new GroupShowVO(seatGroup.getGroupName(),getTypeShowVO(seatGroup.getId(),config.getGameNumber(),config.getGameRound())));
         }
         return groupJudgeVOList;
     }
@@ -168,15 +168,12 @@ public class JudgeController {
   
     /**
      * 根据考生场次轮次
-     * 
-     * @param groupNumber 考试场次
-     * @param groupRound 考试轮次
+     *
      * @return
      */
     @GetMapping("/getGroupVO")
-    public List<GroupShowVO> getGroupVO(Integer groupNumber, Integer groupRound) {
-        log.info("groupNumber : {}",groupNumber);
-        log.info("groupRound : {}",groupRound);
+    public List<GroupShowVO> getGroupVO() {
+        Config config = configService.getById(1);
         List<GroupShowVO> GroupShowVOList = new ArrayList<>();
         // 获取六个赛组
         List<SeatGroup> seatGroupList = seatGroupService.list();
@@ -184,7 +181,7 @@ public class JudgeController {
             GroupShowVO groupShowVO = new GroupShowVO();
             // 设置赛组名称
             groupShowVO.setGroupName(seatGroup.getGroupName());
-            List<TypeShowVO> typeShowVOList = getTypeShowVO(seatGroup.getId(),groupNumber,groupRound);
+            List<TypeShowVO> typeShowVOList = getTypeShowVO(seatGroup.getId(),config.getGameNumber(),config.getGameRound());
             groupShowVO.setTypeShowVOList(typeShowVOList);
             GroupShowVOList.add(groupShowVO);
         }

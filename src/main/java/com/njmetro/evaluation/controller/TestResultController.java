@@ -1,19 +1,15 @@
 package com.njmetro.evaluation.controller;
 
-
 import com.njmetro.evaluation.service.StudentService;
 import com.njmetro.evaluation.service.TestResultService;
 import com.njmetro.evaluation.vo.FinalResultVO;
 import com.njmetro.evaluation.vo.TestResultVO;
-import com.zaxxer.hikari.util.FastList;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -79,7 +75,8 @@ public class TestResultController {
                     List<TestResultVO> testResultVOArrayList = new ArrayList<>();
                     for (TestResultVO testResultVO : testResultVOList) {
                         if (testResultVO.getStudentId() == num) {
-                            testResultVOArrayList.add(testResultVO);//将两个裁判的打分存入该list
+                            //将两个裁判的打分存入该list
+                            testResultVOArrayList.add(testResultVO);
                         }
                     }
                     double res = (testResultVOArrayList.get(0).getResult() + testResultVOArrayList.get(1).getResult()) / 2;
