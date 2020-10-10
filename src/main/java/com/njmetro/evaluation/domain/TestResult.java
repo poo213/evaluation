@@ -84,5 +84,6 @@ public class TestResult implements Serializable {
     @TableField("update_time")
     private LocalDateTime updateTime;
 
-
+    @TableField("state")
+    private Integer state;
 }

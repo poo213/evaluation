@@ -20,6 +20,7 @@ import java.util.List;
 public interface TestResultMapper extends BaseMapper<TestResult> {
     @Select("SELECT student_id,student.code as student_code,student.name as student_name,sum(cent) as result ,judge_id,judge.name as judge_name FROM test_result,student,judge where test_result.game_number = #{gameNumber} and test_result.game_round = #{gameRound}  and judge.id = test_result.judge_id and student.id = test_result.student_id GROUP BY judge_id")
     List<TestResultVO> getTempResult(@Param("gameNumber") Integer gameNumber,@Param("gameRound") Integer gameRound);
+    //获取指定场次和轮次的所有考生
     @Select("SELECT DISTINCT student_id FROM test_result where game_number = #{gameNumber} and game_round = #{gameRound}")
     List<Integer> getStudentIdList(@Param("gameNumber") Integer gameNumber,@Param("gameRound") Integer gameRound);
 
