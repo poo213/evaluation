@@ -116,4 +116,9 @@ public class Student implements Serializable {
      */
     @TableField("test_day_state")
     private Integer testDayState;
+    /**
+     * 机考成绩
+     */
+    @TableField("computer_test_result")
+    private String computerTestResult;
 }
