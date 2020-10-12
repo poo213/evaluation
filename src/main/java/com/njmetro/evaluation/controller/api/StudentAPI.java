@@ -7,10 +7,12 @@ import com.njmetro.evaluation.domain.*;
 import com.njmetro.evaluation.exception.StudentException;
 import com.njmetro.evaluation.service.*;
 import com.njmetro.evaluation.util.IpUtil;
+import com.njmetro.evaluation.util.SeatUtil;
 import com.njmetro.evaluation.vo.PauseOrStartVO;
 import com.njmetro.evaluation.vo.api.StudentInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.aspectj.apache.bcel.classfile.Code;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -36,6 +38,7 @@ public class StudentAPI {
     private final QuestionDrawService questionDrawService;
     private final TestQuestionService testQuestionService;
     private final PauseRecordService pauseRecordService;
+    private final CodeStateService codeStateService;
 
     /**
      * @param
@@ -102,7 +105,7 @@ public class StudentAPI {
         Pad pad = padService.getOne(padQueryWrapper);//获取对应pad
         System.out.println(pad);
         QueryWrapper<QuestionDraw> questionDrawQueryWrapper = new QueryWrapper<>();
-        questionDrawQueryWrapper.eq("game_number", config.getGameRound()).eq("seat_id", pad.getSeatId());
+        questionDrawQueryWrapper.eq("game_number", config.getGameRound()).eq("game_type", SeatUtil.getGameTypeByStudentSeatId(pad.getSeatId()));
         log.info("考题id：{}", questionDrawService.getOne(questionDrawQueryWrapper).getQuestionId());//考题Id
         QueryWrapper<TestQuestion> testQuestionQueryWrapper = new QueryWrapper<>();
         testQuestionQueryWrapper.eq("id", questionDrawService.getOne(questionDrawQueryWrapper).getQuestionId());
@@ -171,11 +174,10 @@ public class StudentAPI {
     /**
      * @param gameNumber 场次
      * @param gameRound  轮次
-     * @param remainingTime    用时
      * @return
      */
     @GetMapping("/finishTest")
-    public Boolean finishTest(Integer gameNumber, Integer gameRound, Integer remainTime, HttpServletRequest httpServletRequest) {
+    public Boolean finishTest(Integer gameNumber, Integer gameRound, Integer remainingTime, HttpServletRequest httpServletRequest) {
         String ipAddress = IpUtil.getIpAddr(httpServletRequest);
         if (ipAddress.equals("0:0:0:0:0:0:0:1")) {
             ipAddress = "192.168.96.9";
@@ -189,7 +191,7 @@ public class StudentAPI {
         seatDrawUpdateWrapper.eq("seat_id", pad.getSeatId())
                 .eq("game_number", gameNumber)
                 .eq("game_round", gameRound)
-                .set("use_time", 1200-remainTime)
+                .set("use_time", 1200-remainingTime)
                 .set("state", 4);//选手准备就绪
         return seatDrawService.update(seatDrawUpdateWrapper);
     }
@@ -222,5 +224,20 @@ public class StudentAPI {
                 .eq("game_round", gameRound)
                 .set("state", 1);//选手准备就绪
         return seatDrawService.update(seatDrawUpdateWrapper);
+    }
+
+    @GetMapping("/writeQRcode")
+    public Boolean writeQRcode(String qrcode,HttpServletRequest httpServletRequest)
+    {
+        String ipAddress = IpUtil.getIpAddr(httpServletRequest);
+        if (ipAddress.equals("0:0:0:0:0:0:0:1")) {
+            ipAddress = "192.168.96.9";
+        }
+        ipAddress = "192.168.96.9";
+        CodeState codeState = new CodeState();
+        codeState.setIp(ipAddress);
+        codeState.setTwoDimensionalCode(qrcode);
+        codeState.setState(0);
+        return codeStateService.save(codeState);
     }
 }

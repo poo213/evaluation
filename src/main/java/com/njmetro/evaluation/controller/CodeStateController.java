@@ -58,7 +58,7 @@ public class CodeStateController {
         if (ipListOne.contains(ipAddress)){
             log.info("进入候考区pad签到:{}", ipAddress);
             QueryWrapper<CodeState> queryWrapper = new QueryWrapper<>();
-            queryWrapper.eq("type", 1).eq("state", 0);
+            queryWrapper.eq("ip", ipAddress).eq("state", 0);
             List<CodeState> codeStateList = codeStateService.list(queryWrapper);
             if (codeStateList.size() > 0)//每次只取一个
             {
@@ -86,7 +86,7 @@ public class CodeStateController {
         } else if (ipListTwo.contains(ipAddress)) {
             log.info("进入备考考区pad签到:{}", ipAddress);
             QueryWrapper<CodeState> queryWrapper = new QueryWrapper<>();
-            queryWrapper.eq("type", 2).eq("state", 0);
+            queryWrapper.eq("ip", ipAddress).eq("state", 0);
             List<CodeState> codeStateList = codeStateService.list(queryWrapper);
             if (codeStateList.size() > 0)//每次只取一个
             {
@@ -114,7 +114,7 @@ public class CodeStateController {
         } else if (ipListAway.contains(ipAddress)) {
             log.info("离开考区pad签出:{}", ipAddress);
             QueryWrapper<CodeState> queryWrapper = new QueryWrapper<>();
-            queryWrapper.eq("type", 4).eq("state", 0);
+            queryWrapper.eq("ip", ipAddress).eq("state", 0);
             List<CodeState> codeStateList = codeStateService.list(queryWrapper);
             if (codeStateList.size() > 0)//每次只取一个
             {

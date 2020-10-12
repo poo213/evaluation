@@ -44,11 +44,6 @@ public class CodeState implements Serializable {
     @TableField("state")
     private Integer state;
     /**
-     * 类型，表示哪个扫描枪
-     */
-    @TableField("type")
-    private Integer type;
-    /**
      * 创建时间
      */
     @TableField("create_time")
@@ -59,6 +54,10 @@ public class CodeState implements Serializable {
      */
     @TableField("update_time")
     private LocalDateTime updateTime;
-
+    /**
+     * ip
+     */
+    @TableField("ip")
+    private String ip;
 
 }
