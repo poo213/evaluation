@@ -1,15 +1,24 @@
 package com.njmetro.evaluation.controller;
 
+import cn.afterturn.easypoi.excel.ExcelImportUtil;
+import cn.afterturn.easypoi.excel.entity.ImportParams;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.njmetro.evaluation.domain.Student;
+import com.njmetro.evaluation.dto.ComputerTestResultExcel;
 import com.njmetro.evaluation.service.StudentService;
 import com.njmetro.evaluation.service.TestResultService;
 import com.njmetro.evaluation.vo.FinalResultVO;
 import com.njmetro.evaluation.vo.TestResultVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.apache.commons.compress.utils.IOUtils;
+
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,12 +74,17 @@ public class TestResultController {
      */
     @GetMapping("/getFinalResult")
     public List<FinalResultVO> getFinalResult() {
+        log.info("1");
         List<FinalResultVO> finalTempResultVOList = new ArrayList<>();
 
         for (int gameNumber = 1; gameNumber <= 7; gameNumber++) {
             for (int gameRound = 1; gameRound <= 3; gameRound++) {
+                log.info("第{}场：", gameNumber);
+                log.info("第{}轮：", gameRound);
                 List<TestResultVO> testResultVOList = testResultService.getTempResult(gameNumber, gameRound);
+                log.info("获取指定场次的结果：{}", testResultVOList);
                 List<Integer> studentIdList = testResultService.getStudentIdList(gameNumber, gameRound);
+                log.info("获取指定场次的考生：{}", studentIdList);
                 for (Integer num : studentIdList) {
                     List<TestResultVO> testResultVOArrayList = new ArrayList<>();
                     for (TestResultVO testResultVO : testResultVOList) {
@@ -119,6 +133,31 @@ public class TestResultController {
             }
         }
         return finaResultVOList;
+    }
+
+    /**
+     * 上传机考得分
+     */
+    @PostMapping("/readExcel")
+    public void readExcel(@RequestParam("file") MultipartFile uploadFile) {
+        log.info("上传机考成绩！");
+        try {
+            //存储并解析Excel
+            File file = new File("C:/UploadFile/机考得分表.xlsx");
+            uploadFile.transferTo(file);
+            ImportParams importParams = new ImportParams();
+            importParams.setHeadRows(1);
+            List<ComputerTestResultExcel> computerTestResultExcelList = ExcelImportUtil.importExcel(file, ComputerTestResultExcel.class, importParams);
+            log.info("{}", computerTestResultExcelList);
+            for (ComputerTestResultExcel item : computerTestResultExcelList
+            ) {
+                UpdateWrapper<Student> studentUpdateWrapper = new UpdateWrapper<>();
+                studentUpdateWrapper.eq("code",item.getCode()).set("computer_test_result",item.getCent());
+                studentService.update(studentUpdateWrapper);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }

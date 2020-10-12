@@ -161,7 +161,7 @@ values ('参赛队抽签', true),
        ('裁判类型抽签', true),
        ('执行裁判抽签', false),
        ('裁判位置抽签', false);
-
+# 6. 打分结果表
 INSERT INTO test_result(game_number, game_round, question_id, question_standard_id, cent, student_id, judge_id)
 values (1,1,1,1,10,1,1),
        (1,1,1,2,10,1,1),
@@ -217,4 +217,7 @@ values (1,1,1,1,10,1,1),
        (1,3,3,1,10,1,6),
        (1,3,3,2,10,1,6),
        (1,3,3,3,10,1,6);
-
+# 6. 二维码扫码 存数据表
+INSERT INTO code_state(two_dimensional_code, state, type) VALUE ('x1',0,1);
+INSERT INTO code_state(two_dimensional_code, state, type) VALUE ('x2',0,3);
+INSERT INTO code_state(two_dimensional_code, state, type) VALUE ('x3',0,4);

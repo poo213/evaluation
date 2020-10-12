@@ -20,6 +20,7 @@ repositories {
 }
 
 dependencies {
+    implementation 'cn.afterturn:easypoi-spring-boot-starter:4.2.0'
     implementation 'commons-codec:commons-codec:1.15'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-aop'

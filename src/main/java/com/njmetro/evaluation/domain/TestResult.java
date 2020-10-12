@@ -90,16 +90,4 @@ public class TestResult implements Serializable {
 
     @TableField("state")
     private Integer state;
-
-    public TestResult() {
-    }
-
-    public TestResult(Integer gameNumber, Integer gameRound, Integer studentId, Integer judgeId, Integer questionId) {
-        this.gameNumber = gameNumber;
-        this.gameRound = gameRound;
-        this.studentId = studentId;
-        this.judgeId = judgeId;
-        this.questionId = questionId;
-    }
-
 }

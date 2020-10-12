@@ -2,6 +2,10 @@ package com.njmetro.evaluation.mapper;
 
 import com.njmetro.evaluation.domain.CodeState;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +17,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface CodeStateMapper extends BaseMapper<CodeState> {
 
+    @Select("select ip from pad where type = #{type}")
+    List<String> getIpList(@Param("type") Integer type);
 }

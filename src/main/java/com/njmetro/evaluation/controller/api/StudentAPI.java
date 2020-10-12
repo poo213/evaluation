@@ -7,6 +7,7 @@ import com.njmetro.evaluation.domain.*;
 import com.njmetro.evaluation.exception.StudentException;
 import com.njmetro.evaluation.service.*;
 import com.njmetro.evaluation.util.IpUtil;
+import com.njmetro.evaluation.vo.PauseOrStartVO;
 import com.njmetro.evaluation.vo.api.StudentInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -113,13 +114,14 @@ public class StudentAPI {
 
     /**
      * @param type               0表示暂停，1表示开始
-     * @param useTime            用时
+     * @param remainingTime            用时
      * @param httpServletRequest
      * @return
      */
     @GetMapping("/pauseOrStart")
-    public Boolean pauseOrStart(@RequestParam("type") Integer type, @RequestParam("useTime") Integer useTime, Integer gameNumber, Integer gameRound, HttpServletRequest httpServletRequest) {
-        Config config = configService.getById(1);//获取当前的场次和轮次
+    public PauseOrStartVO pauseOrStart(@RequestParam("type") Integer type, @RequestParam("remainingTime") Integer remainingTime, Integer gameNumber, Integer gameRound, HttpServletRequest httpServletRequest) {
+        //获取当前的场次和轮次
+        //Config config = configService.getById(1);
         String ipAddress = IpUtil.getIpAddr(httpServletRequest);
         if (ipAddress.equals("0:0:0:0:0:0:0:1")) {
             ipAddress = "192.168.96.9";
@@ -128,40 +130,52 @@ public class StudentAPI {
         QueryWrapper<Pad> padQueryWrapper = new QueryWrapper<>();
         padQueryWrapper.eq("ip", ipAddress).eq("type", 1);
         Pad pad = padService.getOne(padQueryWrapper);
-        log.info("调用次接口的IP:{}", ipAddress);
+        log.info("调用暂停or开始接口的IP:{}", ipAddress);
         QueryWrapper<SeatDraw> seatDrawQueryWrapper = new QueryWrapper<>();
         seatDrawQueryWrapper.eq("seat_id", pad.getSeatId())
-                .eq("game_number", config.getGameNumber())
-                .eq("game_round", config.getGameRound());
+                .eq("game_number", gameNumber)
+                .eq("game_round", gameRound);
         SeatDraw seatDraw = seatDrawService.getOne(seatDrawQueryWrapper);
-        UpdateWrapper<SeatDraw> seatDrawUpdateWrapper = new UpdateWrapper<>();
-        if (type == 0)//暂停
+        //暂停
+        if (type == 0)
         {
-            seatDraw.setUseTime(useTime);
-            seatDraw.setState(3);//比赛暂停，记录比赛用时
+            seatDraw.setRemainingTime(remainingTime);
+            //比赛暂停，记录比赛剩余时间
+            seatDraw.setState(3);
             PauseRecord pauseRecord = new PauseRecord();
             pauseRecord.setSeatDrawId(seatDraw.getId());
             pauseRecord.setType(0);
             pauseRecordService.save(pauseRecord);
-            return seatDrawService.updateById(seatDraw);
+            seatDrawService.updateById(seatDraw);
+            PauseOrStartVO pauseOrStartVO = new PauseOrStartVO();
+            pauseOrStartVO.setRemainingTime(remainingTime);
+            pauseOrStartVO.setState(3);//表示暂停
+            return pauseOrStartVO;//返回剩余时间
         } else {//开始
             PauseRecord pauseRecord = new PauseRecord();
             pauseRecord.setSeatDrawId(seatDraw.getId());
             pauseRecord.setType(1);
             pauseRecordService.save(pauseRecord);
-            seatDraw.setState(2);//恢复比赛，切换为考试中 状态2
-            return seatDrawService.updateById(seatDraw);
+            //恢复比赛，切换为考试中 状态2
+            seatDraw.setState(2);
+            seatDrawService.updateById(seatDraw);
+
+            PauseOrStartVO pauseOrStartVO = new PauseOrStartVO();
+            //返回剩余时间
+            pauseOrStartVO.setRemainingTime(seatDraw.getRemainingTime());
+            pauseOrStartVO.setState(2);
+            return pauseOrStartVO;
         }
     }
 
     /**
      * @param gameNumber 场次
      * @param gameRound  轮次
-     * @param useTime    用时
+     * @param remainingTime    用时
      * @return
      */
     @GetMapping("/finishTest")
-    public Boolean finishTest(Integer gameNumber, Integer gameRound, Integer useTime, HttpServletRequest httpServletRequest) {
+    public Boolean finishTest(Integer gameNumber, Integer gameRound, Integer remainTime, HttpServletRequest httpServletRequest) {
         String ipAddress = IpUtil.getIpAddr(httpServletRequest);
         if (ipAddress.equals("0:0:0:0:0:0:0:1")) {
             ipAddress = "192.168.96.9";
@@ -175,7 +189,7 @@ public class StudentAPI {
         seatDrawUpdateWrapper.eq("seat_id", pad.getSeatId())
                 .eq("game_number", gameNumber)
                 .eq("game_round", gameRound)
-                .set("use_time", useTime)
+                .set("use_time", 1200-remainTime)
                 .set("state", 4);//选手准备就绪
         return seatDrawService.update(seatDrawUpdateWrapper);
     }
@@ -207,7 +221,6 @@ public class StudentAPI {
                 .eq("game_number", gameNumber)
                 .eq("game_round", gameRound)
                 .set("state", 1);//选手准备就绪
-
         return seatDrawService.update(seatDrawUpdateWrapper);
     }
 }
