@@ -17,7 +17,6 @@ import java.time.LocalDateTime;
 @Data
 public class TestQuestionStandardVO {
     private Integer id;
-    private Integer testQuestionId;
     private String text;
     private String point;
     private Double score;
@@ -28,7 +27,6 @@ public class TestQuestionStandardVO {
 
     public TestQuestionStandardVO(TestQuestionStandard testQuestionStandard) {
         this.id = testQuestionStandard.getId();
-        this.testQuestionId = testQuestionStandard.getTestQuestionId();
         this.text = testQuestionStandard.getText();
         this.point = testQuestionStandard.getPoint();
         this.score = testQuestionStandard.getScore();

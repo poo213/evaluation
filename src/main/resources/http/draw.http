@@ -1,5 +1,9 @@
           ############# 正常抽签顺序
 
+######
+# 注意： 抽签之前一定要保证签到完成
+
+
 ###  api 1. 参赛队抽签
 GET http://localhost:8889/company/drawCompany
 Accept: application/json

@@ -137,4 +137,26 @@ public class SeatUtil {
     public static Integer getRightJudgeSeatIdByStudentSeatId(Integer studentId) {
         return studentId * 2;
     }
+
+    /**
+     * 根据学生座位ID获取考试类型
+     *
+     * @param studentSeatId 学生座位id
+     * @return
+     */
+    public static String getGameTypeByStudentSeatId(Integer studentSeatId){
+        String typeName = "";
+        switch (studentSeatId % 3){
+            case 0:
+                typeName = "视频搭建";
+                break;
+            case 1:
+                typeName = "光缆接续";
+                break;
+            case 2:
+                typeName = "交换机组网";
+                break;
+        }
+        return typeName;
+    }
 }

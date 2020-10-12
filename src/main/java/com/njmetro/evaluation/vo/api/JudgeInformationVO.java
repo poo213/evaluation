@@ -25,7 +25,14 @@ public class JudgeInformationVO {
     public Integer gameNumber;
     public Integer gameRound;
 
-    public JudgeInformationVO(JudgeInfoDTO judgeInfoDTO,Integer gameNumber,Integer gameRound){
+    /**
+     * 当前 考生id
+     */
+    public Integer  studentId;
+
+
+
+    public JudgeInformationVO(JudgeInfoDTO judgeInfoDTO,Integer gameNumber,Integer gameRound,Integer studentId){
        this.id = judgeInfoDTO.getId();
         this.name= judgeInfoDTO.getName();
         this.code= judgeInfoDTO.getCode();
@@ -35,6 +42,8 @@ public class JudgeInformationVO {
         this.studentSeatId= judgeInfoDTO.getSeatId()/6+1;
         this.gameNumber= gameNumber;
         this.gameRound= gameRound;
+
+        this.studentId = studentId;
     }
 
 }

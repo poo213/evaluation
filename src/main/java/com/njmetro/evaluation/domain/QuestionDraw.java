@@ -41,8 +41,8 @@ public class QuestionDraw implements Serializable {
     /**
      * 考生赛位号id
      */
-    @TableField("seat_id")
-    private Integer seatId;
+    @TableField("game_type")
+    private String gameType;
 
     /**
      * 题目编号

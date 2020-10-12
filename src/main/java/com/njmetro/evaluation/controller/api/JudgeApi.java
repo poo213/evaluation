@@ -10,6 +10,7 @@ import com.njmetro.evaluation.service.*;
 import com.njmetro.evaluation.util.IpUtil;
 import com.njmetro.evaluation.util.SeatUtil;
 import com.njmetro.evaluation.vo.PadSeatInfoVO;
+import com.njmetro.evaluation.vo.StudentStateVO;
 import com.njmetro.evaluation.vo.api.JudgeInformationVO;
 import com.njmetro.evaluation.vo.api.TestQuestionStandardResultVO;
 import com.njmetro.evaluation.vo.api.TestQuestionStandardVO;
@@ -39,6 +40,8 @@ public class JudgeApi {
     private final TestQuestionStandardService testQuestionStandardService;
     private final QuestionDrawService questionDrawService;
     private final TestQuestionService testQuestionService;
+    private final TestResultService testResultService;
+    private final SeatDrawService seatDrawService;
 
     /**
      * 轮询接口： 获取 裁判信息，考生赛位号，场次，轮次
@@ -47,19 +50,69 @@ public class JudgeApi {
      */
     @GetMapping("/getJudgeInfo")
     public JudgeInformationVO getJudgeInformation(HttpServletRequest httpServletRequest) {
-        Config config = configService.getById(1);
         String ipAddress = IpUtil.getIpAddr(httpServletRequest);
         /**
-         *  TODO 去掉 ip值
+         * TODO : 删除
          */
-        ipAddress = "192.168.97.7";
+        ipAddress = "192.168.97.17";
+        QueryWrapper<Pad> padQueryWrapper = new QueryWrapper<>();
+        padQueryWrapper.eq("ip", ipAddress)
+                .eq("type", 2);
+        Pad pad = padService.getOne(padQueryWrapper);
+        Config config = configService.getById(1);
+
+        Integer studentSeatId = SeatUtil.getStudentSeatIdByJudgeSeatId(pad.getSeatId());
+        // 根据 studentSeatId 场次 和 轮次 在 seat_draw 中查找 studentId
+        QueryWrapper<SeatDraw> seatDrawQueryWrapper = new QueryWrapper<>();
+        seatDrawQueryWrapper.eq("game_number",config.getGameNumber())
+                .eq("game_round",config.getGameRound())
+                .eq("seat_id",studentSeatId);
+        SeatDraw seatDraw = seatDrawService.getOne(seatDrawQueryWrapper);
+        Integer studentId = 0;
+        if(seatDraw != null){
+            studentId = seatDraw.getStudentId();
+        }else {
+            log.info("没有找到studentId");
+            throw new JudgeApiException("没有找到studentId");
+        }
+
+
         List<JudgeInfoDTO> judgeInfoDTOList = judgeService.getJudgeInfo(ipAddress);
         if (!judgeInfoDTOList.isEmpty()) {
-            JudgeInformationVO judgeInformationVO = new JudgeInformationVO(judgeInfoDTOList.get(0), config.getGameNumber(), config.getGameRound());
+            JudgeInformationVO judgeInformationVO = new JudgeInformationVO(judgeInfoDTOList.get(0), config.getGameNumber(), config.getGameRound(),studentId);
             return judgeInformationVO;
         } else {
             throw new JudgeApiException("没有查询到裁判信息");
         }
+    }
+
+
+    @GetMapping("/pauseOrStart")
+    public StudentStateVO pauseOrStart(HttpServletRequest httpServletRequest) {
+     /*   Config config = configService.getById(1);
+        String ipAddress = IpUtil.getIpAddr(httpServletRequest);
+        *//**
+         *  TODO 去掉 ip值
+         *//*
+        ipAddress = "192.168.97.17";
+        QueryWrapper<Pad> padQueryWrapper = new QueryWrapper<>();
+        padQueryWrapper.eq("ip", ipAddress)
+                .eq("type", 2);
+        Pad pad = padService.getOne(padQueryWrapper);
+        Integer studentSeatId = SeatUtil.getStudentSeatIdByJudgeSeatId(pad.getSeatId());
+        // 根据 studentSeatId 场次 和 轮次 在 seat_draw 中查找 studentId
+        QueryWrapper<SeatDraw> seatDrawQueryWrapper = new QueryWrapper<>();
+        seatDrawQueryWrapper.eq("game_number",config.getGameNumber())
+                .eq("game_round",config.getGameRound())
+                .eq("seat_id",studentSeatId);
+        SeatDraw seatDraw = seatDrawService.getOne(seatDrawQueryWrapper);
+        if(seatDraw == null){
+            log.info("没有找到考生状态信息");
+            throw new JudgeApiException("没有找到考生状态信息");
+        }else {
+            return new StudentStateVO(seatDraw.getState(),seatDraw.getRemainingTime());
+        }*/
+        return new StudentStateVO(2,1000);
     }
 
     /**
@@ -73,7 +126,7 @@ public class JudgeApi {
         /**
          *  TODO 去掉 ip值
          */
-        ipAddress = "192.168.97.7";
+        ipAddress = "192.168.97.17";
         // 根据 ip 查询pad信息
         QueryWrapper<Pad> padQueryWrapper = new QueryWrapper<>();
         padQueryWrapper.eq("ip", ipAddress);
@@ -110,6 +163,25 @@ public class JudgeApi {
         } else {
             Config config = configService.getById(1);
             Integer studentSeatId = SeatUtil.getStudentSeatIdByJudgeSeatId(pad.getSeatId());
+            // 根据 studentSeatId 场次 和 轮次 在 seat_draw 中查找 studentId
+            QueryWrapper<SeatDraw> seatDrawQueryWrapper = new QueryWrapper<>();
+            seatDrawQueryWrapper.eq("game_number",config.getGameNumber())
+                    .eq("game_round",config.getGameRound())
+                    .eq("seat_id",studentSeatId);
+            SeatDraw seatDraw = seatDrawService.getOne(seatDrawQueryWrapper);
+            Integer studentId = 0;
+            if(seatDraw != null){
+                studentId = seatDraw.getStudentId();
+            }else {
+                log.info("没有找到studentId");
+                throw new JudgeApiException("没有找到studentId");
+            }
+
+            // 根据padId 获取裁判Id
+            QueryWrapper<JudgeDrawResult> judgeDrawResultQueryWrapper = new QueryWrapper<>();
+            judgeDrawResultQueryWrapper.eq("pad_id", pad.getId());
+            JudgeDrawResult judgeDrawResult = judgeDrawResultService.getOne(judgeDrawResultQueryWrapper);
+            Integer judgeId = judgeDrawResult.getJudgeId();
             // 根据 场次 和 考生所在位置 在 question 中获取 赛题信息
             QueryWrapper<QuestionDraw> questionDrawQueryWrapper = new QueryWrapper<>();
             questionDrawQueryWrapper.eq("game_number", config.getGameNumber())
@@ -131,7 +203,7 @@ public class JudgeApi {
                 }
                 // 根据试题id 获取 试题名称
                 String testName = testQuestionService.getById(questionDraw.getQuestionId()).getName();
-                return new TestQuestionStandardResultVO(testQuestionStandardVOList, testName);
+                return new TestQuestionStandardResultVO(testQuestionStandardVOList, testName, questionDraw.getQuestionId(), judgeId,studentId);
             }
         }
     }
@@ -143,13 +215,75 @@ public class JudgeApi {
      * @return
      */
     @PostMapping("/submitResults")
-    public Boolean submitResults(@RequestBody List<StudentResultDTO> list, Integer gameNumber, Integer gameRound, Integer state, Integer studentId) {
+    public Boolean submitResults(@RequestBody List<StudentResultDTO> list, Integer gameNumber, Integer gameRound, Integer state, Integer studentId, Integer questionId, Integer judgeId) {
         log.info("gameNumber {}", gameNumber);
         log.info("gameRound {}", gameRound);
         log.info("state {}", state);
         log.info("studentId {}", studentId);
+        log.info("questionId {}", questionId);
+        log.info("judgeId {}", judgeId);
         log.info("list {}", list);
-        return true;
+
+        // 判断 传入场次和轮次 和 数据库中是否一致
+        Config config = configService.getById(1);
+        if (config.getGameNumber().equals(gameNumber) && config.getGameRound().equals(gameRound)) {
+            // 根据 state 判断能否修改  0 ： 可修改   1：不可修改
+            TestResult testResult = new TestResult(gameNumber,gameRound,studentId,judgeId,questionId);
+            QueryWrapper<TestResult> testResultQueryWrapper = new QueryWrapper<>();
+            testResultQueryWrapper.eq("game_number", gameNumber)
+                    .eq("game_round", gameRound)
+                    .eq("student_id", studentId)
+                    .eq("judge_id", judgeId)
+                    .eq("question_id", questionId);
+            List<TestResult> testResultList = testResultService.list(testResultQueryWrapper);
+            log.info("testResultList {}", testResultList);
+            if(testResultList.size() == 0){
+                // 没有成绩时 可以直接写入
+                for (StudentResultDTO studentResultDTO : list){
+                    // 设置更新结果
+                    testResult.setState(state);
+                    testResult.setQuestionStandardId(studentResultDTO.getId());
+                    testResult.setCent(studentResultDTO.getResult());
+                    testResultService.save(testResult);
+                    log.info("没有成绩时 可以直接写入   ----");
+                }
+            }else {
+                // 允许上传数据
+                if(testResultList.get(0).getState() == 0){
+                    for (StudentResultDTO studentResultDTO : list){
+                        QueryWrapper<TestResult> testResultQueryWrapperSql = new QueryWrapper<>();
+                        testResultQueryWrapperSql.eq("game_number", gameNumber)
+                                .eq("game_round", gameRound)
+                                .eq("student_id", studentId)
+                                .eq("judge_id", judgeId)
+                                .eq("question_id", questionId)
+                                .eq("question_standard_id",studentResultDTO.getId());
+                        TestResult testResultSql = testResultService.getOne(testResultQueryWrapperSql);
+                        if(testResultSql == null){
+                            log.info("没有该记录，插入一条记录");
+                            // 设置更新结果
+                            testResult.setState(state);
+                            testResult.setQuestionStandardId(studentResultDTO.getId());
+                            testResult.setCent(studentResultDTO.getResult());
+                            testResultService.save(testResult);
+                        }else {
+                            log.info("存在该记录，根据id更新记录");
+                            testResultSql.setState(state);
+                            testResultSql.setQuestionStandardId(studentResultDTO.getId());
+                            testResultSql.setCent(studentResultDTO.getResult());
+                            testResultService.updateById(testResultSql);
+                        }
+                    }
+                }else {
+                    log.info("成绩上传截至！请核对后再上传");
+                    throw new JudgeApiException("成绩上传截至！请核对后再上传");
+                }
+
+            }
+            return true;
+        } else {
+            throw new JudgeApiException("场次或轮次与数据库不匹配，请核对后提交！");
+        }
     }
 
     /**
