@@ -21,6 +21,12 @@ TRUNCATE TABLE pad;
 # 5. 重置 draw_state 表
 TRUNCATE TABLE draw_state;
 
+# 6. 重置裁判评分表
+TRUNCATE TABLE test_result;
+
+# 7. 重置座位抽签表
+TRUNCATE TABLE seat_draw;
+
 ### 二、 生成项目表格基础数据
 
 # 1.  初始化 judge_draw_result 表

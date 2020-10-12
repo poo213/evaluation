@@ -3,16 +3,20 @@ package com.njmetro.evaluation.domain;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+
 import java.time.LocalDateTime;
+
 import com.baomidou.mybatisplus.annotation.TableField;
+
 import java.io.Serializable;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author zc
@@ -24,7 +28,7 @@ import lombok.experimental.Accessors;
 @TableName("test_result")
 public class TestResult implements Serializable {
 
-    private static final long serialVersionUID=1L;
+    private static final long serialVersionUID = 1L;
 
     /**
      * 自增id
@@ -70,7 +74,7 @@ public class TestResult implements Serializable {
      * 得分
      */
     @TableField("cent")
-    private Integer cent;
+    private double cent;
 
     /**
      * 创建时间
@@ -84,5 +88,18 @@ public class TestResult implements Serializable {
     @TableField("update_time")
     private LocalDateTime updateTime;
 
+    @TableField("state")
+    private Integer state;
+
+    public TestResult() {
+    }
+
+    public TestResult(Integer gameNumber, Integer gameRound, Integer studentId, Integer judgeId, Integer questionId) {
+        this.gameNumber = gameNumber;
+        this.gameRound = gameRound;
+        this.studentId = studentId;
+        this.judgeId = judgeId;
+        this.questionId = questionId;
+    }
 
 }

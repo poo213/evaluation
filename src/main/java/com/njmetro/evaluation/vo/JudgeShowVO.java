@@ -1,5 +1,6 @@
 package com.njmetro.evaluation.vo;
 
+import com.njmetro.evaluation.util.NumberToColorUtil;
 import lombok.Data;
 
 /**
@@ -22,6 +23,7 @@ public class JudgeShowVO {
      * 裁判就绪状态
      */
     private Boolean state;
+    private String stateColor;
 
     /**
      * 自定义构造函数
@@ -33,7 +35,12 @@ public class JudgeShowVO {
     public JudgeShowVO(String code, String name, Boolean state) {
         this.code = code;
         this.name = name;
-        this.state = state;
+        if(state){
+            this.stateColor = NumberToColorUtil.readyColor;
+        }else {
+            this.stateColor = NumberToColorUtil.breakColor;
+        }
+
     }
 
     public JudgeShowVO() {

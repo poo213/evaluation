@@ -20,6 +20,7 @@ TRUNCATE TABLE  test_question_standard;
 # 5. 重置 test_result 表格
 TRUNCATE TABLE test_result;
 
+
 ############################################################# 二、 生成项目表格模拟数据
 
 # 1. 生成 judge (裁判) 信息

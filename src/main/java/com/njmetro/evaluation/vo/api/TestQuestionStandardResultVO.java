@@ -24,15 +24,31 @@ public class TestQuestionStandardResultVO {
      * 比赛名称
      */
     private String testName;
+
+    /**
+     * 比赛名称
+     */
+    private Integer questionId;
+    /**
+     * 裁判Id
+     */
+    private Integer judgeId;
+    /**
+     * 裁判Id
+     */
+    private Integer studentId;
     /**
      * 评分标准
      */
     public List<TestQuestionStandardVO> testQuestionStandardVOList;
 
-    public TestQuestionStandardResultVO(List<TestQuestionStandardVO> testQuestionStandardVOList,String testName){
+    public TestQuestionStandardResultVO(List<TestQuestionStandardVO> testQuestionStandardVOList,String testName,Integer questionId,Integer judgeId,Integer studentId){
         this.readTime = 30;
         this.testTime = 1200;
         this.testName = testName;
+        this.questionId = questionId;
+        this.judgeId = judgeId;
+        this.studentId = studentId;
         this.testQuestionStandardVOList = testQuestionStandardVOList;
     }
 }

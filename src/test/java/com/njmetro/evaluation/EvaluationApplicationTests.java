@@ -3,6 +3,8 @@ package com.njmetro.evaluation;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.njmetro.evaluation.domain.Company;
 import com.njmetro.evaluation.domain.Judge;
+import com.njmetro.evaluation.domain.Seat;
+import com.njmetro.evaluation.domain.SeatDraw;
 import com.njmetro.evaluation.mapper.JudgeMapper;
 import com.njmetro.evaluation.mapper.SeatGroupMapper;
 import com.njmetro.evaluation.service.CompanyService;
@@ -92,6 +94,15 @@ class EvaluationApplicationTests {
     @Test
     void mapper3() {
         System.out.println(seatDrawService.deleteTable());
+    }
+
+    @Test
+    void mapper4() {
+       List<SeatDraw> seatDraws = seatDrawService.list();
+       for(SeatDraw seatDraw : seatDraws){
+           seatDraw.setState(2);
+           seatDrawService.updateById(seatDraw);
+       }
     }
 
 

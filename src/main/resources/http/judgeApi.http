@@ -1,91 +1,6 @@
-GET http://localhost:8889/seat/getSeats
-Content-Type: application/json
-
-<> 2020-09-23T030431.200.json
-<> 2020-09-23T030142.200.json
-
-###
-POST http://localhost:8889/seat/save
-Content-Type: application/json
-
-{
-  "code": "112***",
-  "name": "赛位A-2",
-  "type": "交换机组网",
-  "groupNumber": 1,
-  "createTime": "2020-09-23T15:01:13",
-  "updateTime": "2020-09-23T15:01:13"
-}
-
-<> 2020-09-27T062403.404.json
-<> 2020-09-23T033106.200.json
-
-###
-POST http://localhost:8889/seat/update
-Content-Type: application/json
-
-{
-  "id": 3,
-  "code": "1113***",
-  "name": "赛位A-3",
-  "type": "交换机组网",
-  "groupNumber": 1,
-  "createTime": "2020-09-23T15:01:13",
-  "updateTime": "2020-09-23T15:01:13"
-}
-
-<> 2020-09-28T063707.404.json
-
-###
-POST http://localhost:8889/seat/del?id=4
-
-###
-GET http://localhost:8889/company/getCompanyList
-Content-Type: application/json
-
-###
-GET http://localhost:8889/judge/judgeGrouping
-Content-Type: application/json
-
-
-
-###
-GET http://localhost:8889/judge/getJudgeByJudgeType?judgeType=交换机组网
-Content-Type: application/json
-###
-
-
-
-### 交换机组网 光缆接续 视频搭建
-GET http://localhost:8889/judge/getMasterJudgeByJudgeType?judgeType=交换机组网
-Content-Type: application/json
-
-###
-GET http://localhost:8889/judge/judgeDraw
-Content-Type: application/json
-
-<> 2020-09-28T064126.200.json
-<> 2020-09-27T064911.200.json
-
-###  将51个裁判分组
-GET http://localhost:8889/judge/judgeGrouping
-Content-Type: application/json
-
-<> 2020-09-27T055703.200.json
-
-### 每组选择12个一般裁判
-GET http://localhost:8889/judge/choiceMasterJudgeFormAllJudge
-Content-Type: application/json
-
-<> 2020-09-27T055708.200.json
-
-###  给每组12个一般裁判 分座位
-GET http://localhost:8889/judge/judgeDraw
-Content-Type: application/json
-
 
 ###  api 1. 轮询接口
-GET http://localhost:8889/api/judge/getJudgeInfo?gameNumber=1&gameRound=1
+GET http://localhost:8889/api/judge/getJudgeInfo
 Accept: application/json
 
 ###  api 2. 上报准备就绪
@@ -97,41 +12,12 @@ GET http://localhost:8889/api/judge/getScoringCriteria?gameNumber=1&gameRound=2
 Accept: application/json
 
 ### api 4. 成绩上报成功
-POST http://localhost:8889/api/judge/submitResults?gameNumber=1&gameRound=2
+POST http://localhost:8889/api/judge/submitResults?gameNumber=1&gameRound=2&state=1
 Content-Type: application/json
 
-{
-  "list" : {{ list }}
-}
-
-###
-GET http://localhost:8889/api/judge/getPadSeatInfo
-Accept: application/json
-
-
-### 大屏显示内容
-GET http://localhost:8889/judge/getGroupShowVO?gameNumber=1&gameRound=2
-Accept: application/json
-
-
-
-
-###
-      Accept: application/json
-
-### 考生
-### api  1.获取当前考试的场次和轮次
-GET http://192.168.96.7:8889/api/student/getConfig
-### api  2.考生扫码登录，如果是当前位置的考生，返回考生信息，否则提示非此位置上的考生
-GET http://192.168.96.9:8889/api/student/getStudentInfo?QRcode=xx1234
-### api  3.获取题目
-GET http://192.168.96.7:8889/api/student/getUrl
-### api  4.暂停或开始   0表示暂停，记录用时  该状态 ，1表示继续，改状态
-GET http://192.168.96.7:8889/api/student/pauseOrStart?type=1&useTime=111&gameNumber=1&gameRound=1
-### api  5.考生就绪
-GET http://192.168.96.7:8889/api/student/beReday?gameNumber=1&gameRound=1
-### api  6.考生提交
-GET http://192.168.96.7:8889/api/student/finishTest?useTime=1200&gameNumber=1&gameRound=1
+### api 5. 获取考生状态信息和剩余时间
+GET http://localhost:8889/api/judge/pauseOrStart
+Content-Type: application/json
 
 
 

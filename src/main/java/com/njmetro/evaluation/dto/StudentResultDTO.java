@@ -11,5 +11,5 @@ import lombok.Data;
 @Data
 public class StudentResultDTO {
     public Integer id;
-    public Integer result;
+    public double result;
 }

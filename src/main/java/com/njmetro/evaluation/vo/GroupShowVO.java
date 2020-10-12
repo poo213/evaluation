@@ -12,6 +12,7 @@ import java.util.List;
  */
 @Data
 public class GroupShowVO {
+
     /**
      * 群组名称
      */

@@ -229,3 +229,16 @@ CREATE TABLE IF NOT EXISTS code_state
     PRIMARY KEY (id)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = UTF8MB4;
+
+# 二维码签到记录表
+CREATE TABLE IF NOT EXISTS question_draw
+(
+    id            INT UNSIGNED AUTO_INCREMENT COMMENT 'id',
+    game_number   INT UNSIGNED NOT NULL COMMENT '比赛场次',
+    game_type      CHAR(15)     NOT NULL COMMENT '考试类型: 光缆接续,交换机组网,视频搭建',
+    question_id   INT UNSIGNED NOT NULL COMMENT '试题ID',
+    `create_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+    PRIMARY KEY (id)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = UTF8MB4;
