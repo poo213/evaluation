@@ -13,12 +13,16 @@ import com.njmetro.evaluation.vo.api.StudentInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.apache.bcel.classfile.Code;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+
+import static com.njmetro.evaluation.common.SystemCommon.DOWNLOAD_BASE_URL;
 
 /**
  * @program: evaluation
@@ -54,6 +58,7 @@ public class StudentAPI {
      * @return 考生信息
      */
     @GetMapping("/getStudentInfo")
+    @Transactional
     public StudentInfo getStudentInfo(@RequestParam("QRcode") String QRcode, HttpServletRequest httpServletRequest) {
         Config config = configService.getById(1);//获取当前的场次和轮次
         String ipAddress = IpUtil.getIpAddr(httpServletRequest);
@@ -85,6 +90,8 @@ public class StudentAPI {
         studentInfo.setGameRound(config.getGameRound());
         studentInfo.setCompanyName(student.getCompanyName());
         studentInfo.setIdCard(student.getIdCard());
+        studentInfo.setUrl(DOWNLOAD_BASE_URL+"idcard/"+student.getIdCard()+".jpg");
+        System.out.println(DOWNLOAD_BASE_URL+"idcard/"+student.getIdCard()+".jpg");
         return studentInfo;
     }
 
@@ -112,12 +119,12 @@ public class StudentAPI {
         String url = testQuestionService.getOne(testQuestionQueryWrapper).getUrl();
         System.out.println(url);
         //todo
-        return SystemCommon.DOWNLOAD_BASE_URL + url;
+        return DOWNLOAD_BASE_URL + url;
     }
 
     /**
      * @param type               0表示暂停，1表示开始
-     * @param remainingTime            用时
+     * @param remainingTime      用时
      * @param httpServletRequest
      * @return
      */
@@ -140,8 +147,7 @@ public class StudentAPI {
                 .eq("game_round", gameRound);
         SeatDraw seatDraw = seatDrawService.getOne(seatDrawQueryWrapper);
         //暂停
-        if (type == 0)
-        {
+        if (type == 0) {
             seatDraw.setRemainingTime(remainingTime);
             //比赛暂停，记录比赛剩余时间
             seatDraw.setState(3);
@@ -191,7 +197,7 @@ public class StudentAPI {
         seatDrawUpdateWrapper.eq("seat_id", pad.getSeatId())
                 .eq("game_number", gameNumber)
                 .eq("game_round", gameRound)
-                .set("use_time", 1200-remainingTime)
+                .set("use_time", 1200 - remainingTime)
                 .set("state", 4);//选手准备就绪
         return seatDrawService.update(seatDrawUpdateWrapper);
     }
@@ -227,17 +233,25 @@ public class StudentAPI {
     }
 
     @GetMapping("/writeQRcode")
-    public Boolean writeQRcode(String qrcode,HttpServletRequest httpServletRequest)
-    {
+    public Boolean writeQRcode(@RequestParam("qrcode") String qrcode, HttpServletRequest httpServletRequest) {
         String ipAddress = IpUtil.getIpAddr(httpServletRequest);
-        if (ipAddress.equals("0:0:0:0:0:0:0:1")) {
-            ipAddress = "192.168.96.9";
+//        if (ipAddress.equals("0:0:0:0:0:0:0:1")) {
+//            ipAddress = "192.168.96.9";
+//        }
+//        ipAddress = "192.168.96.9";
+        QueryWrapper<CodeState> codeStateQueryWrapper = new QueryWrapper<>();
+        codeStateQueryWrapper.eq("two_dimensional_code", qrcode).eq("state", 0).eq("ip", ipAddress);
+        List<CodeState> codeStateList = codeStateService.list(codeStateQueryWrapper);
+        if (codeStateList.size() != 0) {
+            log.info("本条扫码信息已存在！");
+            return true;
+        } else {
+            CodeState codeState = new CodeState();
+            codeState.setIp(ipAddress);
+            codeState.setTwoDimensionalCode(qrcode);
+            codeState.setState(0);
+            return codeStateService.save(codeState);
         }
-        ipAddress = "192.168.96.9";
-        CodeState codeState = new CodeState();
-        codeState.setIp(ipAddress);
-        codeState.setTwoDimensionalCode(qrcode);
-        codeState.setState(0);
-        return codeStateService.save(codeState);
+
     }
 }

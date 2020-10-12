@@ -23,6 +23,10 @@ public class StudentInfo {
      */
     private String companyName;
     /**
+     * 考生照片
+     */
+    private String url;
+    /**
      * 考生单位
      */
     private String idCard;
@@ -34,4 +38,5 @@ public class StudentInfo {
      * 轮次
      */
     private Integer gameRound;
+
 }
