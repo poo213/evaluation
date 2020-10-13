@@ -144,7 +144,7 @@ public class JudgeController {
     public BigShowVO getGroupJudgeVO(Integer gameNumber, Integer gameRound) {
         Config config = configService.getById(1);
         BigShowVO bigShowVO = new BigShowVO();
-        bigShowVO.setGameNumber(NumberToCharUtil.getChar(config.getGameNumber()));
+        bigShowVO.setGameNumber(config.getGameNumber());
         bigShowVO.setGameRound(config.getGameRound());
 
         List<GroupShowVO> groupJudgeVOList = new ArrayList<>();
@@ -169,7 +169,7 @@ public class JudgeController {
     public BigShowVO getBigShowVO() {
         Config config = configService.getById(1);
         BigShowVO bigShowVO = new BigShowVO();
-        bigShowVO.setGameNumber(NumberToCharUtil.getChar(config.getGameNumber()));
+        bigShowVO.setGameNumber(config.getGameNumber());
         bigShowVO.setGameRound(config.getGameRound());
 
         // 遍历6个赛组

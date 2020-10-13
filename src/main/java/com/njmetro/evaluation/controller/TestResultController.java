@@ -2,23 +2,20 @@ package com.njmetro.evaluation.controller;
 
 import cn.afterturn.easypoi.excel.ExcelImportUtil;
 import cn.afterturn.easypoi.excel.entity.ImportParams;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.njmetro.evaluation.domain.Student;
-import com.njmetro.evaluation.dto.ComputerTestResultExcel;
+import com.njmetro.evaluation.dto.ComputerTestResultExcelDTO;
 import com.njmetro.evaluation.service.StudentService;
 import com.njmetro.evaluation.service.TestResultService;
 import com.njmetro.evaluation.vo.FinalResultVO;
 import com.njmetro.evaluation.vo.TestResultVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.compress.utils.IOUtils;
 
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -147,9 +144,9 @@ public class TestResultController {
             uploadFile.transferTo(file);
             ImportParams importParams = new ImportParams();
             importParams.setHeadRows(1);
-            List<ComputerTestResultExcel> computerTestResultExcelList = ExcelImportUtil.importExcel(file, ComputerTestResultExcel.class, importParams);
+            List<ComputerTestResultExcelDTO> computerTestResultExcelList = ExcelImportUtil.importExcel(file, ComputerTestResultExcelDTO.class, importParams);
             log.info("{}", computerTestResultExcelList);
-            for (ComputerTestResultExcel item : computerTestResultExcelList
+            for (ComputerTestResultExcelDTO item : computerTestResultExcelList
             ) {
                 UpdateWrapper<Student> studentUpdateWrapper = new UpdateWrapper<>();
                 studentUpdateWrapper.eq("code",item.getCode()).set("computer_test_result",item.getCent());

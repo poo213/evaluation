@@ -5,9 +5,11 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.njmetro.evaluation.domain.QuestionDraw;
 import com.njmetro.evaluation.domain.TestQuestion;
 import com.njmetro.evaluation.exception.QuestionDrawException;
+import com.njmetro.evaluation.service.ConfigService;
 import com.njmetro.evaluation.service.QuestionDrawService;
 import com.njmetro.evaluation.service.TestQuestionService;
 import com.njmetro.evaluation.util.KnuthUtil;
+import com.njmetro.evaluation.vo.QuestionDrawVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,7 +34,15 @@ import java.util.List;
 public class QuestionDrawController {
     public final TestQuestionService testQuestionService;
     public final QuestionDrawService questionDrawService;
+    public final ConfigService configService;
 
+    /**
+     * 根据考试类型和比赛场次抽取赛题
+     *
+     * @param gameNumber 场次
+     * @param type 考试类型
+     * @return
+     */
     public Boolean doDrawOneType(Integer gameNumber,String type) {
         // 根据考试类型查找所有试题
         QueryWrapper<TestQuestion> testQuestionQueryWrapper = new QueryWrapper<>();
@@ -70,13 +80,25 @@ public class QuestionDrawController {
         return true;
     }
 
-
+    /**
+     * 裁判抽签
+     * @return
+     */
     @GetMapping("/doDraw")
-    public Boolean doDraw(Integer gameNumber) {
+    public Boolean doDraw() {
+        Integer gameNumber = configService.getById(1).getGameNumber();
         doDrawOneType(gameNumber,"光缆接续");
         doDrawOneType(gameNumber,"交换机组网");
         doDrawOneType(gameNumber,"视频搭建");
         return true;
+    }
+
+    /**
+     *  返回已抽签的试题列表
+     */
+    @GetMapping("/getList")
+    public List<QuestionDrawVO> getList(){
+        return questionDrawService.selectList();
     }
 
 }

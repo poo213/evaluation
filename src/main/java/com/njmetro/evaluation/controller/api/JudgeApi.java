@@ -185,7 +185,7 @@ public class JudgeApi {
             // 根据 场次 和 考生所在位置 在 question 中获取 赛题信息
             QueryWrapper<QuestionDraw> questionDrawQueryWrapper = new QueryWrapper<>();
             questionDrawQueryWrapper.eq("game_number", config.getGameNumber())
-                    .eq("seat_id", studentSeatId);
+                    .eq("game_type", SeatUtil.getGameTypeByStudentSeatId(studentSeatId));
             QuestionDraw questionDraw = questionDrawService.getOne(questionDrawQueryWrapper);
             if (questionDraw == null) {
                 log.info("没有找到考题");
