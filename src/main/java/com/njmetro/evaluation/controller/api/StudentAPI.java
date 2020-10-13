@@ -9,6 +9,7 @@ import com.njmetro.evaluation.service.*;
 import com.njmetro.evaluation.util.IpUtil;
 import com.njmetro.evaluation.util.SeatUtil;
 import com.njmetro.evaluation.vo.PauseOrStartVO;
+import com.njmetro.evaluation.vo.QuestionVO;
 import com.njmetro.evaluation.vo.api.StudentInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 import static com.njmetro.evaluation.common.SystemCommon.DOWNLOAD_BASE_URL;
+import static com.njmetro.evaluation.common.SystemCommon.PDF_URL;
 
 /**
  * @program: evaluation
@@ -90,16 +92,16 @@ public class StudentAPI {
         studentInfo.setGameRound(config.getGameRound());
         studentInfo.setCompanyName(student.getCompanyName());
         studentInfo.setIdCard(student.getIdCard());
-        studentInfo.setUrl(DOWNLOAD_BASE_URL+"idcard/"+student.getIdCard()+".jpg");
-        System.out.println(DOWNLOAD_BASE_URL+"idcard/"+student.getIdCard()+".jpg");
+        studentInfo.setUrl(DOWNLOAD_BASE_URL + "idcard/" + student.getIdCard() + ".jpg");
+        System.out.println(DOWNLOAD_BASE_URL + "idcard/" + student.getIdCard() + ".jpg");
         return studentInfo;
     }
 
     /**
-     * 获取url
+     * 获取url 试题的相关信息
      */
     @GetMapping("/getUrl")
-    public String getUrl(HttpServletRequest httpServletRequest) {
+    public QuestionVO getUrl(HttpServletRequest httpServletRequest) {
         Config config = configService.getById(1);//获取当前的场次和轮次
         String ipAddress = IpUtil.getIpAddr(httpServletRequest);
         if (ipAddress.equals("0:0:0:0:0:0:0:1")) {
@@ -116,10 +118,16 @@ public class StudentAPI {
         log.info("考题id：{}", questionDrawService.getOne(questionDrawQueryWrapper).getQuestionId());//考题Id
         QueryWrapper<TestQuestion> testQuestionQueryWrapper = new QueryWrapper<>();
         testQuestionQueryWrapper.eq("id", questionDrawService.getOne(questionDrawQueryWrapper).getQuestionId());
-        String url = testQuestionService.getOne(testQuestionQueryWrapper).getUrl();
-        System.out.println(url);
+        TestQuestion testQuestion  = testQuestionService.getOne(testQuestionQueryWrapper);
+        String url = testQuestion.getUrl();
+        log.info("获取考题的{}", url);
         //todo
-        return DOWNLOAD_BASE_URL + url;
+        QuestionVO questionVO = new QuestionVO();
+        questionVO.setUrl(PDF_URL + url);
+        questionVO.setQuestionName(testQuestion.getName());
+        questionVO.setReadTime(testQuestion.getReadTime());
+        questionVO.setTestTime(testQuestion.getTestTime());
+        return questionVO;
     }
 
     /**
@@ -198,7 +206,8 @@ public class StudentAPI {
                 .eq("game_number", gameNumber)
                 .eq("game_round", gameRound)
                 .set("use_time", 1200 - remainingTime)
-                .set("state", 4);//选手准备就绪
+                .set("remaining_time", remainingTime)
+                .set("state", 4);//选手准备就绪s
         return seatDrawService.update(seatDrawUpdateWrapper);
     }
 

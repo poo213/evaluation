@@ -23,7 +23,10 @@ public class SystemCommon {
      *  水印服务器下载 文件的 根地址
      */
     public static final String DOWNLOAD_BASE_URL = "http://192.168.96.7:8889/api/file/";
-
+    /**
+     *  pdf组件拼接用
+     */
+    public static final String PDF_URL = "http://192.168.96.7:8000/pdf?url=/api/file/pdf/";
     /**
      *  文件在服务器中 存储位置的跟目录
      */
