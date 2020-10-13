@@ -10,7 +10,7 @@ import lombok.Data;
  * @create: 2020-10-10 11:27
  **/
 @Data
-public class ComputerTestResultExcel {
+public class ComputerTestResultExcelDTO {
     @Excel(name="code")
     private String code;
     @Excel(name="cent")

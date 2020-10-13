@@ -13,7 +13,7 @@ import java.util.List;
  */
 @Data
 public class BigShowVO {
-    public String gameNumber;
+    public Integer gameNumber;
     public Integer gameRound;
     List<GroupShowVO> groupShowVOList;
 }

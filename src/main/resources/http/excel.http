@@ -1,0 +1,7 @@
+###  api 1.导入试题
+GET http://localhost:8889/testQuestion/readExcel
+Accept: application/json
+
+###  api 2.导入试题评分标准
+GET http://localhost:8889/testQuestionStandard/readExcel
+Accept: application/json

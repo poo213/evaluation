@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import java.time.LocalDateTime;
 import com.baomidou.mybatisplus.annotation.TableField;
 import java.io.Serializable;
+
+import com.njmetro.evaluation.dto.TestQuestionExcelDTO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -73,6 +75,17 @@ public class TestQuestion implements Serializable {
      */
     @TableField("update_time")
     private LocalDateTime updateTime;
+
+    public TestQuestion(){}
+
+    public TestQuestion(TestQuestionExcelDTO testQuestionExcelDTO){
+        this.id = testQuestionExcelDTO.getId();
+        this.code = testQuestionExcelDTO.getCode();
+        this.name = testQuestionExcelDTO.getName();
+        this.seatType = testQuestionExcelDTO.getSeatType();
+        this.url = testQuestionExcelDTO.getUrl();
+        this.testTime = testQuestionExcelDTO.getTestTime();
+    }
 
 
 }

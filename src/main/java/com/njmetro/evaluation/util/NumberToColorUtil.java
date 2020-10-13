@@ -8,10 +8,10 @@ package com.njmetro.evaluation.util;
  */
 public class NumberToColorUtil {
 
-    public static final String readyColor = "background-color: #00baff";
-    public static final String testColor = "background-color: #3de7c9";
-    public static final String breakColor = "background-color: #ffc530";
-    public static final String endColor = "background-color: #ffffff";
+    public static final String readyColor = "#00baff";
+    public static final String testColor = "#3de7c9";
+    public static final String breakColor = "#ffc530";
+    public static final String endColor = "#ffffff";
 
     /**
      * 根据 number(1-4) 转换为对应的状态

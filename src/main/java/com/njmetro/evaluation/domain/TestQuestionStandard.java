@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import java.time.LocalDateTime;
 import com.baomidou.mybatisplus.annotation.TableField;
 import java.io.Serializable;
+
+import com.njmetro.evaluation.dto.TestQuestionStandardExcelDTO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -79,6 +81,20 @@ public class TestQuestionStandard implements Serializable {
      */
     @TableField("update_time")
     private LocalDateTime updateTime;
+
+    public TestQuestionStandard(){}
+
+    public TestQuestionStandard(TestQuestionStandardExcelDTO testQuestionStandardDTO){
+        this.testQuestionId = testQuestionStandardDTO.getTestQuestionId();
+        this.text = testQuestionStandardDTO.getText();
+        this.point = testQuestionStandardDTO.getPoint();
+        this.score = testQuestionStandardDTO.getScore();
+        this.standard = testQuestionStandardDTO.getStandard();
+        // 默认步长为 0.5
+        this.step = 0.5;
+
+    }
+
 
 
 }
