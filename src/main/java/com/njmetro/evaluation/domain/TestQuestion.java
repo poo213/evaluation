@@ -63,6 +63,11 @@ public class TestQuestion implements Serializable {
      */
     @TableField("test_time")
     private Integer testTime;
+    /**
+     * 读题时长
+     */
+    @TableField("read_time")
+    private Integer readTime;
 
     /**
      * 创建时间

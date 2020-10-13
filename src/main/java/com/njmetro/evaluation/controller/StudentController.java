@@ -156,6 +156,7 @@ public class StudentController {
             }
 
             QueryWrapper<Student> studentQueryWrapper = new QueryWrapper<>();
+            //获取考生
             studentQueryWrapper.eq("company_name", company.getName());
             List<Student> studentList = studentService.list(studentQueryWrapper);//获取地铁的参赛选手
             log.info("地铁编号：{}", company.getDrawResult());
