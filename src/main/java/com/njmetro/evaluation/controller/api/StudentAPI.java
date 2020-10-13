@@ -118,7 +118,40 @@ public class StudentAPI {
         log.info("考题id：{}", questionDrawService.getOne(questionDrawQueryWrapper).getQuestionId());//考题Id
         QueryWrapper<TestQuestion> testQuestionQueryWrapper = new QueryWrapper<>();
         testQuestionQueryWrapper.eq("id", questionDrawService.getOne(questionDrawQueryWrapper).getQuestionId());
-        TestQuestion testQuestion  = testQuestionService.getOne(testQuestionQueryWrapper);
+        TestQuestion testQuestion = testQuestionService.getOne(testQuestionQueryWrapper);
+        String url = testQuestion.getUrl();
+        log.info("获取考题的{}", url);
+        //todo
+        QuestionVO questionVO = new QuestionVO();
+        questionVO.setUrl(DOWNLOAD_BASE_URL + "/pdf/" + url);
+        questionVO.setQuestionName(testQuestion.getName());
+        questionVO.setReadTime(testQuestion.getReadTime());
+        questionVO.setTestTime(testQuestion.getTestTime());
+        return questionVO;
+    }
+
+    /**
+     * 获取url 试题的相关信息
+     */
+    @GetMapping("/getUrlNew")
+    public QuestionVO getUrlNew(HttpServletRequest httpServletRequest) {
+        Config config = configService.getById(1);//获取当前的场次和轮次
+        String ipAddress = IpUtil.getIpAddr(httpServletRequest);
+        if (ipAddress.equals("0:0:0:0:0:0:0:1")) {
+            ipAddress = "192.168.96.9";
+        }
+        ipAddress = "192.168.96.9";
+        log.info("调用次接口的IP:{}", ipAddress);
+        QueryWrapper<Pad> padQueryWrapper = new QueryWrapper<>();
+        padQueryWrapper.eq("ip", ipAddress).eq("type", 1);
+        Pad pad = padService.getOne(padQueryWrapper);//获取对应pad
+        System.out.println(pad);
+        QueryWrapper<QuestionDraw> questionDrawQueryWrapper = new QueryWrapper<>();
+        questionDrawQueryWrapper.eq("game_number", config.getGameRound()).eq("game_type", SeatUtil.getGameTypeByStudentSeatId(pad.getSeatId()));
+        log.info("考题id：{}", questionDrawService.getOne(questionDrawQueryWrapper).getQuestionId());//考题Id
+        QueryWrapper<TestQuestion> testQuestionQueryWrapper = new QueryWrapper<>();
+        testQuestionQueryWrapper.eq("id", questionDrawService.getOne(questionDrawQueryWrapper).getQuestionId());
+        TestQuestion testQuestion = testQuestionService.getOne(testQuestionQueryWrapper);
         String url = testQuestion.getUrl();
         log.info("获取考题的{}", url);
         //todo
