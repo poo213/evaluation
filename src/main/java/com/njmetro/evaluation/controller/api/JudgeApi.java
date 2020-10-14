@@ -49,18 +49,10 @@ public class JudgeApi {
      * @return
      */
     @GetMapping("/getJudgeInfo")
-    public JudgeInformationVO getJudgeInformation(HttpServletRequest httpServletRequest) {
-        String ipAddress = IpUtil.getIpAddr(httpServletRequest);
-        /**
-         * TODO : 删除
-         */
-        ipAddress = "192.168.97.17";
-        QueryWrapper<Pad> padQueryWrapper = new QueryWrapper<>();
-        padQueryWrapper.eq("ip", ipAddress)
-                .eq("type", 2);
-        Pad pad = padService.getOne(padQueryWrapper);
-        Config config = configService.getById(1);
-
+    public JudgeInformationVO getJudgeInformation(@RequestAttribute("pad") Pad pad,@RequestAttribute("ip") String ip,@RequestAttribute("config") Config config) {
+        log.info("获取到拦截器pad {} ",pad);
+        log.info("获取到拦截器ip {} ",ip);
+        log.info("获取到拦截器config {} ",config);
         Integer studentSeatId = SeatUtil.getStudentSeatIdByJudgeSeatId(pad.getSeatId());
         // 根据 studentSeatId 场次 和 轮次 在 seat_draw 中查找 studentId
         QueryWrapper<SeatDraw> seatDrawQueryWrapper = new QueryWrapper<>();
@@ -75,9 +67,7 @@ public class JudgeApi {
             log.info("没有找到studentId");
             throw new JudgeApiException("没有找到studentId");
         }
-
-
-        List<JudgeInfoDTO> judgeInfoDTOList = judgeService.getJudgeInfo(ipAddress);
+        List<JudgeInfoDTO> judgeInfoDTOList = judgeService.getJudgeInfo(ip);
         if (!judgeInfoDTOList.isEmpty()) {
             JudgeInformationVO judgeInformationVO = new JudgeInformationVO(judgeInfoDTOList.get(0), config.getGameNumber(), config.getGameRound(),studentId);
             return judgeInformationVO;
@@ -88,17 +78,8 @@ public class JudgeApi {
 
 
     @GetMapping("/pauseOrStart")
-    public StudentStateVO pauseOrStart(HttpServletRequest httpServletRequest) {
-     /*   Config config = configService.getById(1);
-        String ipAddress = IpUtil.getIpAddr(httpServletRequest);
-        *//**
-         *  TODO 去掉 ip值
-         *//*
-        ipAddress = "192.168.97.17";
-        QueryWrapper<Pad> padQueryWrapper = new QueryWrapper<>();
-        padQueryWrapper.eq("ip", ipAddress)
-                .eq("type", 2);
-        Pad pad = padService.getOne(padQueryWrapper);
+    public StudentStateVO pauseOrStart(@RequestAttribute("pad") Pad pad,@RequestAttribute("config")Config config) {
+
         Integer studentSeatId = SeatUtil.getStudentSeatIdByJudgeSeatId(pad.getSeatId());
         // 根据 studentSeatId 场次 和 轮次 在 seat_draw 中查找 studentId
         QueryWrapper<SeatDraw> seatDrawQueryWrapper = new QueryWrapper<>();
@@ -111,8 +92,8 @@ public class JudgeApi {
             throw new JudgeApiException("没有找到考生状态信息");
         }else {
             return new StudentStateVO(seatDraw.getState(),seatDraw.getRemainingTime());
-        }*/
-        return new StudentStateVO(2,1000);
+        }
+        //return new StudentStateVO(2,1000);
     }
 
     /**
@@ -121,16 +102,8 @@ public class JudgeApi {
      * @return
      */
     @GetMapping("/beReady")
-    public Boolean getBeReady(HttpServletRequest httpServletRequest) {
-        String ipAddress = IpUtil.getIpAddr(httpServletRequest);
-        /**
-         *  TODO 去掉 ip值
-         */
-        ipAddress = "192.168.97.17";
-        // 根据 ip 查询pad信息
-        QueryWrapper<Pad> padQueryWrapper = new QueryWrapper<>();
-        padQueryWrapper.eq("ip", ipAddress);
-        Pad pad = padService.getOne(padQueryWrapper);
+    public Boolean getBeReady(@RequestAttribute("pad") Pad pad) {
+        log.info("pad: {}",pad);
         // 通过padId 在 JudgeDrawResult 中找到对应的记录
         QueryWrapper<JudgeDrawResult> judgeDrawResultQueryWrapper = new QueryWrapper<>();
         judgeDrawResultQueryWrapper.eq("pad_id", pad.getId());
@@ -146,65 +119,49 @@ public class JudgeApi {
      * @return
      */
     @GetMapping("/getScoringCriteria")
-    public TestQuestionStandardResultVO getScoringCriteria(HttpServletRequest httpServletRequest) {
-        String ipAddress = IpUtil.getIpAddr(httpServletRequest);
-        /**
-         * TODO : 删除
-         */
-        ipAddress = "192.168.97.17";
-        // 根据 ip 获取 padId
-        QueryWrapper<Pad> padQueryWrapper = new QueryWrapper<>();
-        padQueryWrapper.eq("ip", ipAddress)
-                .eq("type", 2);
-        Pad pad = padService.getOne(padQueryWrapper);
-        if (pad == null) {
-            log.info("ip 错误 ！");
-            throw new JudgeApiException("ip 错误 ！没有找到任何结果！！");
-        } else {
-            Config config = configService.getById(1);
-            Integer studentSeatId = SeatUtil.getStudentSeatIdByJudgeSeatId(pad.getSeatId());
-            // 根据 studentSeatId 场次 和 轮次 在 seat_draw 中查找 studentId
-            QueryWrapper<SeatDraw> seatDrawQueryWrapper = new QueryWrapper<>();
-            seatDrawQueryWrapper.eq("game_number",config.getGameNumber())
-                    .eq("game_round",config.getGameRound())
-                    .eq("seat_id",studentSeatId);
-            SeatDraw seatDraw = seatDrawService.getOne(seatDrawQueryWrapper);
-            Integer studentId = 0;
-            if(seatDraw != null){
-                studentId = seatDraw.getStudentId();
-            }else {
-                log.info("没有找到studentId");
-                throw new JudgeApiException("没有找到studentId");
-            }
+    public TestQuestionStandardResultVO getScoringCriteria(@RequestAttribute("pad") Pad pad,@RequestAttribute("config") Config config) {
+        Integer studentSeatId = SeatUtil.getStudentSeatIdByJudgeSeatId(pad.getSeatId());
+        // 根据 studentSeatId 场次 和 轮次 在 seat_draw 中查找 studentId
+        QueryWrapper<SeatDraw> seatDrawQueryWrapper = new QueryWrapper<>();
+        seatDrawQueryWrapper.eq("game_number",config.getGameNumber())
+                .eq("game_round",config.getGameRound())
+                .eq("seat_id",studentSeatId);
+        SeatDraw seatDraw = seatDrawService.getOne(seatDrawQueryWrapper);
+        Integer studentId = 0;
+        if(seatDraw != null){
+            studentId = seatDraw.getStudentId();
+        }else {
+            log.info("没有找到studentId");
+            throw new JudgeApiException("没有找到studentId");
+        }
 
-            // 根据padId 获取裁判Id
-            QueryWrapper<JudgeDrawResult> judgeDrawResultQueryWrapper = new QueryWrapper<>();
-            judgeDrawResultQueryWrapper.eq("pad_id", pad.getId());
-            JudgeDrawResult judgeDrawResult = judgeDrawResultService.getOne(judgeDrawResultQueryWrapper);
-            Integer judgeId = judgeDrawResult.getJudgeId();
-            // 根据 场次 和 考生所在位置 在 question 中获取 赛题信息
-            QueryWrapper<QuestionDraw> questionDrawQueryWrapper = new QueryWrapper<>();
-            questionDrawQueryWrapper.eq("game_number", config.getGameNumber())
-                    .eq("game_type", SeatUtil.getGameTypeByStudentSeatId(studentSeatId));
-            QuestionDraw questionDraw = questionDrawService.getOne(questionDrawQueryWrapper);
-            if (questionDraw == null) {
-                log.info("没有找到考题");
-                throw new JudgeApiException("没有找到考题");
-            } else {
-                // 根据 试题 id 在 test_question_standard 中找到判题标准
-                QueryWrapper<TestQuestionStandard> questionStandardQueryWrapper = new QueryWrapper<>();
-                questionStandardQueryWrapper.eq("test_question_id", questionDraw.getQuestionId());
-                List<TestQuestionStandard> testQuestionStandardList = testQuestionStandardService.list(questionStandardQueryWrapper);
-                // 将结果进行封装
-                List<TestQuestionStandardVO> testQuestionStandardVOList = new ArrayList<>();
-                for (TestQuestionStandard testQuestionStandard : testQuestionStandardList) {
-                    TestQuestionStandardVO testQuestionStandardVO = new TestQuestionStandardVO(testQuestionStandard);
-                    testQuestionStandardVOList.add(testQuestionStandardVO);
-                }
-                // 根据试题id 获取 试题名称
-                String testName = testQuestionService.getById(questionDraw.getQuestionId()).getName();
-                return new TestQuestionStandardResultVO(testQuestionStandardVOList, testName, questionDraw.getQuestionId(), judgeId,studentId);
+        // 根据padId 获取裁判Id
+        QueryWrapper<JudgeDrawResult> judgeDrawResultQueryWrapper = new QueryWrapper<>();
+        judgeDrawResultQueryWrapper.eq("pad_id", pad.getId());
+        JudgeDrawResult judgeDrawResult = judgeDrawResultService.getOne(judgeDrawResultQueryWrapper);
+        Integer judgeId = judgeDrawResult.getJudgeId();
+        // 根据 场次 和 考生所在位置 在 question 中获取 赛题信息
+        QueryWrapper<QuestionDraw> questionDrawQueryWrapper = new QueryWrapper<>();
+        questionDrawQueryWrapper.eq("game_number", config.getGameNumber())
+                .eq("game_type", SeatUtil.getGameTypeByStudentSeatId(studentSeatId));
+        QuestionDraw questionDraw = questionDrawService.getOne(questionDrawQueryWrapper);
+        if (questionDraw == null) {
+            log.info("没有找到考题");
+            throw new JudgeApiException("没有找到考题");
+        } else {
+            // 根据 试题 id 在 test_question_standard 中找到判题标准
+            QueryWrapper<TestQuestionStandard> questionStandardQueryWrapper = new QueryWrapper<>();
+            questionStandardQueryWrapper.eq("test_question_id", questionDraw.getQuestionId());
+            List<TestQuestionStandard> testQuestionStandardList = testQuestionStandardService.list(questionStandardQueryWrapper);
+            // 将结果进行封装
+            List<TestQuestionStandardVO> testQuestionStandardVOList = new ArrayList<>();
+            for (TestQuestionStandard testQuestionStandard : testQuestionStandardList) {
+                TestQuestionStandardVO testQuestionStandardVO = new TestQuestionStandardVO(testQuestionStandard);
+                testQuestionStandardVOList.add(testQuestionStandardVO);
             }
+            // 根据试题id 获取 试题名称
+            String testName = testQuestionService.getById(questionDraw.getQuestionId()).getName();
+            return new TestQuestionStandardResultVO(testQuestionStandardVOList, testName, questionDraw.getQuestionId(), judgeId, studentId);
         }
     }
 
@@ -289,32 +246,21 @@ public class JudgeApi {
     /**
      * 根据ip 获取 赛位和赛组信息
      *
-     * @param httpServletRequest
+     * @param pad
      * @return
      */
     @GetMapping("/getPadSeatInfo")
-    public PadSeatInfoVO getPadSeatInfo(HttpServletRequest httpServletRequest) {
-        String ipAddress = IpUtil.getIpAddr(httpServletRequest);
-        ipAddress = "192.168.96.7";
-        log.info("ipAddress {}", ipAddress);
-        QueryWrapper<Pad> padQueryWrapper = new QueryWrapper<>();
-        padQueryWrapper.eq("ip", ipAddress);
-        Pad pad = padService.getOne(padQueryWrapper);
-        if (pad == null) {
-            throw new PadException("根据IP 未能找到匹配的pad");
+    public PadSeatInfoVO getPadSeatInfo(@RequestAttribute("pad") Pad pad) {
+        PadSeatInfoVO padSeatInfoVO = new PadSeatInfoVO();
+        padSeatInfoVO.setPadId(pad.getId());
+        padSeatInfoVO.setSeatId(pad.getSeatId());
+        if (pad.getType() == 1) {
+            padSeatInfoVO.setPadType("考生pad");
+            padSeatInfoVO.setGroupId(SeatUtil.getGroupIdByStudentSeatId(pad.getSeatId()));
         } else {
-            PadSeatInfoVO padSeatInfoVO = new PadSeatInfoVO();
-            padSeatInfoVO.setPadId(pad.getId());
-            padSeatInfoVO.setSeatId(pad.getSeatId());
-            if (pad.getType() == 1) {
-                padSeatInfoVO.setPadType("考生pad");
-                padSeatInfoVO.setGroupId(SeatUtil.getGroupIdByStudentSeatId(pad.getSeatId()));
-            } else {
-                padSeatInfoVO.setPadType("裁判pad");
-                padSeatInfoVO.setGroupId(SeatUtil.getGroupIdByJudgeSeatId(pad.getSeatId()));
-            }
-            return padSeatInfoVO;
+            padSeatInfoVO.setPadType("裁判pad");
+            padSeatInfoVO.setGroupId(SeatUtil.getGroupIdByJudgeSeatId(pad.getSeatId()));
         }
+        return padSeatInfoVO;
     }
-
 }
