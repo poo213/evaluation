@@ -12,6 +12,7 @@ import com.njmetro.evaluation.vo.SignVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.RestController;
@@ -39,26 +40,27 @@ public class CodeStateController {
     /**
      * 前端轮询调用
      *
-     * @param httpServletRequest
+     * @param
      */
     @GetMapping("/getInfoAndSign")
-    public SignVO getInfoAndSign(HttpServletRequest httpServletRequest) {
-        String ipAddress = IpUtil.getIpAddr(httpServletRequest);//获取IP
-        if (ipAddress.equals("0:0:0:0:0:0:0:1")) {
-            ipAddress = "192.168.99.9";
-        }
-        ipAddress = "192.168.99.9";//模拟ip，进入候考区，备考区，离场，3台设备ip
-        log.info("调用次接口的IP:{}", ipAddress);
+    public SignVO getInfoAndSign(@RequestAttribute("ip") String ip) {
+//        String ipAddress = IpUtil.getIpAddr(httpServletRequest);//获取IP
+//        if (ipAddress.equals("0:0:0:0:0:0:0:1")) {
+//            ipAddress = "192.168.99.9";
+//        }
+//        ipAddress = "192.168.99.9";//模拟ip，进入候考区，备考区，离场，3台设备ip
+//        log.info("调用次接口的IP:{}", ipAddress);
+        log.info("获取到拦截器ip {} ",ip);
         List<String> ipListOne = codeStateService.getIpList(3);
         List<String> ipListTwo = codeStateService.getIpList(4);
         List<String> ipListAway = codeStateService.getIpList(5);
         log.info("候考区扫码枪ip：{}",ipListOne.toString());
         log.info("备考区扫码枪ip：{}",ipListTwo.toString());
         log.info("离开考场扫码枪ip：{}",ipListAway.toString());
-        if (ipListOne.contains(ipAddress)){
-            log.info("进入候考区pad签到:{}", ipAddress);
+        if (ipListOne.contains(ip)){
+            log.info("进入候考区pad签到:{}", ip);
             QueryWrapper<CodeState> queryWrapper = new QueryWrapper<>();
-            queryWrapper.eq("ip", ipAddress).eq("state", 0);
+            queryWrapper.eq("ip", ip).eq("state", 0);
             List<CodeState> codeStateList = codeStateService.list(queryWrapper);
             if (codeStateList.size() > 0)//每次只取一个
             {
@@ -83,10 +85,10 @@ public class CodeStateController {
             } else {
                 return null;
             }
-        } else if (ipListTwo.contains(ipAddress)) {
-            log.info("进入备考考区pad签到:{}", ipAddress);
+        } else if (ipListTwo.contains(ip)) {
+            log.info("进入备考考区pad签到:{}", ip);
             QueryWrapper<CodeState> queryWrapper = new QueryWrapper<>();
-            queryWrapper.eq("ip", ipAddress).eq("state", 0);
+            queryWrapper.eq("ip", ip).eq("state", 0);
             List<CodeState> codeStateList = codeStateService.list(queryWrapper);
             if (codeStateList.size() > 0)//每次只取一个
             {
@@ -111,10 +113,10 @@ public class CodeStateController {
             } else {
                 return null;
             }
-        } else if (ipListAway.contains(ipAddress)) {
-            log.info("离开考区pad签出:{}", ipAddress);
+        } else if (ipListAway.contains(ip)) {
+            log.info("离开考区pad签出:{}", ip);
             QueryWrapper<CodeState> queryWrapper = new QueryWrapper<>();
-            queryWrapper.eq("ip", ipAddress).eq("state", 0);
+            queryWrapper.eq("ip", ip).eq("state", 0);
             List<CodeState> codeStateList = codeStateService.list(queryWrapper);
             if (codeStateList.size() > 0)//每次只取一个
             {
