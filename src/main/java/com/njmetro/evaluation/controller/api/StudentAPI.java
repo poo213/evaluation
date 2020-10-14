@@ -15,10 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.apache.bcel.classfile.Code;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -51,8 +48,9 @@ public class StudentAPI {
      * @return 当前场次和轮次
      */
     @GetMapping("/getConfig")
-    public Config getConfig() {
-        return configService.getById(1);//获取当前的场次和轮次
+    public Config getConfig(@RequestAttribute("config") Config config) {
+        log.info("获取到拦截器config {} ",config);
+        return config;//获取当前的场次和轮次
     }
 
     /**
@@ -61,23 +59,25 @@ public class StudentAPI {
      */
     @GetMapping("/getStudentInfo")
     @Transactional
-    public StudentInfo getStudentInfo(@RequestParam("QRcode") String QRcode, HttpServletRequest httpServletRequest) {
-        Config config = configService.getById(1);//获取当前的场次和轮次
-        String ipAddress = IpUtil.getIpAddr(httpServletRequest);
-        if (ipAddress.equals("0:0:0:0:0:0:0:1")) {
-            ipAddress = "192.168.96.9";
-        }
-        ipAddress = "192.168.96.9";
-        QueryWrapper<Pad> padQueryWrapper = new QueryWrapper<>();
-        padQueryWrapper.eq("ip", ipAddress).eq("type", 1);
+    public StudentInfo getStudentInfo(@RequestParam("QRcode") String QRcode, @RequestAttribute("ip") String ip,@RequestAttribute("config") Config config,@RequestAttribute("pad") Pad pad) {
+        log.info("获取到拦截器pad {} ",pad);
+        log.info("获取到拦截器ip {} ",ip);
+        log.info("获取到拦截器config {} ",config);
+//        String ipAddress = IpUtil.getIpAddr(httpServletRequest);
+//        if (ipAddress.equals("0:0:0:0:0:0:0:1")) {
+//            ipAddress = "192.168.96.9";
+//        }
+//        ipAddress = "192.168.96.9";
+//        QueryWrapper<Pad> padQueryWrapper = new QueryWrapper<>();
+//        padQueryWrapper.eq("ip", ip).eq("type", 1);
+//
+//        Pad pad = padService.getOne(padQueryWrapper);
 
-        Pad pad = padService.getOne(padQueryWrapper);
-        log.info("调用次接口的IP:{}", ipAddress);
         QueryWrapper<SeatDraw> seatDrawQueryWrapper = new QueryWrapper<>();
         seatDrawQueryWrapper.eq("seat_id", pad.getSeatId())
                 .eq("game_number", config.getGameNumber()).eq("game_round", config.getGameRound());
         SeatDraw seatDraw = seatDrawService.getOne(seatDrawQueryWrapper);//获取当前场次，轮次，赛位上考生信息
-        log.info("seatdraw：{}", seatDraw);
+        log.info("赛位信息：{}", seatDraw);
         QueryWrapper<Student> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("two_dimensional_code", QRcode);
         Student student = studentService.getOne(queryWrapper);
@@ -101,18 +101,20 @@ public class StudentAPI {
      * 获取url 试题的相关信息
      */
     @GetMapping("/getUrl")
-    public QuestionVO getUrl(HttpServletRequest httpServletRequest) {
-        Config config = configService.getById(1);//获取当前的场次和轮次
-        String ipAddress = IpUtil.getIpAddr(httpServletRequest);
-        if (ipAddress.equals("0:0:0:0:0:0:0:1")) {
-            ipAddress = "192.168.96.9";
-        }
-        ipAddress = "192.168.96.9";
-        log.info("调用次接口的IP:{}", ipAddress);
-        QueryWrapper<Pad> padQueryWrapper = new QueryWrapper<>();
-        padQueryWrapper.eq("ip", ipAddress).eq("type", 1);
-        Pad pad = padService.getOne(padQueryWrapper);//获取对应pad
-        System.out.println(pad);
+    public QuestionVO getUrl(@RequestAttribute("ip") String ip,@RequestAttribute("config") Config config,@RequestAttribute("pad") Pad pad) {
+//        Config config = configService.getById(1);//获取当前的场次和轮次
+//        String ipAddress = IpUtil.getIpAddr(httpServletRequest);
+//        if (ipAddress.equals("0:0:0:0:0:0:0:1")) {
+//            ipAddress = "192.168.96.9";
+//        }
+//        ipAddress = "192.168.96.9";
+//        log.info("调用次接口的IP:{}", ipAddress);
+//        QueryWrapper<Pad> padQueryWrapper = new QueryWrapper<>();
+//        padQueryWrapper.eq("ip", ipAddress).eq("type", 1);
+//        Pad pad = padService.getOne(padQueryWrapper);//获取对应pad
+        log.info("获取到拦截器pad {} ",pad);
+        log.info("获取到拦截器ip {} ",ip);
+        log.info("获取到拦截器config {} ",config);
         QueryWrapper<QuestionDraw> questionDrawQueryWrapper = new QueryWrapper<>();
         questionDrawQueryWrapper.eq("game_number", config.getGameRound()).eq("game_type", SeatUtil.getGameTypeByStudentSeatId(pad.getSeatId()));
         log.info("考题id：{}", questionDrawService.getOne(questionDrawQueryWrapper).getQuestionId());//考题Id
@@ -131,7 +133,7 @@ public class StudentAPI {
     }
 
     /**
-     * 获取url 试题的相关信息
+     * 获取url 试题的相关信息，暂时不用
      */
     @GetMapping("/getUrlNew")
     public QuestionVO getUrlNew(HttpServletRequest httpServletRequest) {
@@ -166,22 +168,24 @@ public class StudentAPI {
     /**
      * @param type               0表示暂停，1表示开始
      * @param remainingTime      用时
-     * @param httpServletRequest
+     * @param
      * @return
      */
     @GetMapping("/pauseOrStart")
-    public PauseOrStartVO pauseOrStart(@RequestParam("type") Integer type, @RequestParam("remainingTime") Integer remainingTime, Integer gameNumber, Integer gameRound, HttpServletRequest httpServletRequest) {
+    public PauseOrStartVO pauseOrStart(@RequestParam("type") Integer type, @RequestParam("remainingTime") Integer remainingTime, Integer gameNumber, Integer gameRound, @RequestAttribute("config") Config config,@RequestAttribute("pad") Pad pad) {
         //获取当前的场次和轮次
-        //Config config = configService.getById(1);
-        String ipAddress = IpUtil.getIpAddr(httpServletRequest);
-        if (ipAddress.equals("0:0:0:0:0:0:0:1")) {
-            ipAddress = "192.168.96.9";
-        }
-        ipAddress = "192.168.96.9";
-        QueryWrapper<Pad> padQueryWrapper = new QueryWrapper<>();
-        padQueryWrapper.eq("ip", ipAddress).eq("type", 1);
-        Pad pad = padService.getOne(padQueryWrapper);
-        log.info("调用暂停or开始接口的IP:{}", ipAddress);
+//        //Config config = configService.getById(1);
+//        String ipAddress = IpUtil.getIpAddr(httpServletRequest);
+//        if (ipAddress.equals("0:0:0:0:0:0:0:1")) {
+//            ipAddress = "192.168.96.9";
+//        }
+//        ipAddress = "192.168.96.9";
+//        QueryWrapper<Pad> padQueryWrapper = new QueryWrapper<>();
+//        padQueryWrapper.eq("ip", ipAddress).eq("type", 1);
+//        Pad pad = padService.getOne(padQueryWrapper);
+//        log.info("调用暂停or开始接口的IP:{}", ipAddress);
+        log.info("获取到拦截器pad {} ",pad);
+        log.info("获取到拦截器config {} ",config);
         QueryWrapper<SeatDraw> seatDrawQueryWrapper = new QueryWrapper<>();
         seatDrawQueryWrapper.eq("seat_id", pad.getSeatId())
                 .eq("game_number", gameNumber)
@@ -224,48 +228,37 @@ public class StudentAPI {
      * @return
      */
     @GetMapping("/finishTest")
-    public Boolean finishTest(Integer gameNumber, Integer gameRound, Integer remainingTime, HttpServletRequest httpServletRequest) {
-        String ipAddress = IpUtil.getIpAddr(httpServletRequest);
-        if (ipAddress.equals("0:0:0:0:0:0:0:1")) {
-            ipAddress = "192.168.96.9";
-        }
-        ipAddress = "192.168.96.9";
-        QueryWrapper<Pad> padQueryWrapper = new QueryWrapper<>();
-        padQueryWrapper.eq("ip", ipAddress).eq("type", 1);
-        Pad pad = padService.getOne(padQueryWrapper);
-        log.info("调用次接口的IP:{}", ipAddress);
+    public Boolean finishTest(Integer gameNumber, Integer gameRound, Integer remainingTime, @RequestAttribute("pad") Pad pad,@RequestAttribute("config") Config config) {
+        log.info("获取到拦截器pad {} ",pad);
+        log.info("获取到拦截器config {} ",config);
         UpdateWrapper<SeatDraw> seatDrawUpdateWrapper = new UpdateWrapper<>();
         seatDrawUpdateWrapper.eq("seat_id", pad.getSeatId())
                 .eq("game_number", gameNumber)
                 .eq("game_round", gameRound)
                 .set("use_time", 1200 - remainingTime)
                 .set("remaining_time", remainingTime)
-                .set("state", 4);//选手准备就绪s
+                .set("state", 4);//选手完成考试
         return seatDrawService.update(seatDrawUpdateWrapper);
     }
 
     /**
      * 考生就绪
-     *
-     * @param id         学生ID
      * @param gameNumber 场次
      * @param gameRound  轮次
      * @return
      */
     @GetMapping("/beReday")
-    public Boolean beReday(Integer id, Integer gameNumber, Integer gameRound, HttpServletRequest httpServletRequest) {
-//        Config config = configService.getById(1);//获取当前的场次和轮次
-        String ipAddress = IpUtil.getIpAddr(httpServletRequest);
-        if (ipAddress.equals("0:0:0:0:0:0:0:1")) {
-            ipAddress = "192.168.96.9";
-        }
-        ipAddress = "192.168.96.9";
-        QueryWrapper<Pad> padQueryWrapper = new QueryWrapper<>();
-        padQueryWrapper.eq("ip", ipAddress).eq("type", 1);
-
-        Pad pad = padService.getOne(padQueryWrapper);
-
-        log.info("调用次接口的IP:{}", ipAddress);
+    public Boolean beReday(Integer gameNumber, Integer gameRound,@RequestAttribute("pad") Pad pad) {
+////        Config config = configService.getById(1);//获取当前的场次和轮次
+//        String ipAddress = IpUtil.getIpAddr(httpServletRequest);
+//        if (ipAddress.equals("0:0:0:0:0:0:0:1")) {
+//            ipAddress = "192.168.96.9";
+//        }
+//        ipAddress = "192.168.96.9";
+//        QueryWrapper<Pad> padQueryWrapper = new QueryWrapper<>();
+//        padQueryWrapper.eq("ip", ipAddress).eq("type", 1);
+//
+//        Pad pad = padService.getOne(padQueryWrapper);
         UpdateWrapper<SeatDraw> seatDrawUpdateWrapper = new UpdateWrapper<>();
         seatDrawUpdateWrapper.eq("seat_id", pad.getSeatId())
                 .eq("game_number", gameNumber)
@@ -275,21 +268,22 @@ public class StudentAPI {
     }
 
     @GetMapping("/writeQRcode")
-    public Boolean writeQRcode(@RequestParam("qrcode") String qrcode, HttpServletRequest httpServletRequest) {
-        String ipAddress = IpUtil.getIpAddr(httpServletRequest);
+    public Boolean writeQRcode(@RequestParam("qrcode") String qrcode, @RequestAttribute("ip") String ip) {
+//        String ipAddress = IpUtil.getIpAddr(httpServletRequest);
 //        if (ipAddress.equals("0:0:0:0:0:0:0:1")) {
 //            ipAddress = "192.168.96.9";
 //        }
 //        ipAddress = "192.168.96.9";
+        log.info("获取到拦截器ip {} ",ip);
         QueryWrapper<CodeState> codeStateQueryWrapper = new QueryWrapper<>();
-        codeStateQueryWrapper.eq("two_dimensional_code", qrcode).eq("state", 0).eq("ip", ipAddress);
+        codeStateQueryWrapper.eq("two_dimensional_code", qrcode).eq("state", 0).eq("ip", ip);
         List<CodeState> codeStateList = codeStateService.list(codeStateQueryWrapper);
         if (codeStateList.size() != 0) {
             log.info("本条扫码信息已存在！");
             return true;
         } else {
             CodeState codeState = new CodeState();
-            codeState.setIp(ipAddress);
+            codeState.setIp(ip);
             codeState.setTwoDimensionalCode(qrcode);
             codeState.setState(0);
             return codeStateService.save(codeState);
