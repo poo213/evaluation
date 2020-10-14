@@ -123,7 +123,7 @@ public class StudentAPI {
         log.info("获取考题的{}", url);
         //todo
         QuestionVO questionVO = new QuestionVO();
-        questionVO.setUrl(DOWNLOAD_BASE_URL + "/pdf/" + url);
+        questionVO.setUrl(DOWNLOAD_BASE_URL + "pdf/" + url);
         questionVO.setQuestionName(testQuestion.getName());
         questionVO.setReadTime(testQuestion.getReadTime());
         questionVO.setTestTime(testQuestion.getTestTime());
