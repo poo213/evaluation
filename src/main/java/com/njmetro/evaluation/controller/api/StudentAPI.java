@@ -275,9 +275,10 @@ public class StudentAPI {
 //        }
 //        ipAddress = "192.168.96.9";
         log.info("获取到拦截器ip {} ",ip);
-        log.info("获取到拦截器qrcode {} ",qrcode);
+        log.info("扫码枪二维码打印 {} ",qrcode);
         QueryWrapper<CodeState> codeStateQueryWrapper = new QueryWrapper<>();
-        codeStateQueryWrapper.eq("two_dimensional_code", qrcode).eq("state", 0).eq("ip", ip);
+        //已经扫码，包含确认的和未确认的
+        codeStateQueryWrapper.eq("two_dimensional_code", qrcode).eq("ip", ip).eq("state", 0).or().eq("state", 1);
         List<CodeState> codeStateList = codeStateService.list(codeStateQueryWrapper);
         if (codeStateList.size() != 0) {
             log.info("本条扫码信息已存在！");

@@ -89,6 +89,33 @@ public class StudentController {
     public List<Student> getStudentList() {
         return studentService.list();
     }
+    /**
+     * 获取待进入候考区的考生列表，此处针对已报到考生
+     */
+    @GetMapping("/getStudentListHaveRegister ")
+    public List<Student> getStudentListHaveRegister() {
+        QueryWrapper<Student> studentQueryWrapper = new QueryWrapper<>();
+        studentQueryWrapper.eq("sign_state",1);
+        return studentService.list(studentQueryWrapper);
+    }
+    /**
+     * 获取已进入候考区的考生列表
+     */
+    @GetMapping("/getStudentListHaveSignOne ")
+    public List<Student> getStudentListHaveSignOne() {
+        QueryWrapper<Student> studentQueryWrapper = new QueryWrapper<>();
+        studentQueryWrapper.eq("sign_state",2);
+        return studentService.list(studentQueryWrapper);
+    }
+    /**
+     * 获取考试中的考生列表
+     */
+    @GetMapping("/getStudentListHaveInTest ")
+    public List<Student> getStudentListHaveInTest() {
+        QueryWrapper<Student> studentQueryWrapper = new QueryWrapper<>();
+        studentQueryWrapper.eq("sign_state",3);
+        return studentService.list(studentQueryWrapper);
+    }
 
     /**
      * 考生签到
@@ -157,7 +184,7 @@ public class StudentController {
 
             QueryWrapper<Student> studentQueryWrapper = new QueryWrapper<>();
             //获取考生
-            studentQueryWrapper.eq("company_name", company.getName());
+            studentQueryWrapper.eq("company_name", company.getName()).eq("sign_state",1);
             List<Student> studentList = studentService.list(studentQueryWrapper);//获取地铁的参赛选手
             log.info("地铁编号：{}", company.getDrawResult());
             log.info("考生数目：{}", studentList.size());
