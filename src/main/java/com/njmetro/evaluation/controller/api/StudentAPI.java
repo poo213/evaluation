@@ -49,7 +49,7 @@ public class StudentAPI {
      */
     @GetMapping("/getConfig")
     public Config getConfig(@RequestAttribute("config") Config config) {
-        log.info("获取到拦截器config {} ",config);
+        log.info("getConfig -- 获取到拦截器config {} ",config);
         return config;//获取当前的场次和轮次
     }
 
@@ -61,9 +61,9 @@ public class StudentAPI {
     @GetMapping("/getStudentInfo")
     @Transactional
     public StudentInfo getStudentInfo(@RequestParam("QRcode") String QRcode, @RequestAttribute("ip") String ip,@RequestAttribute("config") Config config,@RequestAttribute("pad") Pad pad) {
-        log.info("获取到拦截器pad {} ",pad);
-        log.info("获取到拦截器ip {} ",ip);
-        log.info("获取到拦截器config {} ",config);
+        log.info("getStudentInfo -- 获取到拦截器pad {} ",pad);
+        log.info("getStudentInfo -- 获取到拦截器ip {} ",ip);
+        log.info("getStudentInfo -- 获取到拦截器config {} ",config);
 //        String ipAddress = IpUtil.getIpAddr(httpServletRequest);
 //        if (ipAddress.equals("0:0:0:0:0:0:0:1")) {
 //            ipAddress = "192.168.96.9";
@@ -121,9 +121,9 @@ public class StudentAPI {
 //        QueryWrapper<Pad> padQueryWrapper = new QueryWrapper<>();
 //        padQueryWrapper.eq("ip", ipAddress).eq("type", 1);
 //        Pad pad = padService.getOne(padQueryWrapper);//获取对应pad
-        log.info("获取到拦截器pad {} ",pad);
-        log.info("获取到拦截器ip {} ",ip);
-        log.info("获取到拦截器config {} ",config);
+        log.info("getUrl -- 获取到拦截器pad {} ",pad);
+        log.info("getUrl -- 获取到拦截器ip {} ",ip);
+        log.info("getUrl -- 获取到拦截器config {} ",config);
         QueryWrapper<QuestionDraw> questionDrawQueryWrapper = new QueryWrapper<>();
         questionDrawQueryWrapper.eq("game_number", config.getGameRound()).eq("game_type", SeatUtil.getGameTypeByStudentSeatId(pad.getSeatId()));
         log.info("考题id：{}", questionDrawService.getOne(questionDrawQueryWrapper).getQuestionId());//考题Id
@@ -193,8 +193,8 @@ public class StudentAPI {
 //        padQueryWrapper.eq("ip", ipAddress).eq("type", 1);
 //        Pad pad = padService.getOne(padQueryWrapper);
 //        log.info("调用暂停or开始接口的IP:{}", ipAddress);
-        log.info("获取到拦截器pad {} ",pad);
-        log.info("获取到拦截器config {} ",config);
+        log.info("pauseOrStart -- 获取到拦截器pad {} ",pad);
+        log.info("pauseOrStart -- 获取到拦截器config {} ",config);
         QueryWrapper<SeatDraw> seatDrawQueryWrapper = new QueryWrapper<>();
         seatDrawQueryWrapper.eq("seat_id", pad.getSeatId())
                 .eq("game_number", gameNumber)
@@ -238,8 +238,8 @@ public class StudentAPI {
      */
     @GetMapping("/finishTest")
     public Boolean finishTest(Integer gameNumber, Integer gameRound, Integer remainingTime, @RequestAttribute("pad") Pad pad,@RequestAttribute("config") Config config) {
-        log.info("获取到拦截器pad {} ",pad);
-        log.info("获取到拦截器config {} ",config);
+        log.info("finishTest -- 获取到拦截器pad {} ",pad);
+        log.info("finishTest -- 获取到拦截器config {} ",config);
         UpdateWrapper<SeatDraw> seatDrawUpdateWrapper = new UpdateWrapper<>();
         seatDrawUpdateWrapper.eq("seat_id", pad.getSeatId())
                 .eq("game_number", gameNumber)
