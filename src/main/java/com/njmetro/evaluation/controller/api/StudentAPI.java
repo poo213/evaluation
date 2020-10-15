@@ -54,6 +54,7 @@ public class StudentAPI {
     }
 
     /**
+     * 实现考生登录
      * @param QRcode 二维码信息
      * @return 考生信息
      */
@@ -84,7 +85,15 @@ public class StudentAPI {
         if (student.getId() != seatDraw.getStudentId()) {
             throw new StudentException("您不是当前考位的考生！");
         }
-        log.info("考生信息：{}", student);
+        if(student.getTestDayState() != 2)
+        {
+            throw new StudentException("备考区签到成功才可以正常登录考试系统！");
+        }
+        log.info("考生登录信息：{}", student);
+        UpdateWrapper<Student> studentUpdateWrapper = new UpdateWrapper<>();
+        //登录的时候，考试当天的状态变为3，表示正在考试中
+        studentUpdateWrapper.eq("id",student.getId()).set("test_day_state",3);
+        studentService.update(studentUpdateWrapper);
         StudentInfo studentInfo = new StudentInfo();
         studentInfo.setName(student.getName());
         studentInfo.setCode(student.getCode());
@@ -93,7 +102,7 @@ public class StudentAPI {
         studentInfo.setCompanyName(student.getCompanyName());
         studentInfo.setIdCard(student.getIdCard());
         studentInfo.setUrl(DOWNLOAD_BASE_URL + "idcard/" + student.getIdCard() + ".jpg");
-        System.out.println(DOWNLOAD_BASE_URL + "idcard/" + student.getIdCard() + ".jpg");
+        log.info("考生扫码登录，获取的考试信息：{}",studentInfo);
         return studentInfo;
     }
 
