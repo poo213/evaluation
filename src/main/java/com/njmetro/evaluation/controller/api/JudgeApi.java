@@ -255,10 +255,12 @@ public class JudgeApi {
         padSeatInfoVO.setPadId(pad.getId());
         padSeatInfoVO.setSeatId(pad.getSeatId());
         if (pad.getType() == 1) {
+            padSeatInfoVO.setSeatId(pad.getSeatId());
             padSeatInfoVO.setPadType("考生pad");
             padSeatInfoVO.setGroupId(SeatUtil.getGroupIdByStudentSeatId(pad.getSeatId()));
         } else {
             padSeatInfoVO.setPadType("裁判pad");
+            padSeatInfoVO.setSeatId(SeatUtil.getStudentSeatIdByJudgeSeatId(pad.getSeatId()));
             padSeatInfoVO.setGroupId(SeatUtil.getGroupIdByJudgeSeatId(pad.getSeatId()));
         }
         return padSeatInfoVO;

@@ -229,3 +229,9 @@ values (1, 1, 1, 1, 10, 1, 1),
 INSERT INTO code_state(two_dimensional_code, state) VALUE ('x1', 0, 1);
 INSERT INTO code_state(two_dimensional_code, state) VALUE ('x2', 0, 3);
 INSERT INTO code_state(two_dimensional_code, state) VALUE ('x3', 0, 4);
+
+
+
+#
+TRUNCATE TABLE code_state;
+TRUNCATE TABLE pause_record;

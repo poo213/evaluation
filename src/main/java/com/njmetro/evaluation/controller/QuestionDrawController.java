@@ -2,12 +2,9 @@ package com.njmetro.evaluation.controller;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.njmetro.evaluation.domain.QuestionDraw;
-import com.njmetro.evaluation.domain.TestQuestion;
+import com.njmetro.evaluation.domain.*;
 import com.njmetro.evaluation.exception.QuestionDrawException;
-import com.njmetro.evaluation.service.ConfigService;
-import com.njmetro.evaluation.service.QuestionDrawService;
-import com.njmetro.evaluation.service.TestQuestionService;
+import com.njmetro.evaluation.service.*;
 import com.njmetro.evaluation.util.KnuthUtil;
 import com.njmetro.evaluation.vo.QuestionDrawVO;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +32,8 @@ public class QuestionDrawController {
     public final TestQuestionService testQuestionService;
     public final QuestionDrawService questionDrawService;
     public final ConfigService configService;
+    public final JudgeDrawResultService judgeDrawResultService;
+    public final SeatDrawService seatDrawService;
 
     /**
      * 根据考试类型和比赛场次抽取赛题
@@ -99,6 +98,17 @@ public class QuestionDrawController {
     @GetMapping("/getList")
     public List<QuestionDrawVO> getList(){
         return questionDrawService.selectList();
+    }
+
+    @GetMapping("/getReadyState")
+    public Boolean getReadyState(){
+        Config config = configService.getById(1);
+        // 判断裁判是否全部就绪
+       /* QueryWrapper<JudgeDrawResult> judgeDrawResultQueryWrapper = new QueryWrapper<>();
+        judgeDrawResultQueryWrapper.eq()
+        JudgeDrawResult*/
+
+        return true;
     }
 
 }
