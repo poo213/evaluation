@@ -6,6 +6,7 @@ import com.njmetro.evaluation.dto.JudgeInfoDTO;
 import com.njmetro.evaluation.dto.StudentResultDTO;
 import com.njmetro.evaluation.exception.JudgeApiException;
 import com.njmetro.evaluation.exception.PadException;
+import com.njmetro.evaluation.exception.TestQuestionException;
 import com.njmetro.evaluation.service.*;
 import com.njmetro.evaluation.util.IpUtil;
 import com.njmetro.evaluation.util.SeatUtil;
@@ -120,48 +121,52 @@ public class JudgeApi {
      */
     @GetMapping("/getScoringCriteria")
     public TestQuestionStandardResultVO getScoringCriteria(@RequestAttribute("pad") Pad pad,@RequestAttribute("config") Config config) {
-        Integer studentSeatId = SeatUtil.getStudentSeatIdByJudgeSeatId(pad.getSeatId());
-        // 根据 studentSeatId 场次 和 轮次 在 seat_draw 中查找 studentId
-        QueryWrapper<SeatDraw> seatDrawQueryWrapper = new QueryWrapper<>();
-        seatDrawQueryWrapper.eq("game_number",config.getGameNumber())
-                .eq("game_round",config.getGameRound())
-                .eq("seat_id",studentSeatId);
-        SeatDraw seatDraw = seatDrawService.getOne(seatDrawQueryWrapper);
-        Integer studentId = 0;
-        if(seatDraw != null){
-            studentId = seatDraw.getStudentId();
-        }else {
-            log.info("没有找到studentId");
-            throw new JudgeApiException("没有找到studentId");
-        }
-
-        // 根据padId 获取裁判Id
-        QueryWrapper<JudgeDrawResult> judgeDrawResultQueryWrapper = new QueryWrapper<>();
-        judgeDrawResultQueryWrapper.eq("pad_id", pad.getId());
-        JudgeDrawResult judgeDrawResult = judgeDrawResultService.getOne(judgeDrawResultQueryWrapper);
-        Integer judgeId = judgeDrawResult.getJudgeId();
-        // 根据 场次 和 考生所在位置 在 question 中获取 赛题信息
-        QueryWrapper<QuestionDraw> questionDrawQueryWrapper = new QueryWrapper<>();
-        questionDrawQueryWrapper.eq("game_number", config.getGameNumber())
-                .eq("game_type", SeatUtil.getGameTypeByStudentSeatId(studentSeatId));
-        QuestionDraw questionDraw = questionDrawService.getOne(questionDrawQueryWrapper);
-        if (questionDraw == null) {
-            log.info("没有找到考题");
-            throw new JudgeApiException("没有找到考题");
-        } else {
-            // 根据 试题 id 在 test_question_standard 中找到判题标准
-            QueryWrapper<TestQuestionStandard> questionStandardQueryWrapper = new QueryWrapper<>();
-            questionStandardQueryWrapper.eq("test_question_id", questionDraw.getQuestionId());
-            List<TestQuestionStandard> testQuestionStandardList = testQuestionStandardService.list(questionStandardQueryWrapper);
-            // 将结果进行封装
-            List<TestQuestionStandardVO> testQuestionStandardVOList = new ArrayList<>();
-            for (TestQuestionStandard testQuestionStandard : testQuestionStandardList) {
-                TestQuestionStandardVO testQuestionStandardVO = new TestQuestionStandardVO(testQuestionStandard);
-                testQuestionStandardVOList.add(testQuestionStandardVO);
+        if(config.getState().equals(3)){
+            // 如果下发试题成功，裁判可以访问到试题评分标准
+            Integer studentSeatId = SeatUtil.getStudentSeatIdByJudgeSeatId(pad.getSeatId());
+            // 根据 studentSeatId 场次 和 轮次 在 seat_draw 中查找 studentId
+            QueryWrapper<SeatDraw> seatDrawQueryWrapper = new QueryWrapper<>();
+            seatDrawQueryWrapper.eq("game_number",config.getGameNumber())
+                    .eq("game_round",config.getGameRound())
+                    .eq("seat_id",studentSeatId);
+            SeatDraw seatDraw = seatDrawService.getOne(seatDrawQueryWrapper);
+            Integer studentId = 0;
+            if(seatDraw != null){
+                studentId = seatDraw.getStudentId();
+            }else {
+                log.info("没有找到studentId");
+                throw new JudgeApiException("根据padIP没有找到studentId");
             }
-            // 根据试题id 获取 试题名称
-            String testName = testQuestionService.getById(questionDraw.getQuestionId()).getName();
-            return new TestQuestionStandardResultVO(testQuestionStandardVOList, testName, questionDraw.getQuestionId(), judgeId, studentId);
+            // 根据padId 获取裁判Id
+            QueryWrapper<JudgeDrawResult> judgeDrawResultQueryWrapper = new QueryWrapper<>();
+            judgeDrawResultQueryWrapper.eq("pad_id", pad.getId());
+            JudgeDrawResult judgeDrawResult = judgeDrawResultService.getOne(judgeDrawResultQueryWrapper);
+            Integer judgeId = judgeDrawResult.getJudgeId();
+            // 根据 场次 和 考生所在位置 在 question 中获取 赛题信息
+            QueryWrapper<QuestionDraw> questionDrawQueryWrapper = new QueryWrapper<>();
+            questionDrawQueryWrapper.eq("game_number", config.getGameNumber())
+                    .eq("game_type", SeatUtil.getGameTypeByStudentSeatId(studentSeatId));
+            QuestionDraw questionDraw = questionDrawService.getOne(questionDrawQueryWrapper);
+            if (questionDraw == null) {
+                log.info("没有找到考题");
+                throw new JudgeApiException("没有找到考题");
+            } else {
+                // 根据 试题 id 在 test_question_standard 中找到判题标准
+                QueryWrapper<TestQuestionStandard> questionStandardQueryWrapper = new QueryWrapper<>();
+                questionStandardQueryWrapper.eq("test_question_id", questionDraw.getQuestionId());
+                List<TestQuestionStandard> testQuestionStandardList = testQuestionStandardService.list(questionStandardQueryWrapper);
+                // 将结果进行封装
+                List<TestQuestionStandardVO> testQuestionStandardVOList = new ArrayList<>();
+                for (TestQuestionStandard testQuestionStandard : testQuestionStandardList) {
+                    TestQuestionStandardVO testQuestionStandardVO = new TestQuestionStandardVO(testQuestionStandard);
+                    testQuestionStandardVOList.add(testQuestionStandardVO);
+                }
+                // 根据试题id 获取 试题名称
+                String testName = testQuestionService.getById(questionDraw.getQuestionId()).getName();
+                return new TestQuestionStandardResultVO(testQuestionStandardVOList, testName, questionDraw.getQuestionId(), judgeId, studentId);
+            }
+        }else {
+            throw new TestQuestionException("裁判还未发题，获取评分评分标准");
         }
     }
 

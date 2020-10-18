@@ -1,3 +1,11 @@
-###  api 1. 参赛队抽签
-GET http://localhost:8889/questionDraw/doDraw?gameNumber=1
+###  api 1. 能否抽提
+GET http://localhost:8889/questionDraw/getReadyState
+Accept: application/json
+
+
+
+
+
+###  api 2. 抽提
+GET http://localhost:8889/questionDraw/doDraw
 Accept: application/json

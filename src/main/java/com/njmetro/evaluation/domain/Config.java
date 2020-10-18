@@ -27,7 +27,7 @@ public class Config implements Serializable {
 
     private static final long serialVersionUID=1L;
 
-    /**
+     /**
      * 自增id
      */
     @TableId(value = "id", type = IdType.AUTO)
@@ -44,6 +44,12 @@ public class Config implements Serializable {
      */
     @TableField("game_round")
     private Integer gameRound;
+
+    /**
+     * 0: 初始化值，1： 考生裁判全部就绪，可以抽题 2： 可以下发试题 3： 试题下发完成 4：本轮结束，可以开始下一轮
+     */
+    @TableField("state")
+    private Integer state;
 
     /**
      * 创建时间

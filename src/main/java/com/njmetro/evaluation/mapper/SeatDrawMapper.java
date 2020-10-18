@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.njmetro.evaluation.domain.Student;
 import com.njmetro.evaluation.dto.JudgeInfoDTO;
 import com.njmetro.evaluation.vo.SeatDrawVO;
+import com.njmetro.evaluation.vo.StudentReadyShowVO;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
@@ -51,4 +52,16 @@ public interface SeatDrawMapper extends BaseMapper<SeatDraw> {
             "FROM seat_draw,student\n" +
             "WHERE seat_draw.game_number = #{gameNumber} and seat_draw. game_round = #{gameRound} and seat_id =#{seatId} and student.id = seat_draw.student_id")
     List<Student> selectShowStudentBySeatId(Integer gameNumber, Integer gameRound, Integer seatId);
+
+    /**
+     *  根据场次轮次信息获取考生就绪状态
+     *
+     * @param gameNumber 场次
+     * @param gameRound 轮次
+     * @return
+     */
+    @Select("SELECT student.name,seat_draw.id,seat_draw.state\n" +
+            "FROM seat_draw,student\n" +
+            "WHERE seat_draw.game_number = #{gameNumber} AND seat_draw.game_round = #{gameRound} AND seat_draw.student_id = student.id;")
+    List<StudentReadyShowVO> selectListByGameNumberAndGameRound(Integer gameNumber, Integer gameRound);
 }

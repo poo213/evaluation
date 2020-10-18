@@ -154,6 +154,7 @@ CREATE TABLE IF NOT EXISTS config
     id            INT UNSIGNED AUTO_INCREMENT COMMENT '自增id',
     game_number   INT UNSIGNED NOT NULL COMMENT '比赛场次（1-7）',
     game_round    INT UNSIGNED NOT NULL COMMENT '比赛轮次（1，2，3）',
+    state         INT UNSIGNED NOT NULL COMMENT '0: 初始化值，1： 考生裁判全部就绪，可以抽题 2： 可以下发试题 3： 试题下发完成 4：本轮结束，可以开始下一轮',
     `create_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `update_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
     PRIMARY KEY (id)
@@ -235,7 +236,7 @@ CREATE TABLE IF NOT EXISTS question_draw
 (
     id            INT UNSIGNED AUTO_INCREMENT COMMENT 'id',
     game_number   INT UNSIGNED NOT NULL COMMENT '比赛场次',
-    game_type      CHAR(15)     NOT NULL COMMENT '考试类型: 光缆接续,交换机组网,视频搭建',
+    game_type     CHAR(15)     NOT NULL COMMENT '考试类型: 光缆接续,交换机组网,视频搭建',
     question_id   INT UNSIGNED NOT NULL COMMENT '试题ID',
     `create_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `update_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',

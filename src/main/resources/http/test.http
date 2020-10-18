@@ -1,0 +1,14 @@
+###  api 1. 模拟考生就绪    ipId  1,2,3
+GET http://localhost:8889/test/student/beReady
+Accept: application/json
+###  api 2. 模拟裁判就绪    ipId  19,20;  21 22 ; 23 24.
+GET http://localhost:8889/test/judge/beReady
+Accept: application/json
+### api 3.  考生获取考题
+GET http://localhost:8889/api/student/getUrl
+### api 4.  裁判获取考题评分标准
+GET http://localhost:8889/api/judge/getScoringCriteria
+Accept: application/json
+### 5 成绩全部提交成功
+GET http://localhost:8889/test/doEnd
+Accept: application/json

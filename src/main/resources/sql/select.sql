@@ -26,4 +26,15 @@ WHERE test_question.id = question_draw.question_id;
 truncate table question_draw;
 truncate table test_result;
 
+# 查找考生考试状态
+SELECT student.name,seat_draw.id,seat_draw.state
+FROM seat_draw,student
+WHERE seat_draw.game_number =1 AND seat_draw.game_round =1 AND seat_draw.student_id = student.id;
+
+# 查找裁判就绪状态
+SELECT judge.name,judge_draw_result.id,judge_draw_result.state
+FROM judge_draw_result,judge
+WHERE judge_draw_result.seat_id = 1 and judge_draw_result.judge_id = judge.id;
+
+
 

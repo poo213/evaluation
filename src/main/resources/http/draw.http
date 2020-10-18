@@ -2,7 +2,8 @@
 
 ######
 # 注意： 抽签之前一定要保证签到完成
-
+GET http://localhost:8889/test/signAll
+Accept: application/json
 
 ###  api 1. 参赛队抽签
 GET http://localhost:8889/company/drawCompany
