@@ -1,6 +1,7 @@
 package com.njmetro.evaluation.config;
 
 import com.njmetro.evaluation.common.SystemCommon;
+import com.njmetro.evaluation.interceptor.EndInterceptor;
 import com.njmetro.evaluation.interceptor.IpInterceptor;
 import com.njmetro.evaluation.interceptor.ReadyInterceptor;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     private final IpInterceptor ipInterceptor;
     private final ReadyInterceptor readyInterceptor;
+    private final EndInterceptor endInterceptor;
 
     /**
      * 配置静态文件映射(将本地pdf文件映射成浏览器可以访问的 pdf 网址)
@@ -42,6 +44,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
         // studentApi judgeApi ip 拦截器
         registry.addInterceptor(ipInterceptor).addPathPatterns("/api/**");
         registry.addInterceptor(readyInterceptor).addPathPatterns("/**/beReady");
+        registry.addInterceptor(endInterceptor).addPathPatterns("/**/submit");
     }
 
     /**

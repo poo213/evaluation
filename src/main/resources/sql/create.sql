@@ -243,3 +243,18 @@ CREATE TABLE IF NOT EXISTS question_draw
     PRIMARY KEY (id)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = UTF8MB4;
+
+# 裁判上报成绩完成
+CREATE TABLE IF NOT EXISTS judge_submit_state
+(
+    id            INT UNSIGNED AUTO_INCREMENT COMMENT 'id',
+    game_number   INT UNSIGNED NOT NULL COMMENT '比赛场次',
+    game_round    INT UNSIGNED NOT NULL COMMENT '比赛轮次',
+    student_id    INT UNSIGNED NOT NULL COMMENT '考生Id',
+    judge_id      INT UNSIGNED NOT NULL COMMENT '对应监考裁判Id',
+    state         INT UNSIGNED NOT NULL COMMENT '裁判是否上报成功 0： 未上报成功 1： 上报成功',
+    `create_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+    PRIMARY KEY (id)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = UTF8MB4;

@@ -17,6 +17,7 @@ import com.njmetro.evaluation.vo.api.TestQuestionStandardResultVO;
 import com.njmetro.evaluation.vo.api.TestQuestionStandardVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.STEditAs;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -43,6 +44,7 @@ public class JudgeApi {
     private final TestQuestionService testQuestionService;
     private final TestResultService testResultService;
     private final SeatDrawService seatDrawService;
+    private final JudgeSubmitStateService judgeSubmitStateService;
 
     /**
      * 轮询接口： 获取 裁判信息，考生赛位号，场次，轮次
@@ -176,8 +178,8 @@ public class JudgeApi {
      *
      * @return
      */
-    @PostMapping("/submitResults")
-    public Boolean submitResults(@RequestBody List<StudentResultDTO> list, Integer gameNumber, Integer gameRound, Integer state, Integer studentId, Integer questionId, Integer judgeId) {
+    @PostMapping("/submit1")
+    public Boolean submitResults1(@RequestBody List<StudentResultDTO> list, Integer gameNumber, Integer gameRound, Integer state, Integer studentId, Integer questionId, Integer judgeId) {
         log.info("gameNumber {}", gameNumber);
         log.info("gameRound {}", gameRound);
         log.info("state {}", state);
@@ -235,6 +237,93 @@ public class JudgeApi {
                             testResultSql.setCent(studentResultDTO.getResult());
                             testResultService.updateById(testResultSql);
                         }
+                    }
+                }else {
+                    log.info("成绩上传截至！请核对后再上传");
+                    throw new JudgeApiException("成绩上传截至！请核对后再上传");
+                }
+
+            }
+            return true;
+        } else {
+            throw new JudgeApiException("场次或轮次与数据库不匹配，请核对后提交！");
+        }
+    }
+
+    /**
+     * 成绩上报成功
+     *
+     * @return
+     */
+    @PostMapping("/submit")
+    public Boolean submitResults(@RequestBody List<StudentResultDTO> list, Integer gameNumber, Integer gameRound, Integer state, Integer studentId, Integer questionId, Integer judgeId) {
+        log.info("gameNumber {}", gameNumber);
+        log.info("gameRound {}", gameRound);
+        log.info("state {}", state);
+        log.info("studentId {}", studentId);
+        log.info("questionId {}", questionId);
+        log.info("judgeId {}", judgeId);
+        log.info("list {}", list);
+        // 判断 传入场次和轮次 和 数据库中是否一致
+        Config config = configService.getById(1);
+        if (config.getGameNumber().equals(gameNumber) && config.getGameRound().equals(gameRound)) {
+            // 判断数据是否是第一次写入，是： 直接写入 test_result
+            TestResult testResult = new TestResult(gameNumber,gameRound,studentId,judgeId,questionId);
+            QueryWrapper<TestResult> testResultQueryWrapper = new QueryWrapper<>();
+            testResultQueryWrapper.eq("game_number", gameNumber)
+                    .eq("game_round", gameRound)
+                    .eq("student_id", studentId)
+                    .eq("judge_id", judgeId)
+                    .eq("question_id", questionId);
+            List<TestResult> testResultList = testResultService.list(testResultQueryWrapper);
+            if(testResultList.size() == 0){
+                // 没有成绩时 可以直接写入
+                for (StudentResultDTO studentResultDTO : list){
+                    // 设置更新结果
+                    testResult.setState(state);
+                    testResult.setQuestionStandardId(studentResultDTO.getId());
+                    testResult.setCent(studentResultDTO.getResult());
+                    testResultService.save(testResult);
+                    log.info("没有成绩时 可以直接写入   ----");
+                }
+            }else {
+                // 允许上传数据
+                if(testResultList.get(0).getState() == 0){
+                    for (StudentResultDTO studentResultDTO : list){
+                        QueryWrapper<TestResult> testResultQueryWrapperSql = new QueryWrapper<>();
+                        testResultQueryWrapperSql.eq("game_number", gameNumber)
+                                .eq("game_round", gameRound)
+                                .eq("student_id", studentId)
+                                .eq("judge_id", judgeId)
+                                .eq("question_id", questionId)
+                                .eq("question_standard_id",studentResultDTO.getId());
+                        TestResult testResultSql = testResultService.getOne(testResultQueryWrapperSql);
+                        if(testResultSql == null){
+                            log.info("没有该记录，插入一条记录");
+                            // 设置更新结果
+                            testResult.setState(state);
+                            testResult.setQuestionStandardId(studentResultDTO.getId());
+                            testResult.setCent(studentResultDTO.getResult());
+                            testResultService.save(testResult);
+                        }else {
+                            log.info("存在该记录，根据id更新记录");
+                            testResultSql.setState(state);
+                            testResultSql.setQuestionStandardId(studentResultDTO.getId());
+                            testResultSql.setCent(studentResultDTO.getResult());
+                            testResultService.updateById(testResultSql);
+                        }
+                    }
+                    // 根据 state 值更改judge_submit_result 值
+                    if(state.equals(1)){
+                        QueryWrapper<JudgeSubmitState> judgeSubmitStateQueryWrapper = new QueryWrapper<>();
+                        judgeSubmitStateQueryWrapper.eq("game_number",gameNumber)
+                                .eq("game_round",gameRound)
+                                .eq("student_id",studentId)
+                                .eq("judge_id",judgeId);
+                        JudgeSubmitState judgeSubmitState = judgeSubmitStateService.getOne(judgeSubmitStateQueryWrapper);
+                        judgeSubmitState.setState(1);
+                        judgeSubmitStateService.updateById(judgeSubmitState);
+                        log.info("最终提交，写入数据库成功");
                     }
                 }else {
                     log.info("成绩上传截至！请核对后再上传");

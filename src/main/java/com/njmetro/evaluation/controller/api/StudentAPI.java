@@ -234,7 +234,7 @@ public class StudentAPI {
      * @param gameRound  轮次
      * @return
      */
-    @GetMapping("/finishTest")
+    @GetMapping("/submit")
     public Boolean finishTest(Integer gameNumber, Integer gameRound, Integer remainingTime, @RequestAttribute("pad") Pad pad, @RequestAttribute("config") Config config) {
         log.info("finishTest -- 获取到拦截器pad {} ", pad);
         log.info("finishTest -- 获取到拦截器config {} ", config);

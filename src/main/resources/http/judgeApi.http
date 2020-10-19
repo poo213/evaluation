@@ -50,7 +50,7 @@ GET http://192.168.96.9:8889/api/student/pauseOrStart?type=1&remainingTime=&game
 ### api  5.考生就绪
 GET http://192.168.96.7:8889/api/student/beReday?gameNumber=1&gameRound=1
 ### api  6.考生提交
-GET http://192.168.96.9:8889/api/student/finishTest?remainingTime=1100&gameNumber=1&gameRound=1
+GET http://192.168.96.7:8889/api/student/submit?remainingTime=1100&gameNumber=1&gameRound=1
 ### api  6.二维码写库
 GET http://192.168.96.9:8889/api/student/writeQRcode?qrcode=sdasdxxx
 
