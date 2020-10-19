@@ -3,13 +3,14 @@ package com.njmetro.evaluation.service;
 import com.njmetro.evaluation.domain.TestResult;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.njmetro.evaluation.vo.FinalResultVO;
+import com.njmetro.evaluation.vo.TestResultDetailVO;
 import com.njmetro.evaluation.vo.TestResultVO;
 
 import java.util.List;
 
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
  *
  * @author zc
@@ -18,6 +19,15 @@ import java.util.List;
 public interface TestResultService extends IService<TestResult> {
 
     List<TestResultVO> getTempResult(Integer gameNumber, Integer gameRound);
+
     List<Integer> getStudentIdList(Integer gameNumber, Integer gameRound);
+
     List<FinalResultVO> getFinalResult();
+
+    /**
+     * 获取打分详情，校正得分时候用
+     *
+     * @return
+     */
+    List<TestResultDetailVO> getTestResultDetail(Integer gameNumber, Integer gameRound, Integer studentId);
 }

@@ -3,6 +3,8 @@ package com.njmetro.evaluation.vo;
 import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 /**
  * @program: evaluation
  * @description: 最终得分
@@ -14,9 +16,22 @@ public class FinalResultVO {
     private  Integer id;
     @TableField("student_id")
     private Integer studentId;
+    @TableField("company_name")
+    private String companyName;
     @TableField("student_code")
     private String studentCode;
     @TableField("student_name")
     private String studentName;
-    private Double result;
+    /**
+     * 实操得分
+     */
+    private BigDecimal result;
+    /**
+     * 机考得分
+     */
+    private BigDecimal computerTestResult;
+    /**
+     * 综合成绩
+     */
+    private BigDecimal comprehensiveResult;
 }
