@@ -5,6 +5,7 @@ import com.njmetro.evaluation.domain.SeatDraw;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.njmetro.evaluation.domain.Student;
 import com.njmetro.evaluation.vo.SeatDrawVO;
+import com.njmetro.evaluation.vo.StudentReadyShowVO;
 
 import java.util.List;
 
@@ -36,4 +37,12 @@ public interface SeatDrawService extends IService<SeatDraw> {
      * @return
      */
     List<Student> getStudentShowBySeatId(Integer gameNumber, Integer gameRound, Integer seatId);
+    /**
+     *  根据场次轮次信息获取考生就绪状态
+     *
+     * @param gameNumber 场次
+     * @param gameRound 轮次
+     * @return
+     */
+    List<StudentReadyShowVO> listStudentReady(Integer gameNumber, Integer gameRound);
 }

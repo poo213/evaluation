@@ -1,19 +1,17 @@
 package com.njmetro.evaluation.controller;
-
-
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.njmetro.evaluation.domain.*;
 import com.njmetro.evaluation.exception.QuestionDrawException;
 import com.njmetro.evaluation.service.*;
 import com.njmetro.evaluation.util.KnuthUtil;
+import com.njmetro.evaluation.util.SeatUtil;
 import com.njmetro.evaluation.vo.QuestionDrawVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.aspectj.weaver.patterns.TypePatternQuestions;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-
 import org.springframework.web.bind.annotation.RestController;
-
 import java.util.List;
 
 /**
@@ -34,6 +32,7 @@ public class QuestionDrawController {
     public final ConfigService configService;
     public final JudgeDrawResultService judgeDrawResultService;
     public final SeatDrawService seatDrawService;
+
 
     /**
      * 根据考试类型和比赛场次抽取赛题
@@ -85,10 +84,23 @@ public class QuestionDrawController {
      */
     @GetMapping("/doDraw")
     public Boolean doDraw() {
-        Integer gameNumber = configService.getById(1).getGameNumber();
-        doDrawOneType(gameNumber,"光缆接续");
-        doDrawOneType(gameNumber,"交换机组网");
-        doDrawOneType(gameNumber,"视频搭建");
+        // 根据比赛场次判断是否已经抽题
+        Config config = configService.getById(1);
+        Integer gameNumber = config.getGameNumber();
+        QueryWrapper<QuestionDraw> questionDrawQueryWrapper = new QueryWrapper<>();
+        questionDrawQueryWrapper.eq("game_number",gameNumber);
+        List<QuestionDraw> questionDrawList = questionDrawService.list(questionDrawQueryWrapper);
+        if(questionDrawList.isEmpty()){
+            // 列表为空，说明是第一轮，需要重新抽题
+            doDrawOneType(gameNumber,"光缆接续");
+            doDrawOneType(gameNumber,"交换机组网");
+            doDrawOneType(gameNumber,"视频搭建");
+        }else {
+            log.info("已抽题，无需再抽");
+        }
+        // 抽题结束，改变抽题状态，不允许再次抽题
+        config.setState(2);
+        configService.updateById(config);
         return true;
     }
 
@@ -98,17 +110,6 @@ public class QuestionDrawController {
     @GetMapping("/getList")
     public List<QuestionDrawVO> getList(){
         return questionDrawService.selectList();
-    }
-
-    @GetMapping("/getReadyState")
-    public Boolean getReadyState(){
-        Config config = configService.getById(1);
-        // 判断裁判是否全部就绪
-       /* QueryWrapper<JudgeDrawResult> judgeDrawResultQueryWrapper = new QueryWrapper<>();
-        judgeDrawResultQueryWrapper.eq()
-        JudgeDrawResult*/
-
-        return true;
     }
 
 }

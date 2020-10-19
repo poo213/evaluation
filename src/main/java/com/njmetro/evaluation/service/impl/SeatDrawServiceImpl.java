@@ -8,6 +8,7 @@ import com.njmetro.evaluation.mapper.SeatDrawMapper;
 import com.njmetro.evaluation.service.SeatDrawService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.njmetro.evaluation.vo.SeatDrawVO;
+import com.njmetro.evaluation.vo.StudentReadyShowVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -50,5 +51,10 @@ public class SeatDrawServiceImpl extends ServiceImpl<SeatDrawMapper, SeatDraw> i
     @Override
     public List<Student> getStudentShowBySeatId(Integer gameNumber, Integer gameRound, Integer seatId) {
         return seatDrawMapper.selectShowStudentBySeatId(gameNumber,gameRound,seatId);
+    }
+
+    @Override
+    public List<StudentReadyShowVO> listStudentReady(Integer gameNumber, Integer gameRound) {
+        return seatDrawMapper.selectListByGameNumberAndGameRound(gameNumber,gameRound);
     }
 }

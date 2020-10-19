@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.njmetro.evaluation.common.SystemCommon;
 import com.njmetro.evaluation.domain.*;
 import com.njmetro.evaluation.exception.StudentException;
+import com.njmetro.evaluation.exception.TestQuestionException;
 import com.njmetro.evaluation.service.*;
 import com.njmetro.evaluation.util.IpUtil;
 import com.njmetro.evaluation.util.SeatUtil;
@@ -49,7 +50,7 @@ public class StudentAPI {
      */
     @GetMapping("/getConfig")
     public Config getConfig(@RequestAttribute("config") Config config) {
-        log.info("getConfig -- 获取到拦截器config {} ",config);
+        log.info("getConfig -- 获取到拦截器config {} ", config);
         return config;//获取当前的场次和轮次
     }
 
@@ -60,10 +61,10 @@ public class StudentAPI {
      */
     @GetMapping("/getStudentInfo")
     @Transactional
-    public StudentInfo getStudentInfo(@RequestParam("QRcode") String QRcode, @RequestAttribute("ip") String ip,@RequestAttribute("config") Config config,@RequestAttribute("pad") Pad pad) {
-        log.info("getStudentInfo -- 获取到拦截器pad {} ",pad);
-        log.info("getStudentInfo -- 获取到拦截器ip {} ",ip);
-        log.info("getStudentInfo -- 获取到拦截器config {} ",config);
+    public StudentInfo getStudentInfo(@RequestParam("QRcode") String QRcode, @RequestAttribute("ip") String ip, @RequestAttribute("config") Config config, @RequestAttribute("pad") Pad pad) {
+        log.info("getStudentInfo -- 获取到拦截器pad {} ", pad);
+        log.info("getStudentInfo -- 获取到拦截器ip {} ", ip);
+        log.info("getStudentInfo -- 获取到拦截器config {} ", config);
 //        String ipAddress = IpUtil.getIpAddr(httpServletRequest);
 //        if (ipAddress.equals("0:0:0:0:0:0:0:1")) {
 //            ipAddress = "192.168.96.9";
@@ -110,35 +111,32 @@ public class StudentAPI {
      * 获取url 试题的相关信息
      */
     @GetMapping("/getUrl")
-    public QuestionVO getUrl(@RequestAttribute("ip") String ip,@RequestAttribute("config") Config config,@RequestAttribute("pad") Pad pad) {
-//        Config config = configService.getById(1);//获取当前的场次和轮次
-//        String ipAddress = IpUtil.getIpAddr(httpServletRequest);
-//        if (ipAddress.equals("0:0:0:0:0:0:0:1")) {
-//            ipAddress = "192.168.96.9";
-//        }
-//        ipAddress = "192.168.96.9";
-//        log.info("调用次接口的IP:{}", ipAddress);
-//        QueryWrapper<Pad> padQueryWrapper = new QueryWrapper<>();
-//        padQueryWrapper.eq("ip", ipAddress).eq("type", 1);
-//        Pad pad = padService.getOne(padQueryWrapper);//获取对应pad
-        log.info("getUrl -- 获取到拦截器pad {} ",pad);
-        log.info("getUrl -- 获取到拦截器ip {} ",ip);
-        log.info("getUrl -- 获取到拦截器config {} ",config);
-        QueryWrapper<QuestionDraw> questionDrawQueryWrapper = new QueryWrapper<>();
-        questionDrawQueryWrapper.eq("game_number", config.getGameRound()).eq("game_type", SeatUtil.getGameTypeByStudentSeatId(pad.getSeatId()));
-        log.info("考题id：{}", questionDrawService.getOne(questionDrawQueryWrapper).getQuestionId());//考题Id
-        QueryWrapper<TestQuestion> testQuestionQueryWrapper = new QueryWrapper<>();
-        testQuestionQueryWrapper.eq("id", questionDrawService.getOne(questionDrawQueryWrapper).getQuestionId());
-        TestQuestion testQuestion = testQuestionService.getOne(testQuestionQueryWrapper);
-        String url = testQuestion.getUrl();
-        log.info("获取考题的{}", url);
-        //todo
-        QuestionVO questionVO = new QuestionVO();
-        questionVO.setUrl(DOWNLOAD_BASE_URL + "pdf/" + url);
-        questionVO.setQuestionName(testQuestion.getName());
-        questionVO.setReadTime(testQuestion.getReadTime());
-        questionVO.setTestTime(testQuestion.getTestTime());
-        return questionVO;
+    public QuestionVO getUrl(@RequestAttribute("ip") String ip, @RequestAttribute("config") Config config, @RequestAttribute("pad") Pad pad) {
+        log.info("getUrl -- 获取到拦截器pad {} ", pad);
+        log.info("getUrl -- 获取到拦截器ip {} ", ip);
+        log.info("getUrl -- 获取到拦截器config {} ", config);
+        if (config.getState().equals(3)) {
+            QueryWrapper<QuestionDraw> questionDrawQueryWrapper = new QueryWrapper<>();
+            questionDrawQueryWrapper.eq("game_number", config.getGameNumber()).eq("game_type", SeatUtil.getGameTypeByStudentSeatId(pad.getSeatId()));
+            log.info("考题id：{}", questionDrawService.getOne(questionDrawQueryWrapper).getQuestionId());//考题Id
+            QueryWrapper<TestQuestion> testQuestionQueryWrapper = new QueryWrapper<>();
+            testQuestionQueryWrapper.eq("id", questionDrawService.getOne(questionDrawQueryWrapper).getQuestionId());
+            TestQuestion testQuestion = testQuestionService.getOne(testQuestionQueryWrapper);
+            String url = testQuestion.getUrl();
+            //todo
+            QuestionVO questionVO = new QuestionVO();
+            log.info("获取考题的{}", url);
+            questionVO.setUrl(DOWNLOAD_BASE_URL + "pdf/" + url);
+            questionVO.setQuestionName(testQuestion.getName());
+            questionVO.setReadTime(testQuestion.getReadTime());
+            questionVO.setTestTime(testQuestion.getTestTime());
+            log.info("获取考题的信息 : {}", questionVO);
+            return questionVO;
+        } else {
+            throw new TestQuestionException("裁判未发题，获取试卷失败");
+        }
+
+
     }
 
     /**
@@ -175,13 +173,13 @@ public class StudentAPI {
     }
 
     /**
-     * @param type               0表示暂停，1表示开始
-     * @param remainingTime      用时
+     * @param type          0表示暂停，1表示开始
+     * @param remainingTime 用时
      * @param
      * @return
      */
     @GetMapping("/pauseOrStart")
-    public PauseOrStartVO pauseOrStart(@RequestParam("type") Integer type, @RequestParam("remainingTime") Integer remainingTime, Integer gameNumber, Integer gameRound, @RequestAttribute("config") Config config,@RequestAttribute("pad") Pad pad) {
+    public PauseOrStartVO pauseOrStart(@RequestParam("type") Integer type, @RequestParam("remainingTime") Integer remainingTime, Integer gameNumber, Integer gameRound, @RequestAttribute("config") Config config, @RequestAttribute("pad") Pad pad) {
         //获取当前的场次和轮次
 //        //Config config = configService.getById(1);
 //        String ipAddress = IpUtil.getIpAddr(httpServletRequest);
@@ -193,8 +191,8 @@ public class StudentAPI {
 //        padQueryWrapper.eq("ip", ipAddress).eq("type", 1);
 //        Pad pad = padService.getOne(padQueryWrapper);
 //        log.info("调用暂停or开始接口的IP:{}", ipAddress);
-        log.info("pauseOrStart -- 获取到拦截器pad {} ",pad);
-        log.info("pauseOrStart -- 获取到拦截器config {} ",config);
+        log.info("pauseOrStart -- 获取到拦截器pad {} ", pad);
+        log.info("pauseOrStart -- 获取到拦截器config {} ", config);
         QueryWrapper<SeatDraw> seatDrawQueryWrapper = new QueryWrapper<>();
         seatDrawQueryWrapper.eq("seat_id", pad.getSeatId())
                 .eq("game_number", gameNumber)
@@ -236,10 +234,10 @@ public class StudentAPI {
      * @param gameRound  轮次
      * @return
      */
-    @GetMapping("/finishTest")
-    public Boolean finishTest(Integer gameNumber, Integer gameRound, Integer remainingTime, @RequestAttribute("pad") Pad pad,@RequestAttribute("config") Config config) {
-        log.info("finishTest -- 获取到拦截器pad {} ",pad);
-        log.info("finishTest -- 获取到拦截器config {} ",config);
+    @GetMapping("/submit")
+    public Boolean finishTest(Integer gameNumber, Integer gameRound, Integer remainingTime, @RequestAttribute("pad") Pad pad, @RequestAttribute("config") Config config) {
+        log.info("finishTest -- 获取到拦截器pad {} ", pad);
+        log.info("finishTest -- 获取到拦截器config {} ", config);
         UpdateWrapper<SeatDraw> seatDrawUpdateWrapper = new UpdateWrapper<>();
         seatDrawUpdateWrapper.eq("seat_id", pad.getSeatId())
                 .eq("game_number", gameNumber)
@@ -252,6 +250,7 @@ public class StudentAPI {
 
     /**
      * 考生就绪
+     *
      * @param gameNumber 场次
      * @param gameRound  轮次
      * @return
@@ -283,8 +282,8 @@ public class StudentAPI {
 //            ipAddress = "192.168.96.9";
 //        }
 //        ipAddress = "192.168.96.9";
-        log.info("获取到拦截器ip {} ",ip);
-        log.info("扫码枪二维码打印 {} ",qrcode);
+        log.info("获取到拦截器ip {} ", ip);
+        log.info("扫码枪二维码打印 {} ", qrcode);
         QueryWrapper<CodeState> codeStateQueryWrapper = new QueryWrapper<>();
         //已经扫码，包含确认的和未确认的
         codeStateQueryWrapper.eq("two_dimensional_code", qrcode).eq("ip", ip).eq("state", 0).or().eq("state", 1);

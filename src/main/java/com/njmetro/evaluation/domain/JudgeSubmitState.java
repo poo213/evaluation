@@ -3,9 +3,12 @@ package com.njmetro.evaluation.domain;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableField;
-import java.io.Serializable;
+
 import java.time.LocalDateTime;
+
+import com.baomidou.mybatisplus.annotation.TableField;
+
+import java.io.Serializable;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,40 +16,52 @@ import lombok.experimental.Accessors;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author zc
- * @since 2020-09-27
+ * @since 2020-10-19
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("config")
-public class Config implements Serializable {
+@TableName("judge_submit_state")
+public class JudgeSubmitState implements Serializable {
 
-    private static final long serialVersionUID=1L;
+    private static final long serialVersionUID = 1L;
 
-     /**
-     * 自增id
+    /**
+     * id
      */
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
     /**
-     * 比赛场次（1-7）
+     * 比赛场次
      */
     @TableField("game_number")
     private Integer gameNumber;
 
     /**
-     * 比赛轮次（1，2，3）
+     * 比赛轮次
      */
     @TableField("game_round")
     private Integer gameRound;
 
     /**
-     * 0: 初始化值，1： 考生裁判全部就绪，可以抽题 2： 可以下发试题 3： 试题下发完成 4：本轮结束，可以开始下一轮
+     * 考生Id
+     */
+    @TableField("student_id")
+    private Integer studentId;
+
+    /**
+     * 对应监考裁判Id
+     */
+    @TableField("judge_id")
+    private Integer judgeId;
+
+    /**
+     * 裁判是否上报成功 0： 未上报成功 1： 上报成功
      */
     @TableField("state")
     private Integer state;
@@ -62,5 +77,17 @@ public class Config implements Serializable {
      */
     @TableField("update_time")
     private LocalDateTime updateTime;
+
+    public JudgeSubmitState() {
+    }
+
+    public JudgeSubmitState(SeatDraw seatDraw, Integer judgeId) {
+        this.gameNumber = seatDraw.getGameNumber();
+        this.gameRound = seatDraw.getGameRound();
+        this.studentId = seatDraw.getStudentId();
+        this.judgeId = judgeId;
+        this.state = 0;
+    }
+
 
 }
