@@ -3,31 +3,32 @@ package com.njmetro.evaluation.vo;
 import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 
-import java.math.BigDecimal;
-
 /**
  * @program: evaluation
- * @description: 考生打分情况
+ * @description: 打分结果详情
  * @author: zc
- * @create: 2020-10-03 14:10
+ * @create: 2020-10-16 15:50
  **/
 @Data
-public class TestResultVO {
+public class TestResultDetailVO {
     private  Integer id;
     @TableField("student_id")
     private Integer studentId;
-    @TableField("company_name")
-    private String companyName;
     @TableField("student_code")
     private String studentCode;
     @TableField("student_name")
     private String studentName;
     @TableField("judge_id")
     private Integer judgeId;
+    @TableField("question_id")
+    private String questionId;
+    @TableField("question_name")
+    private String questionName;
+    @TableField("question_standard_id")
+    private String questionStandardId;
+    @TableField("question_standard_name")
+    private String questionStandardName;
     @TableField("judge_name")
     private String judgeName;
-    private BigDecimal result;
-    private BigDecimal timeCent;
-    private Integer flag;
-
+    private Double cent;
 }

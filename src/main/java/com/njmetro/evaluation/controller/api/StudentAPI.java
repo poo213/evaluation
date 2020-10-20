@@ -256,7 +256,7 @@ public class StudentAPI {
      * @return
      */
     @GetMapping("/beReady")
-    public Boolean beReady(Integer gameNumber, Integer gameRound, @RequestAttribute("pad") Pad pad) {
+    public Boolean beReady(Integer gameNumber, Integer gameRound,@RequestAttribute("pad") Pad pad) {
 ////        Config config = configService.getById(1);//获取当前的场次和轮次
 //        String ipAddress = IpUtil.getIpAddr(httpServletRequest);
 //        if (ipAddress.equals("0:0:0:0:0:0:0:1")) {
