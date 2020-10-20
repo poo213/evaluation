@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -136,6 +137,7 @@ public class TestResultController {
                 List<Integer> studentIdList = testResultService.getStudentIdList(gameNumber, gameRound);
                 log.info("获取指定场次的考生：{}", studentIdList);
                 for (Integer num : studentIdList) {
+                    log.info("计算得分时遍历考生id：{}",num);
                     //将两个裁判的打分存入该list
                     List<TestResultVO> testResultVOArrayList = new ArrayList<>();
                     for (TestResultVO testResultVO : testResultVOList) {
@@ -145,6 +147,7 @@ public class TestResultController {
                             seatDrawQueryWrapper.eq("game_number", gameNumber)
                                     .eq("game_round", gameRound).eq("student_id", num);
                             List<SeatDraw> seatDrawList = seatDrawService.list(seatDrawQueryWrapper);
+                            log.info("查询考生seatdraw表中的记录，查用时间：",seatDrawList);
                             Integer useTime = 0;
                             //获取到指定场次轮次下 的比赛用时
                             if (seatDrawList.size() == 1) {
@@ -171,6 +174,7 @@ public class TestResultController {
                 }
             }
         }
+        log.info("最终的临时结果，包含（所有）一个考生的三个项目的成绩：finalTempResultVOList{}",finalTempResultVOList);
         List<FinalResultVO> finaResultVOList = new ArrayList<>();//最终展示到前台
         List<Integer> studentIdList = studentService.getStudentIdList();
         log.info("所有考生列表：{}", studentIdList);
@@ -189,15 +193,14 @@ public class TestResultController {
                         tempList) {
                     finalResult = finalResult.add(item.getResult());
                 }
-                log.info("{}", tempList);
-                log.info("{}", finalResult);
-                log.info("{}", tempList.get(0));
+                log.info("包含指定一个考生的，三个最终临时结果{}", tempList);
+                log.info("三项实操之和：{}", finalResult);
                 FinalResultVO finalResultVO = new FinalResultVO();
                 finalResultVO.setStudentId(tempList.get(0).getStudentId());
                 finalResultVO.setStudentCode(tempList.get(0).getStudentCode());
                 finalResultVO.setStudentName(tempList.get(0).getStudentName());
                 finalResultVO.setCompanyName(tempList.get(0).getCompanyName());
-                finalResultVO.setResult(finalResult.divide(new BigDecimal("3")));
+                finalResultVO.setResult(finalResult.divide(new BigDecimal("3"),2,RoundingMode.HALF_UP));
                 finaResultVOList.add(finalResultVO);
             }
         }
@@ -205,9 +208,10 @@ public class TestResultController {
         for (FinalResultVO item :
                 finaResultVOList) {
             Student student = studentService.getById(item.getStudentId());
+            System.out.println(student);
             //机考成绩
             item.setComputerTestResult(new BigDecimal(student.getComputerTestResult()));
-            item.setComprehensiveResult((new BigDecimal(student.getComputerTestResult())).multiply(new BigDecimal("0.3")).add(item.getResult().multiply(new BigDecimal("0.7"))));
+            item.setComprehensiveResult((new BigDecimal(student.getComputerTestResult())).multiply(new BigDecimal("0.3")).add(item.getResult().multiply(new BigDecimal("0.7"))).setScale(2, RoundingMode.HALF_UP));
         }
         return finaResultVOList;
     }
