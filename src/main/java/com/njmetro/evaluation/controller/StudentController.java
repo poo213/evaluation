@@ -101,7 +101,7 @@ public class StudentController {
     /**
      * 获取已进入候考区的考生列表
      */
-    @GetMapping("/getStudentListHaveSignOne ")
+    @GetMapping("/getStudentListHaveSignOne")
     public List<Student> getStudentListHaveSignOne() {
         QueryWrapper<Student> studentQueryWrapper = new QueryWrapper<>();
         studentQueryWrapper.eq("sign_state",2);
@@ -222,6 +222,7 @@ public class StudentController {
         DrawState drawState = drawStateService.getById(2);
         drawState.setState(false);
         drawStateService.updateById(drawState);
+
         seatDrawService.cleanAll();
         seatDrawService.saveBatch(seatDrawList);
 

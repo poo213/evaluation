@@ -60,7 +60,7 @@ public class JudgeServiceImpl extends ServiceImpl<JudgeMapper, Judge> implements
             judgeMapper.updateById(judge);
             // 更改抽签状态
             DrawState drawState4 = drawStateMapper.selectById(4);
-            drawState4.setState(true);
+            drawState4.setState(false);
             drawStateMapper.updateById(drawState4);
         }
         return true;
@@ -77,11 +77,11 @@ public class JudgeServiceImpl extends ServiceImpl<JudgeMapper, Judge> implements
             judgeMapper.updateById(judge);
             // 更改抽签状态
             DrawState drawState3 = drawStateMapper.selectById(3);
-            drawState3.setState(true);
+            drawState3.setState(false);
             drawStateMapper.updateById(drawState3);
 
             DrawState drawState4 = drawStateMapper.selectById(4);
-            drawState4.setState(true);
+            drawState4.setState(false);
             drawStateMapper.updateById(drawState4);
 
         }

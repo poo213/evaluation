@@ -28,7 +28,6 @@ public class JwsToken {
      * String secretKey = Encoders.BASE64.encode(SECRET_KEY.getEncoded());
      * </pre>
      */
-//    private static final SecretKey SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
     private static final SecretKey SECRET_KEY = Keys.hmacShaKeyFor(DigestUtils.sha256("KEY"));
 
     /**

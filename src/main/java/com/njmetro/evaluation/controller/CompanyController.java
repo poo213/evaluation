@@ -93,12 +93,17 @@ public class CompanyController {
             UpdateWrapper<Company> updateWrapper = new UpdateWrapper<>();
             updateWrapper.eq("name",item.getName()).set("draw_result",item.getDrawResult());
             companyService.update(updateWrapper);
-
         }
-        // 修改抽签状态
+        // 设置参赛队不能抽签，设置考生赛位可以抽签、裁判类型可以抽签
         DrawState drawState = drawStateService.getById(1);
         drawState.setState(false);
         drawStateService.updateById(drawState);
+        DrawState drawState2 = drawStateService.getById(2);
+        drawState2.setState(true);
+        drawStateService.updateById(drawState2);
+        DrawState drawState3 = drawStateService.getById(3);
+        drawState3.setState(true);
+        drawStateService.updateById(drawState3);
         return companyList;
     }
 

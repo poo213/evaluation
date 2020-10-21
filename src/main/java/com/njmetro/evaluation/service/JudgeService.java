@@ -43,6 +43,7 @@ public interface JudgeService extends IService<Judge> {
      *  重置裁判监考类型
      *
      * @return
+     *
      */
     Boolean resetTypeAndMaster();
 }

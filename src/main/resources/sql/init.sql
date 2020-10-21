@@ -162,13 +162,13 @@ VALUES ('******', '172.18.1.228', 1, 1),
 
 # 5. 初始化抽签状态表
 
-    INSERT
+INSERT
 INTO draw_state(draw_name, state)
 values ('参赛队抽签', true),
-    ('考生赛位抽签', false),
-    ('裁判类型抽签', true),
-    ('执行裁判抽签', false),
-    ('裁判位置抽签', false);
+       ('考生赛位抽签', false),
+       ('裁判类型抽签', true),
+       ('执行裁判抽签', false),
+       ('裁判位置抽签', false);
 # 6. 打分结果表
 INSERT INTO test_result(game_number, game_round, question_id, question_standard_id, cent, student_id, judge_id)
 values (1, 1, 1, 1, 10, 1, 1),
@@ -231,7 +231,51 @@ INSERT INTO code_state(two_dimensional_code, state) VALUE ('x2', 0, 3);
 INSERT INTO code_state(two_dimensional_code, state) VALUE ('x3', 0, 4);
 
 
-
 #
 TRUNCATE TABLE code_state;
 TRUNCATE TABLE pause_record;
+
+### 重置menu
+TRUNCATE TABLE menu;
+
+#### 初始化目录
+INSERT INTO menu (id, parent_id, name, path, redirect, component, icon, title)
+VALUES (1, 0, 'index', '/', '/home', 'BasicLayout', ' ', '首页'),
+       (2, 1, 'home', '/home', '', 'home', 'home', '首页'),
+       (3, 1, 'system', '/system', '/system/student', 'RouteView', 'robot', '基础信息管理'),
+       (4, 1, 'competition', '/competition', '', 'RouteView', 'solution', '签到管理'),
+       (5, 1, 'drawManage', '/drawManage', '', 'RouteView', 'table', '抽签管理'),
+       (6, 1, 'chairUmpire', '/chairUmpire', '', 'RouteView', 'audit', '主裁管理页面'),
+
+       (7, 3, 'student', '/system/student', '', 'system/student', '', '考生管理'),
+       (8, 3, 'judge', '/system/judge', '', 'system/judge', '', '裁判管理'),
+       (9, 3, 'test', '/system/test', '', 'system/test', '', '试题管理'),
+       (10, 3, 'company', '/system/company', '', 'system/company', '', '参赛单位管理'),
+       (11, 3, 'syncComputerTestResult', '/chairUmpire/syncComputerTestResult', '','chairUmpire/syncComputerTestResult', '', '上传机考成绩'),
+
+
+       (12, 4, 'studentSign', '/competition/studentSign', '', 'competition/studentSign', '', '考生签到（报到）'),
+       (13, 4, 'judgeSign', '/competition/judgeSign', '', 'competition/judgeSign', '', '裁判签到（报到）'),
+       (14, 4, 'studentSignOne', '/competition/studentSignOne', '', 'competition/studentSignOne', '', '候考签到'),
+       (15, 4, 'studentSignTwo', '/competition/studentSignTwo', '', 'competition/studentSignTwo', '', '备考签到'),
+       (16, 4, 'studentSignAway', '/competition/studentSignAway', '', 'competition/studentSignAway', '', '离场签到'),
+       (17, 4, 'qrSign', '/competition/qrSign', '', 'competition/qrSign', '', '二维码签到'),
+
+       (18, 5, 'drawStateManage', '/drawManage/drawStateManage', '', 'drawManage/drawStateManage', '', '抽签状态管理'),
+       (19, 5, 'drawCompany', '/drawManage/drawCompany', '', 'drawManage/drawCompany', '', '代表队抽签'),
+       (20, 5, 'chairDraw', '/drawManage/chairDraw', '', 'drawManage/chairDraw', '', '赛位抽签'),
+       (21, 5, 'judgeDraw', '/drawManage/judgeDraw', '', 'drawManage/judgeDraw', '', '裁判抽签'),
+       (22, 5, 'judgeDrawResult', '/drawManage/judgeDrawResult', '', 'drawManage/judgeDrawResult', '', '裁判抽签结果'),
+
+       (23, 6, 'roundManage', '/chairUmpire/roundManage', '', 'chairUmpire/roundManage', '', '比赛管理'),
+       (24, 6, 'checkResult', '/chairUmpire/checkResult', '', 'chairUmpire/checkResult', '', '成绩核验'),
+       (25, 6, 'collectScore', '/chairUmpire/collectScore', '', 'chairUmpire/collectScore', '', '打分汇总');
+
+
+
+
+
+
+
+
+

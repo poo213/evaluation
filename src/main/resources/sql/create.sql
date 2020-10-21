@@ -258,3 +258,55 @@ CREATE TABLE IF NOT EXISTS judge_submit_state
     PRIMARY KEY (id)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = UTF8MB4;
+
+# 裁判上报成绩完成
+CREATE TABLE IF NOT EXISTS role
+(
+    id            INT UNSIGNED AUTO_INCREMENT COMMENT 'id',
+    name          CHAR(20) NOT NULL COMMENT '超级管理员： ROLE_SUPER_ADMIN  普通管理员：ROLE_ADMIN 主裁判： ROLE_MASTER',
+    `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+    PRIMARY KEY (id)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = UTF8MB4;
+
+
+### 插入数据
+INSERT INTO role(id, name)
+VALUES (1, 'ROLE_SUPER_ADMIN'),
+       (2, 'ROLE_ADMIN'),
+       (3, 'ROLE_MASTER');
+
+
+### 系统管理员
+CREATE TABLE IF NOT EXISTS admin
+(
+    id            INT UNSIGNED AUTO_INCREMENT COMMENT '用户自增Id',
+    user_name     VARCHAR(20)  NOT NULL COMMENT '用户名',
+    password      VARCHAR(100) NOT NULL COMMENT '密码',
+    `create_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+    PRIMARY KEY (id)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = UTF8MB4;
+
+### 插入系统管理员数据
+INSERT INTO admin(user_name, password)
+VALUES ('mh', '123456'),
+       ('zc', '123456'),
+       ('tcl', '123456');
+
+###  不同权限对应的menu  menu_role
+CREATE TABLE IF NOT EXISTS menu_role
+(
+    id            INT UNSIGNED AUTO_INCREMENT COMMENT '用户自增Id',
+    menu_id       INT UNSIGNED NOT NULL COMMENT 'menu_id',
+    role_name     VARCHAR(100) NOT NULL COMMENT '权限',
+    `create_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+    PRIMARY KEY (id)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = UTF8MB4;
+
+
+

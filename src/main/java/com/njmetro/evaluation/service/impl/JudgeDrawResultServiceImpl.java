@@ -38,7 +38,7 @@ public class JudgeDrawResultServiceImpl extends ServiceImpl<JudgeDrawResultMappe
             judgeDrawResult.setJudgeId(0);
             judgeDrawResultMapper.updateById(judgeDrawResult);
             DrawState drawState5 = drawStateMapper.selectById(5);
-            drawState5.setState(true);
+            drawState5.setState(false);
             drawStateMapper.updateById(drawState5);
         }
         return true;

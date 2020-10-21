@@ -27,17 +27,16 @@ public class DrawStateVO {
     /**
      * 抽签状态 true: 允许抽签   false: 不允许抽签
      */
-    private String stateName;
+    private Integer state;
 
     public DrawStateVO(DrawState drawState){
         this.id = drawState.getId();
         this.drawName = drawState.getDrawName();
         if (drawState.getState()){
-            this.stateName = "可以抽签";
+            this.state = 1;
         }else {
-            this.stateName = "不可以抽签";
+            this.state = 0;
         }
-
     }
 
 }

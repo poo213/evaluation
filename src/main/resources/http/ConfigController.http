@@ -1,3 +1,9 @@
 ###  api 1. 切换下一轮场次
 GET http://localhost:8889/config/nextChange
 Accept: application/json
+
+
+
+###  api 1. 切换下一轮场次
+GET http://localhost:8889/student/getStudentListHaveSignOne
+Accept: application/json
