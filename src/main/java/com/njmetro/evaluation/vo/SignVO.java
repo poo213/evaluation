@@ -29,7 +29,10 @@ public class SignVO {
      * 身份证号
      */
     private String idCard;
-
+    /**
+     * url
+     */
+    private String url;
     /**
      * 性别 0：男 1：女
      */

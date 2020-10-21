@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
+import static com.njmetro.evaluation.common.SystemCommon.PHOTO_URL;
+
 /**
  * <p>
  * 前端控制器
@@ -48,7 +50,7 @@ public class CodeStateController {
 //        if (ipAddress.equals("0:0:0:0:0:0:0:1")) {
 //            ipAddress = "192.168.99.9";
 //        }
-//        ipAddress = "192.168.99.9";//模拟ip，进入候考区，备考区，离场，3台设备ip
+        ipAddress = "172.18.1.239";//模拟ip，进入候考区，备考区，离场，3台设备ip
         log.info("调用次接口的IP:{}", ipAddress);
        // log.info("获取到拦截器ip {} ",ip);
         List<String> ipListOne = codeStateService.getIpList(3);
@@ -74,6 +76,7 @@ public class CodeStateController {
                 }
                 SignVO signVO = new SignVO();
                 signVO.setId(student.getId());
+                signVO.setUrl(PHOTO_URL+student.getIdCard()+".png");
                 signVO.setName(student.getName());
                 signVO.setAge(student.getAge());
                 signVO.setIdCard(student.getIdCard());
@@ -102,6 +105,7 @@ public class CodeStateController {
                 }
                 SignVO signVO = new SignVO();
                 signVO.setId(student.getId());
+                signVO.setUrl(PHOTO_URL+student.getIdCard()+".png");
                 signVO.setName(student.getName());
                 signVO.setAge(student.getAge());
                 signVO.setIdCard(student.getIdCard());
@@ -129,6 +133,7 @@ public class CodeStateController {
                     return null;
                 }
                 SignVO signVO = new SignVO();
+                signVO.setUrl(PHOTO_URL+student.getIdCard()+".png");
                 signVO.setId(student.getId());
                 signVO.setName(student.getName());
                 signVO.setAge(student.getAge());

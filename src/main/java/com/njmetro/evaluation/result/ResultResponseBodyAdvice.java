@@ -26,6 +26,8 @@ public class ResultResponseBodyAdvice implements ResponseBodyAdvice<Object> {
 
     @Override
     public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType, Class<? extends HttpMessageConverter<?>> selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
+        System.out.println(body.getClass());
+        System.out.println(body.toString());
         if (body instanceof Boolean) {
             return Result.bool((Boolean) body);
         }
@@ -38,6 +40,9 @@ public class ResultResponseBodyAdvice implements ResponseBodyAdvice<Object> {
             }
         }
         if (body instanceof Result) {
+            return body;
+        }
+        if (body instanceof byte[]) {
             return body;
         }
         return Result.success(body);

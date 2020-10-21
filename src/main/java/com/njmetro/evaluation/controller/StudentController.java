@@ -92,7 +92,7 @@ public class StudentController {
     /**
      * 获取待进入候考区的考生列表，此处针对已报到考生
      */
-    @GetMapping("/getStudentListHaveRegister ")
+    @GetMapping("/getStudentListHaveRegister")
     public List<Student> getStudentListHaveRegister() {
         QueryWrapper<Student> studentQueryWrapper = new QueryWrapper<>();
         studentQueryWrapper.eq("sign_state",1);
@@ -101,19 +101,19 @@ public class StudentController {
     /**
      * 获取已进入候考区的考生列表
      */
-    @GetMapping("/getStudentListHaveSignOne ")
+    @GetMapping("/getStudentListHaveSignOne")
     public List<Student> getStudentListHaveSignOne() {
         QueryWrapper<Student> studentQueryWrapper = new QueryWrapper<>();
-        studentQueryWrapper.eq("sign_state",2);
+        studentQueryWrapper.eq("test_day_state",1);
         return studentService.list(studentQueryWrapper);
     }
     /**
      * 获取考试中的考生列表
      */
-    @GetMapping("/getStudentListHaveInTest ")
+    @GetMapping("/getStudentListHaveInTest")
     public List<Student> getStudentListHaveInTest() {
         QueryWrapper<Student> studentQueryWrapper = new QueryWrapper<>();
-        studentQueryWrapper.eq("sign_state",3);
+        studentQueryWrapper.eq("test_day_state",3);
         return studentService.list(studentQueryWrapper);
     }
 

@@ -30,4 +30,5 @@ public interface TestResultService extends IService<TestResult> {
      * @return
      */
     List<TestResultDetailVO> getTestResultDetail(Integer gameNumber, Integer gameRound, Integer studentId);
+
 }

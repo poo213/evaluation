@@ -23,6 +23,8 @@ public class SystemCommon {
      *  水印服务器下载 文件的 根地址
      */
     public static final String DOWNLOAD_BASE_URL = "http://192.168.96.7:8889/api/file/";
+
+    public static final String PHOTO_URL = "http://192.168.96.7:8889/api/file/idCard/";
     /**
      *  pdf组件拼接用
      */
