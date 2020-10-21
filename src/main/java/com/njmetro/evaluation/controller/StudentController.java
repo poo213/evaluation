@@ -222,6 +222,7 @@ public class StudentController {
         DrawState drawState = drawStateService.getById(2);
         drawState.setState(false);
         drawStateService.updateById(drawState);
+
         seatDrawService.cleanAll();
         seatDrawService.saveBatch(seatDrawList);
 

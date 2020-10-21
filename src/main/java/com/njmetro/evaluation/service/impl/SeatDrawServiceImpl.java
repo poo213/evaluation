@@ -33,7 +33,7 @@ public class SeatDrawServiceImpl extends ServiceImpl<SeatDrawMapper, SeatDraw> i
         seatDrawMapper.delete();
         // 重置 抽签状态
         DrawState drawState2 = drawStateMapper.selectById(2);
-        drawState2.setState(true);
+        drawState2.setState(false);
         drawStateMapper.updateById(drawState2);
         return true;
     }

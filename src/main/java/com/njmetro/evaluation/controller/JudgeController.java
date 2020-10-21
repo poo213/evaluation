@@ -271,10 +271,13 @@ public class JudgeController {
             judge_type++;
         }
 
-        // 修改抽签状态
+        // 裁判抽签不可以再抽签  可以执行裁判抽签
         DrawState drawState = drawStateService.getById(3);
         drawState.setState(false);
         drawStateService.updateById(drawState);
+        DrawState drawState4 = drawStateService.getById(4);
+        drawState4.setState(true);
+        drawStateService.updateById(drawState4);
         return true;
     }
 
@@ -355,6 +358,10 @@ public class JudgeController {
         DrawState drawState = drawStateService.getById(4);
         drawState.setState(false);
         drawStateService.updateById(drawState);
+        // 允许裁判座位抽签
+        DrawState drawState5 = drawStateService.getById(5);
+        drawState5.setState(true);
+        drawStateService.updateById(drawState5);
         return true;
     }
 
