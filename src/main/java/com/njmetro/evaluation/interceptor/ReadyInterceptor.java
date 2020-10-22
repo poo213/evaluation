@@ -60,8 +60,7 @@ public class ReadyInterceptor implements HandlerInterceptor {
                 .eq("game_round",config.getGameRound());
         List<SeatDraw> seatDrawList = seatDrawService.list(seatDrawQueryWrapper);
         for(SeatDraw seatDraw : seatDrawList){
-            log.info("################## {}",seatDraw.getSeatId());
-            if(seatDraw.getState() != 1){
+            if(!(seatDraw.getState() == 1 || seatDraw.getState() == 5)){
                 return false;
             }else {
                 Integer studentSeatId = seatDraw.getSeatId();
@@ -78,7 +77,6 @@ public class ReadyInterceptor implements HandlerInterceptor {
         }
         return true;
     }
-
 
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {

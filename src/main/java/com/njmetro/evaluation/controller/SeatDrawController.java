@@ -1,8 +1,15 @@
 package com.njmetro.evaluation.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.njmetro.evaluation.domain.Config;
+import com.njmetro.evaluation.domain.JudgeDrawResult;
+import com.njmetro.evaluation.domain.JudgeSubmitState;
+import com.njmetro.evaluation.domain.SeatDraw;
 import com.njmetro.evaluation.service.ConfigService;
+import com.njmetro.evaluation.service.JudgeDrawResultService;
+import com.njmetro.evaluation.service.JudgeSubmitStateService;
 import com.njmetro.evaluation.service.SeatDrawService;
+import com.njmetro.evaluation.util.SeatUtil;
 import com.njmetro.evaluation.vo.SeatDrawVO;
 import com.njmetro.evaluation.vo.StudentReadyShowVO;
 import com.njmetro.evaluation.vo.StudentShowVO;
@@ -28,6 +35,11 @@ import java.util.List;
 public class SeatDrawController {
     private final SeatDrawService seatDrawService;
     private final ConfigService configService;
+    private final JudgeDrawResultService judgeDrawResultService;
+    private final JudgeSubmitStateService judgeSubmitStateService;
+
+
+
 
     @GetMapping("/getSeatDrawList")
     public List<SeatDrawVO> getSeatDrawList() {
@@ -35,7 +47,7 @@ public class SeatDrawController {
     }
 
     /**
-     * 返回考生赛场状态（1： 就绪  2：比赛中 3：中断 4： 结束）
+     * 返回考生赛场状态（1： 就绪  2：比赛中 3：中断 4： 结束  5：缺考 ）
      * @return
      */
     @GetMapping("/getStudentReadyShowVO")
@@ -48,6 +60,55 @@ public class SeatDrawController {
             return studentReadyShowVOS;
         }
     }
+
+
+    /**
+     * 根据裁判座位Id将 裁判状态改为 就绪状态 1; 并获取裁判id
+     * @param judgeSeatId
+     */
+    Integer changeJudgeState(Integer judgeSeatId){
+        QueryWrapper<JudgeDrawResult> judgeDrawResultQueryWrapper = new QueryWrapper<>();
+        judgeDrawResultQueryWrapper.eq("seat_id",judgeSeatId);
+        JudgeDrawResult judgeDrawResult = judgeDrawResultService.getOne(judgeDrawResultQueryWrapper);
+        judgeDrawResult.setState(1);
+        judgeDrawResultService.updateById(judgeDrawResult);
+        return  judgeDrawResult.getJudgeId();
+    }
+
+    void changeJudgeSubmitState(Integer gameNumber,Integer gameRound, Integer studentId, Integer judgeId){
+        QueryWrapper<JudgeSubmitState> judgeSubmitStateQueryWrapper = new QueryWrapper<>();
+        judgeSubmitStateQueryWrapper.eq("game_number",gameNumber)
+                .eq("game_round",gameRound)
+                .eq("student_id",studentId)
+                .eq("judge_id",judgeId);
+        JudgeSubmitState judgeSubmitState = judgeSubmitStateService.getOne(judgeSubmitStateQueryWrapper);
+
+    }
+
+    /**
+     * 设置考生缺考
+     *
+     * @param seatDrawId
+     * @return
+     */
+    @GetMapping("/beReady")
+    public Boolean doStudentMiss(Integer seatDrawId){
+        // 将考生状态改为 5
+        SeatDraw seatDraw = seatDrawService.getById(seatDrawId);
+        seatDraw.setState(5);
+        // 找到考生对应的裁判，将状态改为就绪
+        Integer studentSeatId = seatDraw.getSeatId();
+        Integer leftJudgeSeatId = SeatUtil.getLeftJudgeSeatIdByStudentSeatId(studentSeatId);
+        Integer rightJudgeSeatId = SeatUtil.getRightJudgeSeatIdByStudentSeatId(studentSeatId);
+        Integer leftJudgeId = changeJudgeState(leftJudgeSeatId);
+        Integer rightJudgeId = changeJudgeState(rightJudgeSeatId);
+        changeJudgeState(rightJudgeSeatId);
+        // 将裁判最终提交成绩改为 1
+        return seatDrawService.updateById(seatDraw);
+    }
+
+
+
 
 }
 
