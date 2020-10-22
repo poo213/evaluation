@@ -65,15 +65,6 @@ public class StudentAPI {
         log.info("getStudentInfo -- 获取到拦截器pad {} ", pad);
         log.info("getStudentInfo -- 获取到拦截器ip {} ", ip);
         log.info("getStudentInfo -- 获取到拦截器config {} ", config);
-//        String ipAddress = IpUtil.getIpAddr(httpServletRequest);
-//        if (ipAddress.equals("0:0:0:0:0:0:0:1")) {
-//            ipAddress = "192.168.96.9";
-//        }
-//        ipAddress = "192.168.96.9";
-//        QueryWrapper<Pad> padQueryWrapper = new QueryWrapper<>();
-//        padQueryWrapper.eq("ip", ip).eq("type", 1);
-//
-//        Pad pad = padService.getOne(padQueryWrapper);
 
         QueryWrapper<SeatDraw> seatDrawQueryWrapper = new QueryWrapper<>();
         seatDrawQueryWrapper.eq("seat_id", pad.getSeatId())
@@ -83,7 +74,8 @@ public class StudentAPI {
         QueryWrapper<Student> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("two_dimensional_code", QRcode);
         Student student = studentService.getOne(queryWrapper);
-        if (student.getId() != seatDraw.getStudentId()) {
+        log.info("saomade:{}",student);
+        if (!student.getId().equals(seatDraw.getStudentId())) {
             throw new StudentException("您不是当前考位的考生！");
         }
         //todo 此处逻辑需要考虑到在考试中的人，可以再次签到
@@ -279,7 +271,7 @@ public class StudentAPI {
         QueryWrapper<CodeState> codeStateQueryWrapper = new QueryWrapper<>();
         //已经扫码，包含确认的和未确认的
         codeStateQueryWrapper.eq("two_dimensional_code", qrcode).eq("ip", ip);
-        codeStateQueryWrapper.and(wrapper->wrapper.eq("state", 0).or().eq("state", 1));
+        codeStateQueryWrapper.and(wrapper -> wrapper.eq("state", 0).or().eq("state", 1));
         List<CodeState> codeStateList = codeStateService.list(codeStateQueryWrapper);
         if (codeStateList.size() != 0) {
             log.info("本条扫码信息已存在！");
@@ -292,6 +284,5 @@ public class StudentAPI {
             codeState.setState(0);
             return codeStateService.save(codeState);
         }
-
     }
 }

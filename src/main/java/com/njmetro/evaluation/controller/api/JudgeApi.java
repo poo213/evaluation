@@ -163,8 +163,11 @@ public class JudgeApi {
                     testQuestionStandardVOList.add(testQuestionStandardVO);
                 }
                 // 根据试题id 获取 试题名称
-                String testName = testQuestionService.getById(questionDraw.getQuestionId()).getName();
-                return new TestQuestionStandardResultVO(testQuestionStandardVOList, testName, questionDraw.getQuestionId(), judgeId, studentId);
+                TestQuestion testQuestion = testQuestionService.getById(questionDraw.getQuestionId());
+                String testName = testQuestion.getName();
+                Integer readTime = testQuestion.getReadTime();
+                Integer testTime = testQuestion.getTestTime();
+                return new TestQuestionStandardResultVO(testQuestionStandardVOList, testName, questionDraw.getQuestionId(), judgeId, studentId,readTime,testTime);
             }
         }else {
             throw new TestQuestionException("裁判还未发题，获取评分评分标准");
