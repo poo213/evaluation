@@ -89,13 +89,8 @@ public class CodeStateController {
                 signVO.setPhone(student.getPhone());
                 signVO.setType(1);//进入候考区的pad，状态标记为1
                 return signVO;
-<<<<<<< HEAD
-            } else {
-                System.out.println(33);
-=======
             }
             else{
->>>>>>> 49a4b9fb536ef08d9a5d06448558274de89e7af0
                 return null;
             }
         } else if (ipListTwo.contains(ipAddress)) {
@@ -162,12 +157,7 @@ public class CodeStateController {
                 return null;
             }
         } else {
-<<<<<<< HEAD
-            System.out.println(77);
-            throw new StudentException("非签到设备");
-=======
             throw new StudentException("非签到设备,扫码设备只包括"+ipListOne.toString()+ipListTwo.toString()+ipListAway.toString());
->>>>>>> 49a4b9fb536ef08d9a5d06448558274de89e7af0
         }
     }
 }
