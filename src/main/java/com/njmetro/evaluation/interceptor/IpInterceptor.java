@@ -35,7 +35,6 @@ public class IpInterceptor implements HandlerInterceptor {
         // 根据ip获取pad信息
         String ip = IpUtil.getIpAddr(request);
         log.info("IpInterceptor.Class ip： {}", ip);
-        //ip = "192.168.97.10" ;
         QueryWrapper<Pad> padQueryWrapper = new QueryWrapper<>();
         padQueryWrapper.eq("ip", ip);
         Pad pad = padService.getOne(padQueryWrapper);

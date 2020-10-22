@@ -50,7 +50,7 @@ public class CodeStateController {
 //        if (ipAddress.equals("0:0:0:0:0:0:0:1")) {
 //            ipAddress = "192.168.99.9";
 //        }
-        //ipAddress = "172.18.1.239";//模拟ip，进入候考区，备考区，离场，3台设备ip
+  //      ipAddress = "172.18.1.239";//模拟ip，进入候考区，备考区，离场，3台设备ip
         log.info("调用次接口的IP:{}", ipAddress);
        // log.info("获取到拦截器ip {} ",ip);
         List<String> ipListOne = codeStateService.getIpList(3);
@@ -76,7 +76,7 @@ public class CodeStateController {
                 Student student = studentService.getOne(studentQueryWrapper);//获取考生信息
                 if(student==null)
                 {
-                    return null;
+                    throw new StudentException("没有此考生信息");
                 }
                 SignVO signVO = new SignVO();
                 signVO.setId(student.getId());
@@ -89,8 +89,13 @@ public class CodeStateController {
                 signVO.setPhone(student.getPhone());
                 signVO.setType(1);//进入候考区的pad，状态标记为1
                 return signVO;
+<<<<<<< HEAD
             } else {
                 System.out.println(33);
+=======
+            }
+            else{
+>>>>>>> 49a4b9fb536ef08d9a5d06448558274de89e7af0
                 return null;
             }
         } else if (ipListTwo.contains(ipAddress)) {
@@ -108,7 +113,7 @@ public class CodeStateController {
                 Student student = studentService.getOne(studentQueryWrapper);//获取考生信息
                 if(student==null)
                 {
-                    return null;
+                    throw new StudentException("没有此考生信息");
                 }
                 SignVO signVO = new SignVO();
                 signVO.setId(student.getId());
@@ -121,7 +126,8 @@ public class CodeStateController {
                 signVO.setPhone(student.getPhone());
                 signVO.setType(2);//进入候考区的pad，状态标记为2
                 return signVO;
-            } else {
+            }
+            else{
                 return null;
             }
         } else if (ipListAway.contains(ipAddress)) {
@@ -138,7 +144,7 @@ public class CodeStateController {
                 Student student = studentService.getOne(studentQueryWrapper);//获取考生信息
                 if(student==null)
                 {
-                    return null;
+                    throw new StudentException("没有此考生信息");
                 }
                 SignVO signVO = new SignVO();
                 signVO.setUrl(PHOTO_URL+student.getIdCard()+".png");
@@ -151,12 +157,17 @@ public class CodeStateController {
                 signVO.setPhone(student.getPhone());
                 signVO.setType(4);//进入候考区的pad，状态标记为3
                 return signVO;
-            } else {
+            }
+            else{
                 return null;
             }
         } else {
+<<<<<<< HEAD
             System.out.println(77);
             throw new StudentException("非签到设备");
+=======
+            throw new StudentException("非签到设备,扫码设备只包括"+ipListOne.toString()+ipListTwo.toString()+ipListAway.toString());
+>>>>>>> 49a4b9fb536ef08d9a5d06448558274de89e7af0
         }
     }
 }
