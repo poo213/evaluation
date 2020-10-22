@@ -37,7 +37,6 @@ import java.util.List;
 public class JudgeApi {
     private final JudgeService judgeService;
     private final ConfigService configService;
-    private final PadService padService;
     private final JudgeDrawResultService judgeDrawResultService;
     private final TestQuestionStandardService testQuestionStandardService;
     private final QuestionDrawService questionDrawService;

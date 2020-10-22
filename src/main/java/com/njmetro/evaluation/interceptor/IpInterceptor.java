@@ -34,8 +34,8 @@ public class IpInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         // 根据ip获取pad信息
         String ip = IpUtil.getIpAddr(request);
+        ip = "172.18.1.228" ;
         log.info("IpInterceptor.Class ip： {}", ip);
-        ip = "192.168.97.10" ;
         QueryWrapper<Pad> padQueryWrapper = new QueryWrapper<>();
         padQueryWrapper.eq("ip", ip);
         Pad pad = padService.getOne(padQueryWrapper);

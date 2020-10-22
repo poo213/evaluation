@@ -43,7 +43,7 @@ public class StudentAPI {
     private final TestQuestionService testQuestionService;
     private final PauseRecordService pauseRecordService;
     private final CodeStateService codeStateService;
-
+//获取缺考状态，seatdraw中获取状态5，表示缺考
     /**
      * @param
      * @return 当前场次和轮次
@@ -86,7 +86,8 @@ public class StudentAPI {
         if (student.getId() != seatDraw.getStudentId()) {
             throw new StudentException("您不是当前考位的考生！");
         }
-        if(student.getTestDayState() != 2)
+        //todo 此处逻辑需要考虑到在考试中的人，可以再次签到
+        if(student.getTestDayState() != 2 && student.getTestDayState() != 3)
         {
             throw new StudentException("备考区签到成功才可以正常登录考试系统！");
         }
@@ -257,17 +258,8 @@ public class StudentAPI {
      */
     @GetMapping("/beReady")
     public Boolean beReady(Integer gameNumber, Integer gameRound,@RequestAttribute("pad") Pad pad) {
-////        Config config = configService.getById(1);//获取当前的场次和轮次
-//        String ipAddress = IpUtil.getIpAddr(httpServletRequest);
-//        if (ipAddress.equals("0:0:0:0:0:0:0:1")) {
-//            ipAddress = "192.168.96.9";
-//        }
-//        ipAddress = "192.168.96.9";
-//        QueryWrapper<Pad> padQueryWrapper = new QueryWrapper<>();
-//        padQueryWrapper.eq("ip", ipAddress).eq("type", 1);
-//
-//        Pad pad = padService.getOne(padQueryWrapper);
         UpdateWrapper<SeatDraw> seatDrawUpdateWrapper = new UpdateWrapper<>();
+
         seatDrawUpdateWrapper.eq("seat_id", pad.getSeatId())
                 .eq("game_number", gameNumber)
                 .eq("game_round", gameRound)
