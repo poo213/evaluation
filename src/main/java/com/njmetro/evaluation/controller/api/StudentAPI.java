@@ -260,7 +260,7 @@ public class StudentAPI {
     }
 
     @GetMapping("/writeQRcode")
-    public void writeQRcode(@RequestParam("qrcode") String qrcode, @RequestAttribute("ip") String ip) {
+    public Boolean writeQRcode(@RequestParam("qrcode") String qrcode, @RequestAttribute("ip") String ip) {
 //        String ipAddress = IpUtil.getIpAddr(httpServletRequest);
 //        if (ipAddress.equals("0:0:0:0:0:0:0:1")) {
 //            ipAddress = "192.168.96.9";
@@ -270,15 +270,19 @@ public class StudentAPI {
         log.info("扫码枪二维码打印 {} ", qrcode);
         QueryWrapper<CodeState> codeStateQueryWrapper = new QueryWrapper<>();
         //已经扫码，包含确认的和未确认的
-        codeStateQueryWrapper.eq("two_dimensional_code", qrcode).eq("ip", ip).eq("state", 0);
+        codeStateQueryWrapper.eq("two_dimensional_code", qrcode).eq("ip", ip);
+        codeStateQueryWrapper.and(wrapper -> wrapper.eq("state", 0).or().eq("state", 1));
         List<CodeState> codeStateList = codeStateService.list(codeStateQueryWrapper);
-
+        if (codeStateList.size() != 0) {
+            log.info("本条扫码信息已存在！");
+            return true;
+//            throw new StudentException("本条扫码信息已存在！请问重复扫码");
+        } else {
             CodeState codeState = new CodeState();
             codeState.setIp(ip);
             codeState.setTwoDimensionalCode(qrcode);
             codeState.setState(0);
-             codeStateService.save(codeState);
-
-
+            return codeStateService.save(codeState);
+        }
     }
 }

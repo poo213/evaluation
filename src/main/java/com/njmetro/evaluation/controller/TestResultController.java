@@ -260,12 +260,12 @@ public class TestResultController {
         //此处用于只能获取已进行的场次的成绩汇总
         Config config = configService.getById(1);
         int tempNumber = 1;
-        if (config.getGameNumber() == 1 && config.getGameRound() != 3) {
-            throw new StudentException("一场3轮比赛都结束才能对分数进行统计！");
-        }
-        if (config.getGameNumber() > 1 && config.getGameRound() != 3) {
-            tempNumber = config.getGameNumber() - 1;
-        }
+//        if (config.getGameNumber() == 1 && config.getGameRound() != 3) {
+//            throw new StudentException("一场3轮比赛都结束才能对分数进行统计！");
+//        }
+//        if (config.getGameNumber() > 1 && config.getGameRound() != 3) {
+//            tempNumber = config.getGameNumber() - 1;
+//        }
         //临时表，得到所有场次和轮次的结果 ，理论上一个考生有3个结果分别对应三轮，在这个list里
         List<FinalResultVO> finalTempResultVOList = new ArrayList<>();
 
@@ -369,6 +369,7 @@ public class TestResultController {
         List<Map<String, String>> listMap = new ArrayList<Map<String, String>>();
         for (FinalResultVO item:finaResultVOList
              ) {
+
             Map<String, String> lm = new HashMap<String, String>();
             lm.put("studentId",item.getStudentId()+"");
             lm.put("studentName",item.getStudentName());
@@ -380,11 +381,12 @@ public class TestResultController {
         }
 
         map.put("maplist", listMap);
+        System.out.println(map);
         Workbook workbook = ExcelExportUtil.exportExcel(params, map);
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         workbook.write(outputStream);
         Map<String, Object> resultMap = new HashMap<>(2);
-        resultMap.put("fileName", "fileName001.xlsx");
+        resultMap.put("fileName", "结果汇总.xlsx");
         resultMap.put("fileStream", outputStream.toByteArray());
 
         HttpHeaders headers = new HttpHeaders();
