@@ -83,6 +83,19 @@ public class SeatDrawController {
                 .eq("judge_id",judgeId);
         JudgeSubmitState judgeSubmitState = judgeSubmitStateService.getOne(judgeSubmitStateQueryWrapper);
 
+        if(judgeSubmitState != null){
+            judgeSubmitState.setState(1);
+            judgeSubmitStateService.updateById(judgeSubmitState);
+        }
+
+    }
+
+    Integer getStudentIdBySeatId(Integer gameNumber,Integer gameRound, Integer seatId){
+         QueryWrapper<SeatDraw> seatDrawQueryWrapper = new QueryWrapper<>();
+        seatDrawQueryWrapper.eq("game_number",gameNumber)
+                .eq("game_round",gameRound)
+                .eq("seat_id",seatId);
+        return seatDrawService.getOne(seatDrawQueryWrapper).getStudentId();
     }
 
     /**
@@ -93,6 +106,7 @@ public class SeatDrawController {
      */
     @GetMapping("/beReady")
     public Boolean doStudentMiss(Integer seatDrawId){
+        Config config = configService.getById(1);
         // 将考生状态改为 5
         SeatDraw seatDraw = seatDrawService.getById(seatDrawId);
         seatDraw.setState(5);
@@ -104,6 +118,9 @@ public class SeatDrawController {
         Integer rightJudgeId = changeJudgeState(rightJudgeSeatId);
         changeJudgeState(rightJudgeSeatId);
         // 将裁判最终提交成绩改为 1
+        Integer studentId = getStudentIdBySeatId(config.getGameNumber(),config.getGameRound(),studentSeatId);
+        //changeJudgeSubmitState(config.getGameNumber(),config.getGameRound(),studentId,leftJudgeId);
+        //changeJudgeSubmitState(config.getGameNumber(),config.getGameRound(),studentId,rightJudgeId);
         return seatDrawService.updateById(seatDraw);
     }
 

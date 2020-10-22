@@ -12,11 +12,12 @@ TRUNCATE TABLE judge_draw_result;
 
 #重置数据库(不需要重新初始化)
 TRUNCATE TABLE seat_draw;
-#TRUNCATE TABLE test_result;
+TRUNCATE TABLE test_result;
 TRUNCATE TABLE question_draw;
 TRUNCATE TABLE code_state; # 二维码状态
 TRUNCATE TABLE pause_record;
 TRUNCATE TABLE code_state;
+TRUNCATE TABLE judge_submit_state;
 
 ##  初始数据
 
@@ -309,7 +310,7 @@ VALUES ('******', '172.18.1.228', 1, 1),
        ('******', '172.18.1.241', 36, 5);
 
 # config
-INSERT INTO config(game_number, game_round, state) value (1, 1, 0);
+INSERT INTO config(game_number, game_round, state) value (1, 0, 4);
 
 # draw_state
 
