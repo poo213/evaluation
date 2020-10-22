@@ -1,16 +1,11 @@
 package com.njmetro.evaluation;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.njmetro.evaluation.domain.Company;
-import com.njmetro.evaluation.domain.Judge;
-import com.njmetro.evaluation.domain.Seat;
-import com.njmetro.evaluation.domain.SeatDraw;
+import com.njmetro.evaluation.domain.*;
+import com.njmetro.evaluation.mapper.CodeStateMapper;
 import com.njmetro.evaluation.mapper.JudgeMapper;
 import com.njmetro.evaluation.mapper.SeatGroupMapper;
-import com.njmetro.evaluation.service.CompanyService;
-import com.njmetro.evaluation.service.JudgeService;
-import com.njmetro.evaluation.service.SeatDrawService;
-import com.njmetro.evaluation.service.SeatGroupService;
+import com.njmetro.evaluation.service.*;
 import com.njmetro.evaluation.util.KnuthUtil;
 import com.njmetro.evaluation.util.SeatUtil;
 import com.njmetro.evaluation.vo.JudgeShowVO;
@@ -40,6 +35,9 @@ class EvaluationApplicationTests {
 
     @Autowired
     SeatDrawService seatDrawService;
+
+    @Autowired
+    CodeStateService codeStateService;
 
     @Test
     void contextLoads() {
@@ -103,6 +101,25 @@ class EvaluationApplicationTests {
            seatDraw.setState(2);
            seatDrawService.updateById(seatDraw);
        }
+    }
+
+    @Test
+    void code() {
+        QueryWrapper<CodeState> codeStateQueryWrapper = new QueryWrapper<>();
+        //已经扫码，包含确认的和未确认的
+//        codeStateQueryWrapper.eq("two_dimensional_code", "njdt001").eq("ip", "172.18.1.239").eq("state", 0).or().eq("state", 1);
+        codeStateQueryWrapper.eq("two_dimensional_code", "njdt001").eq("ip", "172.18.1.239");
+        codeStateQueryWrapper.and(wrapper->wrapper.eq("state", 0).or().eq("state", 1));
+        List<CodeState> codeStateList = codeStateService.list(codeStateQueryWrapper);
+        if (codeStateList.size() != 0) {
+            System.out.println("本条扫码信息已存在！");
+        } else {
+            CodeState codeState = new CodeState();
+            codeState.setIp("172.18.1.239");
+            codeState.setTwoDimensionalCode("njdt001");
+            codeState.setState(0);
+             codeStateService.save(codeState);
+        }
     }
 
 
