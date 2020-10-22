@@ -36,5 +36,7 @@ SELECT judge.name,judge_draw_result.id,judge_draw_result.state
 FROM judge_draw_result,judge
 WHERE judge_draw_result.seat_id = 1 and judge_draw_result.judge_id = judge.id;
 
+SELECT id,two_dimensional_code,state,create_time,update_time,ip FROM code_state WHERE (two_dimensional_code = 'njdt01' AND ip = '172.18.1.239' AND (state = 0 OR state = 1))
+
 
 

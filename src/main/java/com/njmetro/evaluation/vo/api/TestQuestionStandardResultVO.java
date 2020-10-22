@@ -26,7 +26,7 @@ public class TestQuestionStandardResultVO {
     private String testName;
 
     /**
-     * 比赛名称
+     * 比赛名称student
      */
     private Integer questionId;
     /**
@@ -42,9 +42,9 @@ public class TestQuestionStandardResultVO {
      */
     public List<TestQuestionStandardVO> testQuestionStandardVOList;
 
-    public TestQuestionStandardResultVO(List<TestQuestionStandardVO> testQuestionStandardVOList,String testName,Integer questionId,Integer judgeId,Integer studentId){
-        this.readTime = 30;
-        this.testTime = 1200;
+    public TestQuestionStandardResultVO(List<TestQuestionStandardVO> testQuestionStandardVOList,String testName,Integer questionId,Integer judgeId,Integer studentId,Integer readTime,Integer testTime){
+        this.readTime = readTime;
+        this.testTime = testTime;
         this.testName = testName;
         this.questionId = questionId;
         this.judgeId = judgeId;

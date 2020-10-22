@@ -50,7 +50,7 @@ public class CodeStateController {
 //        if (ipAddress.equals("0:0:0:0:0:0:0:1")) {
 //            ipAddress = "192.168.99.9";
 //        }
-        ipAddress = "172.18.1.239";//模拟ip，进入候考区，备考区，离场，3台设备ip
+        //ipAddress = "172.18.1.239";//模拟ip，进入候考区，备考区，离场，3台设备ip
         log.info("调用次接口的IP:{}", ipAddress);
        // log.info("获取到拦截器ip {} ",ip);
         List<String> ipListOne = codeStateService.getIpList(3);
@@ -59,13 +59,17 @@ public class CodeStateController {
         log.info("候考区扫码枪ip：{}",ipListOne.toString());
         log.info("备考区扫码枪ip：{}",ipListTwo.toString());
         log.info("离开考场扫码枪ip：{}",ipListAway.toString());
+        System.out.println(1);
         if (ipListOne.contains(ipAddress)){
+            System.out.println(11);
             log.info("进入候考区pad签到:{}", ipAddress);
             QueryWrapper<CodeState> queryWrapper = new QueryWrapper<>();
             queryWrapper.eq("ip", ipAddress).eq("state", 0);
             List<CodeState> codeStateList = codeStateService.list(queryWrapper);
+            log.info("size:{}", codeStateList.size());
             if (codeStateList.size() > 0)//每次只取一个
             {
+                System.out.println(22);
                 String qrCode = codeStateList.get(0).getTwoDimensionalCode();//获取二维码
                 QueryWrapper<Student> studentQueryWrapper = new QueryWrapper<>();
                 studentQueryWrapper.eq("two_dimensional_code", qrCode);
@@ -86,15 +90,18 @@ public class CodeStateController {
                 signVO.setType(1);//进入候考区的pad，状态标记为1
                 return signVO;
             } else {
+                System.out.println(33);
                 return null;
             }
         } else if (ipListTwo.contains(ipAddress)) {
             log.info("进入备考考区pad签到:{}", ipAddress);
+            System.out.println(2);
             QueryWrapper<CodeState> queryWrapper = new QueryWrapper<>();
             queryWrapper.eq("ip", ipAddress).eq("state", 0);
             List<CodeState> codeStateList = codeStateService.list(queryWrapper);
             if (codeStateList.size() > 0)//每次只取一个
             {
+                System.out.println(3);
                 String qrCode = codeStateList.get(0).getTwoDimensionalCode();//获取二维码
                 QueryWrapper<Student> studentQueryWrapper = new QueryWrapper<>();
                 studentQueryWrapper.eq("two_dimensional_code", qrCode);
@@ -118,6 +125,7 @@ public class CodeStateController {
                 return null;
             }
         } else if (ipListAway.contains(ipAddress)) {
+            System.out.println(4);
             log.info("离开考区pad签出:{}", ipAddress);
             QueryWrapper<CodeState> queryWrapper = new QueryWrapper<>();
             queryWrapper.eq("ip", ipAddress).eq("state", 0);
@@ -147,6 +155,7 @@ public class CodeStateController {
                 return null;
             }
         } else {
+            System.out.println(77);
             throw new StudentException("非签到设备");
         }
     }
