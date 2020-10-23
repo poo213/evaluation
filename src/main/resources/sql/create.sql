@@ -188,7 +188,7 @@ CREATE TABLE IF NOT EXISTS pause_record
   DEFAULT CHARSET = UTF8MB4;
 
 
-# 考生 暂停记录表
+# 考生 抽签状态
 CREATE TABLE IF NOT EXISTS draw_state
 (
     id            INT UNSIGNED AUTO_INCREMENT COMMENT 'id',
@@ -201,7 +201,7 @@ CREATE TABLE IF NOT EXISTS draw_state
   DEFAULT CHARSET = UTF8MB4;
 
 
-# 考生 暂停记录表
+# 考生 考试结果
 CREATE TABLE IF NOT EXISTS test_result
 (
     id                   INT UNSIGNED AUTO_INCREMENT COMMENT 'id',

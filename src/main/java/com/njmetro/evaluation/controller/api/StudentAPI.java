@@ -115,6 +115,10 @@ public class StudentAPI {
             log.info("考题id：{}", questionDrawService.getOne(questionDrawQueryWrapper).getQuestionId());//考题Id
             QueryWrapper<TestQuestion> testQuestionQueryWrapper = new QueryWrapper<>();
             testQuestionQueryWrapper.eq("id", questionDrawService.getOne(questionDrawQueryWrapper).getQuestionId());
+            UpdateWrapper<SeatDraw> seatDrawUpdateWrapper = new UpdateWrapper<>();
+            //得到考题，变成考试中
+            seatDrawUpdateWrapper.eq("game_number",config.getGameNumber()).eq("game_round",config.getGameRound()).eq("seat_id",pad.getSeatId()).set("state",2);
+            seatDrawService.update(seatDrawUpdateWrapper);
             TestQuestion testQuestion = testQuestionService.getOne(testQuestionQueryWrapper);
             String url = testQuestion.getUrl();
             //todo
@@ -140,15 +144,10 @@ public class StudentAPI {
     public QuestionVO getUrlNew(HttpServletRequest httpServletRequest) {
         Config config = configService.getById(1);//获取当前的场次和轮次
         String ipAddress = IpUtil.getIpAddr(httpServletRequest);
-        if (ipAddress.equals("0:0:0:0:0:0:0:1")) {
-            ipAddress = "192.168.96.9";
-        }
-        ipAddress = "192.168.96.9";
         log.info("调用次接口的IP:{}", ipAddress);
         QueryWrapper<Pad> padQueryWrapper = new QueryWrapper<>();
         padQueryWrapper.eq("ip", ipAddress).eq("type", 1);
         Pad pad = padService.getOne(padQueryWrapper);//获取对应pad
-        System.out.println(pad);
         QueryWrapper<QuestionDraw> questionDrawQueryWrapper = new QueryWrapper<>();
         questionDrawQueryWrapper.eq("game_number", config.getGameRound()).eq("game_type", SeatUtil.getGameTypeByStudentSeatId(pad.getSeatId()));
         log.info("考题id：{}", questionDrawService.getOne(questionDrawQueryWrapper).getQuestionId());//考题Id
