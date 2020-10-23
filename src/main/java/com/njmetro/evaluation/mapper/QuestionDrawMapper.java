@@ -17,13 +17,15 @@ import java.util.List;
  */
 public interface QuestionDrawMapper extends BaseMapper<QuestionDraw> {
 
+
     /**
      * 获取已经抽签的考题结果
+     * @param gameNumber
      * @return
      */
     @Select("SELECT game_number,game_type,test_question.name\n" +
             "FROM test_question,question_draw\n" +
-            "WHERE test_question.id = question_draw.question_id")
-    List<QuestionDrawVO> selectList();
+            "WHERE test_question.id = question_draw.question_id and game_number =#{gameNumber}")
+    List<QuestionDrawVO> selectList(Integer gameNumber);
 
 }

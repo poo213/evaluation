@@ -19,7 +19,7 @@ WHERE seat_draw.game_number = 1 and seat_draw. game_round = 2 and seat_id =12 an
 # 试题抽签结果
 SELECT game_number,game_type,test_question.name
 FROM test_question,question_draw
-WHERE test_question.id = question_draw.question_id;
+WHERE test_question.id = question_draw.question_id and game_number = 3;
 
 
 ##
