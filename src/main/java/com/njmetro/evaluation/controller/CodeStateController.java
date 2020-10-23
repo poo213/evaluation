@@ -3,9 +3,11 @@ package com.njmetro.evaluation.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.njmetro.evaluation.domain.CodeState;
+import com.njmetro.evaluation.domain.SeatDraw;
 import com.njmetro.evaluation.domain.Student;
 import com.njmetro.evaluation.exception.StudentException;
 import com.njmetro.evaluation.service.CodeStateService;
+import com.njmetro.evaluation.service.SeatDrawService;
 import com.njmetro.evaluation.service.StudentService;
 import com.njmetro.evaluation.util.IpUtil;
 import com.njmetro.evaluation.vo.SignVO;
@@ -38,7 +40,7 @@ public class CodeStateController {
 
     private final CodeStateService codeStateService;
     private final StudentService studentService;
-
+    private final SeatDrawService seatDrawService;
     /**
      * 前端轮询调用
      *
@@ -50,7 +52,7 @@ public class CodeStateController {
 //        if (ipAddress.equals("0:0:0:0:0:0:0:1")) {
 //            ipAddress = "192.168.99.9";
 //        }
-  //      ipAddress = "172.18.1.239";//模拟ip，进入候考区，备考区，离场，3台设备ip
+        //ipAddress = "192.168.96.9";//模拟ip，进入候考区，备考区，离场，3台设备ip
         log.info("调用次接口的IP:{}", ipAddress);
        // log.info("获取到拦截器ip {} ",ip);
         List<String> ipListOne = codeStateService.getIpList(3);
@@ -99,17 +101,26 @@ public class CodeStateController {
             QueryWrapper<CodeState> queryWrapper = new QueryWrapper<>();
             queryWrapper.eq("ip", ipAddress).eq("state", 0);
             List<CodeState> codeStateList = codeStateService.list(queryWrapper);
-            if (codeStateList.size() > 0)//每次只取一个
+            //每次只取一个
+            if (codeStateList.size() > 0)
             {
-                System.out.println(3);
-                String qrCode = codeStateList.get(0).getTwoDimensionalCode();//获取二维码
+                //获取二维码
+                String qrCode = codeStateList.get(0).getTwoDimensionalCode();
                 QueryWrapper<Student> studentQueryWrapper = new QueryWrapper<>();
                 studentQueryWrapper.eq("two_dimensional_code", qrCode);
-                Student student = studentService.getOne(studentQueryWrapper);//获取考生信息
+                //获取考生信息
+                Student student = studentService.getOne(studentQueryWrapper);
                 if(student==null)
                 {
                     throw new StudentException("没有此考生信息");
                 }
+                QueryWrapper<SeatDraw> seatDrawQueryWrapper= new QueryWrapper<>();
+                seatDrawQueryWrapper.eq("student_id",student.getId())
+                        .eq("game_round",1);
+                //获取考生赛位信息(只需要第一轮的信息)
+                SeatDraw seatDraw =  seatDrawService.getOne(seatDrawQueryWrapper);
+                Integer seatId = seatDraw.getSeatId();
+                Integer groupId = seatDraw.getGroupId();
                 SignVO signVO = new SignVO();
                 signVO.setId(student.getId());
                 signVO.setUrl(PHOTO_URL+student.getIdCard()+".png");
@@ -120,13 +131,13 @@ public class CodeStateController {
                 signVO.setCompanyName(student.getCompanyName());
                 signVO.setPhone(student.getPhone());
                 signVO.setType(2);//进入候考区的pad，状态标记为2
+                signVO.setSeatInfo(groupId +"-"+seatId);
                 return signVO;
             }
             else{
                 return null;
             }
         } else if (ipListAway.contains(ipAddress)) {
-            System.out.println(4);
             log.info("离开考区pad签出:{}", ipAddress);
             QueryWrapper<CodeState> queryWrapper = new QueryWrapper<>();
             queryWrapper.eq("ip", ipAddress).eq("state", 0);

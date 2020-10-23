@@ -3,6 +3,7 @@ package com.njmetro.evaluation.service;
 import com.njmetro.evaluation.domain.Company;
 import com.njmetro.evaluation.domain.Student;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.njmetro.evaluation.vo.SignVO;
 
 import java.util.List;
 
@@ -18,4 +19,5 @@ public interface StudentService extends IService<Student> {
 
     List<String> getHaveSighCompanyList();
     List<Integer> getStudentIdList();//获取所有考生id
+    List<SignVO> getSignVOList();
 }

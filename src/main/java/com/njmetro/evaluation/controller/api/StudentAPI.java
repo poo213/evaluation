@@ -44,6 +44,7 @@ public class StudentAPI {
     private final PauseRecordService pauseRecordService;
     private final CodeStateService codeStateService;
 //获取缺考状态，seatdraw中获取状态5，表示缺考
+
     /**
      * @param
      * @return 当前场次和轮次
@@ -56,6 +57,7 @@ public class StudentAPI {
 
     /**
      * 实现考生登录
+     *
      * @param QRcode 二维码信息
      * @return 考生信息
      */
@@ -74,19 +76,18 @@ public class StudentAPI {
         QueryWrapper<Student> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("two_dimensional_code", QRcode);
         Student student = studentService.getOne(queryWrapper);
-        log.info("saomade:{}",student);
+        log.info("saomade:{}", student);
         if (!student.getId().equals(seatDraw.getStudentId())) {
             throw new StudentException("您不是当前考位的考生！");
         }
         //todo 此处逻辑需要考虑到在考试中的人，可以再次签到
-        if(student.getTestDayState() != 2 && student.getTestDayState() != 3)
-        {
+        if (student.getTestDayState() != 2 && student.getTestDayState() != 3) {
             throw new StudentException("备考区签到成功才可以正常登录考试系统！");
         }
         log.info("考生登录信息：{}", student);
         UpdateWrapper<Student> studentUpdateWrapper = new UpdateWrapper<>();
         //登录的时候，考试当天的状态变为3，表示正在考试中
-        studentUpdateWrapper.eq("id",student.getId()).set("test_day_state",3);
+        studentUpdateWrapper.eq("id", student.getId()).set("test_day_state", 3);
         studentService.update(studentUpdateWrapper);
         StudentInfo studentInfo = new StudentInfo();
         studentInfo.setName(student.getName());
@@ -96,7 +97,7 @@ public class StudentAPI {
         studentInfo.setCompanyName(student.getCompanyName());
         studentInfo.setIdCard(student.getIdCard());
         studentInfo.setUrl(DOWNLOAD_BASE_URL + "idcard/" + student.getIdCard() + ".jpg");
-        log.info("考生扫码登录，获取的考试信息：{}",studentInfo);
+        log.info("考生扫码登录，获取的考试信息：{}", studentInfo);
         return studentInfo;
     }
 
@@ -249,7 +250,7 @@ public class StudentAPI {
      * @return
      */
     @GetMapping("/beReady")
-    public Boolean beReady(Integer gameNumber, Integer gameRound,@RequestAttribute("pad") Pad pad) {
+    public Boolean beReady(Integer gameNumber, Integer gameRound, @RequestAttribute("pad") Pad pad) {
         UpdateWrapper<SeatDraw> seatDrawUpdateWrapper = new UpdateWrapper<>();
 
         seatDrawUpdateWrapper.eq("seat_id", pad.getSeatId())
@@ -268,21 +269,29 @@ public class StudentAPI {
 //        ipAddress = "192.168.96.9";
         log.info("获取到拦截器ip {} ", ip);
         log.info("扫码枪二维码打印 {} ", qrcode);
-        QueryWrapper<CodeState> codeStateQueryWrapper = new QueryWrapper<>();
-        //已经扫码，包含确认的和未确认的
-        codeStateQueryWrapper.eq("two_dimensional_code", qrcode).eq("ip", ip);
-        codeStateQueryWrapper.and(wrapper -> wrapper.eq("state", 0).or().eq("state", 1));
-        List<CodeState> codeStateList = codeStateService.list(codeStateQueryWrapper);
-        if (codeStateList.size() != 0) {
-            log.info("本条扫码信息已存在！");
-            return true;
+        QueryWrapper<Student> studentQueryWrapper = new QueryWrapper<>();
+        studentQueryWrapper.eq("two_dimensional_code", qrcode);
+        //此处表示是选手的二维码
+        if (studentService.list(studentQueryWrapper).size() > 0) {
+            QueryWrapper<CodeState> codeStateQueryWrapper = new QueryWrapper<>();
+            //已经扫码，包含确认的和未确认的
+            codeStateQueryWrapper.eq("two_dimensional_code", qrcode).eq("ip", ip);
+            codeStateQueryWrapper.and(wrapper -> wrapper.eq("state", 0).or().eq("state", 1));
+            List<CodeState> codeStateList = codeStateService.list(codeStateQueryWrapper);
+            if (codeStateList.size() != 0) {
+                log.info("本条扫码信息已存在！");
+                return true;
 //            throw new StudentException("本条扫码信息已存在！请问重复扫码");
+            } else {
+                CodeState codeState = new CodeState();
+                codeState.setIp(ip);
+                codeState.setTwoDimensionalCode(qrcode);
+                codeState.setState(0);
+                return codeStateService.save(codeState);
+            }
         } else {
-            CodeState codeState = new CodeState();
-            codeState.setIp(ip);
-            codeState.setTwoDimensionalCode(qrcode);
-            codeState.setState(0);
-            return codeStateService.save(codeState);
+            log.info("非参赛选手二维码，请勿扫描");
+            return false;
         }
     }
 }

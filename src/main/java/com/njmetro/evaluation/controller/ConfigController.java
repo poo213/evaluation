@@ -99,6 +99,7 @@ public class ConfigController {
             config.setGameRound(gameRound);
         }
         config.setState(0);
+        configService.updateById(config);
         // 将裁判抽签结果表中的就绪状态全部设为 0
         List<JudgeDrawResult> judgeDrawResultList = judgeDrawResultService.list();
         for(JudgeDrawResult judgeDrawResult : judgeDrawResultList){
@@ -107,7 +108,7 @@ public class ConfigController {
         }
         // 将 seatDraw中裁判信息写入系统中
         writeJudgeSubmitState();
-        return configService.updateById(config);
+        return true;
     }
 
     /**

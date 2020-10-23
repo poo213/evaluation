@@ -5,6 +5,7 @@ import com.njmetro.evaluation.domain.Student;
 import com.njmetro.evaluation.mapper.StudentMapper;
 import com.njmetro.evaluation.service.StudentService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.njmetro.evaluation.vo.SignVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -32,4 +33,7 @@ public class StudentServiceImpl extends ServiceImpl<StudentMapper, Student> impl
     public List<Integer> getStudentIdList(){
         return studentMapper.getStudentIdList();
     }
+
+    @Override
+    public List<SignVO> getSignVOList(){ return studentMapper.getSignVOList(); }
 }

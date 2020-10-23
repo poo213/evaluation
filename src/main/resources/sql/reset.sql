@@ -16,7 +16,6 @@ TRUNCATE TABLE test_result;
 TRUNCATE TABLE question_draw;
 TRUNCATE TABLE code_state; # 二维码状态
 TRUNCATE TABLE pause_record;
-TRUNCATE TABLE code_state;
 TRUNCATE TABLE judge_submit_state;
 
 ##  初始数据

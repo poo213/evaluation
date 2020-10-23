@@ -6,6 +6,7 @@ import com.njmetro.evaluation.domain.*;
 import com.njmetro.evaluation.param.student.SaveStudentParam;
 import com.njmetro.evaluation.param.student.UpdateStudentParam;
 import com.njmetro.evaluation.service.*;
+import com.njmetro.evaluation.vo.SignVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -106,6 +107,13 @@ public class StudentController {
         QueryWrapper<Student> studentQueryWrapper = new QueryWrapper<>();
         studentQueryWrapper.eq("test_day_state",1);
         return studentService.list(studentQueryWrapper);
+    }
+    /**
+     * 获取已进入备考区的考生列表,状态为2，主要返回到签到页面用
+     */
+    @GetMapping("/getStudentListHaveSignTwo")
+    public List<SignVO> getStudentListHaveSignTwo() {
+        return studentService.getSignVOList();
     }
     /**
      * 获取考试中的考生列表

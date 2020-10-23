@@ -58,4 +58,13 @@ public class SignVO {
      */
     private Integer type;
 
+    /**
+     * 座位信息
+     */
+    private String seatInfo;
+    /**
+     * 座位号
+     */
+    private Integer seatId;
+
 }
