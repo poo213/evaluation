@@ -287,6 +287,17 @@ public class JudgeApi {
                     testResult.setCent(studentResultDTO.getResult());
                     testResultService.save(testResult);
                     log.info("没有成绩时 可以直接写入   ----");
+                    if(state.equals(1)){
+                        QueryWrapper<JudgeSubmitState> judgeSubmitStateQueryWrapper = new QueryWrapper<>();
+                        judgeSubmitStateQueryWrapper.eq("game_number",gameNumber)
+                                .eq("game_round",gameRound)
+                                .eq("student_id",studentId)
+                                .eq("judge_id",judgeId);
+                        JudgeSubmitState judgeSubmitState = judgeSubmitStateService.getOne(judgeSubmitStateQueryWrapper);
+                        judgeSubmitState.setState(1);
+                        judgeSubmitStateService.updateById(judgeSubmitState);
+                        log.info("最终提交，写入数据库成功");
+                    }
                 }
             }else {
                 // 允许上传数据

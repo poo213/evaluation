@@ -87,10 +87,9 @@ public class QuestionDrawController {
         // 根据比赛场次判断是否已经抽题
         Config config = configService.getById(1);
         Integer gameNumber = config.getGameNumber();
-        QueryWrapper<QuestionDraw> questionDrawQueryWrapper = new QueryWrapper<>();
-        questionDrawQueryWrapper.eq("game_number",gameNumber);
-        List<QuestionDraw> questionDrawList = questionDrawService.list(questionDrawQueryWrapper);
+        List<QuestionDrawVO> questionDrawList = questionDrawService.selectQuestionDrawList(config.getGameNumber());
         if(questionDrawList.isEmpty()){
+            log.info("进去抽题~~~~");
             // 列表为空，说明是第一轮，需要重新抽题
             doDrawOneType(gameNumber,"光缆接续");
             doDrawOneType(gameNumber,"交换机组网");
@@ -109,7 +108,8 @@ public class QuestionDrawController {
      */
     @GetMapping("/getList")
     public List<QuestionDrawVO> getList(){
-        return questionDrawService.selectList();
+        Config config = configService.getById(1);
+        return questionDrawService.selectQuestionDrawList(config.getGameNumber());
     }
 
 }

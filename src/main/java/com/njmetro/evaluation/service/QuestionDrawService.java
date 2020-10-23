@@ -14,10 +14,14 @@ import java.util.List;
  * @author zc
  * @since 2020-09-29
  */
-public interface QuestionDrawService extends IService<QuestionDraw> {
-    /**
+public interface QuestionDrawService extends IService<QuestionDraw> {/**
      * 获取已经抽签的考题结果
      * @return
      */
-    List<QuestionDrawVO> selectList();
+    /**
+     * 获取已经抽签的考题结果
+     * @param gameNumber
+     * @return
+     */
+    List<QuestionDrawVO> selectQuestionDrawList(Integer gameNumber);
 }

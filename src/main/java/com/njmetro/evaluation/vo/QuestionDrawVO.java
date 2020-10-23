@@ -1,5 +1,6 @@
 package com.njmetro.evaluation.vo;
 
+import com.njmetro.evaluation.domain.QuestionDraw;
 import lombok.Data;
 
 /**

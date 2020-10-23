@@ -25,7 +25,7 @@ public class QuestionDrawServiceImpl extends ServiceImpl<QuestionDrawMapper, Que
     QuestionDrawMapper questionDrawMapper;
 
     @Override
-    public List<QuestionDrawVO> selectList() {
-        return questionDrawMapper.selectList();
+    public List<QuestionDrawVO> selectQuestionDrawList(Integer gameNumber) {
+        return questionDrawMapper.selectList(gameNumber);
     }
 }

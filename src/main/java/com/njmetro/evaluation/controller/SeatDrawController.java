@@ -119,8 +119,8 @@ public class SeatDrawController {
         changeJudgeState(rightJudgeSeatId);
         // 将裁判最终提交成绩改为 1
         Integer studentId = getStudentIdBySeatId(config.getGameNumber(),config.getGameRound(),studentSeatId);
-        //changeJudgeSubmitState(config.getGameNumber(),config.getGameRound(),studentId,leftJudgeId);
-        //changeJudgeSubmitState(config.getGameNumber(),config.getGameRound(),studentId,rightJudgeId);
+        changeJudgeSubmitState(config.getGameNumber(),config.getGameRound(),studentId,leftJudgeId);
+        changeJudgeSubmitState(config.getGameNumber(),config.getGameRound(),studentId,rightJudgeId);
         return seatDrawService.updateById(seatDraw);
     }
 

@@ -39,7 +39,7 @@ public class EndInterceptor implements HandlerInterceptor {
                 .eq("game_round",config.getGameRound());
         List<SeatDraw> seatDrawList = seatDrawService.list(seatDrawQueryWrapper);
         for(SeatDraw seatDraw : seatDrawList){
-            if(!seatDraw.getState().equals(4)){
+            if(!(seatDraw.getState().equals(4) || seatDraw.getState().equals(5))){
                 log.info("考生没有全部提交");
                 flag =false;
                 break;
