@@ -11,4 +11,4 @@ logging:
     path: c:/log/evaluation
   level:
     root: info
-    com.njmetro.evaluation.mapper: debug
+    com.njmetro.evaluation.mapper: info

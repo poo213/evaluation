@@ -18,6 +18,11 @@ public class StudentReadyShowVO {
      * 学生姓名
      */
     public String name;
+
+    /**
+     * 学生编号
+     */
+    public String code;
     /**
      * 学生状态
      */

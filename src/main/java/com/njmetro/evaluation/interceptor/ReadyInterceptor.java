@@ -60,7 +60,7 @@ public class ReadyInterceptor implements HandlerInterceptor {
                 .eq("game_round",config.getGameRound());
         List<SeatDraw> seatDrawList = seatDrawService.list(seatDrawQueryWrapper);
         for(SeatDraw seatDraw : seatDrawList){
-            if(!(seatDraw.getState() == 1 || seatDraw.getState() == 5)){
+            if(!(seatDraw.getState() == 1 || seatDraw.getState() == 5 || seatDraw.getState() == 6)){
                 return false;
             }else {
                 Integer studentSeatId = seatDraw.getSeatId();

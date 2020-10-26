@@ -10,10 +10,12 @@ import com.njmetro.evaluation.service.CompanyService;
 import com.njmetro.evaluation.service.DrawStateService;
 import com.njmetro.evaluation.service.StudentService;
 import com.njmetro.evaluation.util.DrawUtil;
+import com.njmetro.evaluation.vo.CompanyVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -119,5 +121,75 @@ public class CompanyController {
        return companyService.list(queryWrapper);
 
     }
+
+    /**
+     * 获取抽签前参赛队列表
+     * @return
+     */
+    @GetMapping("/getBeforeCompanyList")
+    public List<CompanyVO> getBeforeCompanyList(){
+        List<Company> companyList = companyService.list();
+        Integer rowNumber = 0;
+        if((companyList.size()) % 4 == 0){
+            rowNumber = companyList.size() / 4;
+        }else {
+            rowNumber = companyList.size() / 4 +1;
+        }
+        List<CompanyVO> companyVOList = new ArrayList<>(rowNumber);
+        for(int i = 0; i < rowNumber ; i++){
+            CompanyVO companyVO = new CompanyVO(companyList.get(i));
+
+            companyVO.setOrderTwo(companyList.get(i+rowNumber).getDrawResult());
+            companyVO.setCompanyTwoName(companyList.get(i+rowNumber).getName());
+
+            companyVO.setOrderThree(companyList.get(i+rowNumber*2).getDrawResult());
+            companyVO.setCompanyThreeName(companyList.get(i+rowNumber *2).getName());
+            if(i+rowNumber *3 < companyList.size()){
+                companyVO.setOrderFour(companyList.get(i+rowNumber*3).getDrawResult());
+                companyVO.setCompanyFourName(companyList.get(i+rowNumber *3).getName());
+            }
+            companyVOList.add(companyVO);
+
+        }
+
+        return companyVOList;
+    }
+
+    /**
+     * 获取抽签后参赛队列表
+     * @return
+     */
+    @GetMapping("/getAfterCompanyList")
+    public List<CompanyVO> getAfterCompanyList(){
+        QueryWrapper<Company> companyQueryWrapper = new QueryWrapper<>();
+        companyQueryWrapper.orderByAsc("draw_result");
+        List<Company> companyList = companyService.list(companyQueryWrapper);
+        Integer rowNumber = 0;
+        if((companyList.size()) % 4 == 0){
+            rowNumber = companyList.size() / 4;
+        }else {
+            rowNumber = companyList.size() / 4 +1;
+        }
+        List<CompanyVO> companyVOList = new ArrayList<>(rowNumber);
+        for(int i = 0; i < rowNumber ; i++){
+            CompanyVO companyVO = new CompanyVO(companyList.get(i));
+
+            companyVO.setOrderTwo(companyList.get(i+rowNumber).getDrawResult());
+            companyVO.setCompanyTwoName(companyList.get(i+rowNumber).getName());
+
+            companyVO.setOrderThree(companyList.get(i+rowNumber*2).getDrawResult());
+            companyVO.setCompanyThreeName(companyList.get(i+rowNumber *2).getName());
+            if(i+rowNumber *3 < companyList.size()){
+                companyVO.setOrderFour(companyList.get(i+rowNumber*3).getDrawResult());
+                companyVO.setCompanyFourName(companyList.get(i+rowNumber *3).getName());
+            }
+            companyVOList.add(companyVO);
+
+        }
+
+        return companyVOList;
+    }
+
+
 }
 

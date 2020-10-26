@@ -19,6 +19,10 @@ public class JudgeReadyShowVO {
      */
     public String name;
     /**
+     * 裁判编号
+     */
+    public String code;
+    /**
      * 裁判状态
      */
     public Integer state;

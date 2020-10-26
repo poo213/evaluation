@@ -37,9 +37,57 @@ public class JudgeDrawResultController {
     public final ConfigService configService;
 
 
+    /**
+     * 获取单个裁判 就绪状态表
+     * @param left
+     * @return
+     */
+    List<JudgeReadyShowVO> getJudgeReadyListOne(Integer left){
+        // 根据当前场次轮次找到对应考生座位id
+        Config config = configService.getById(1);
+        QueryWrapper<SeatDraw> seatDrawQueryWrapper = new QueryWrapper<>();
+        seatDrawQueryWrapper.eq("game_number",config.getGameNumber())
+                .eq("game_round",config.getGameRound());
+        List<SeatDraw> seatDrawList = seatDrawService.list(seatDrawQueryWrapper);
+        // 存放裁判 seatId的数组
+        int[] judgeSeatIdArray = new int[seatDrawList.size()];
+        for(int i = 0 ; i< seatDrawList.size() ; i++){
+            Integer studentSeatId = seatDrawList.get(i).getSeatId();
+            if(left == 0){
+                judgeSeatIdArray[i] = SeatUtil.getLeftJudgeSeatIdByStudentSeatId(studentSeatId);
+            }else {
+                judgeSeatIdArray[i] = SeatUtil.getRightJudgeSeatIdByStudentSeatId(studentSeatId);
+            }
 
+        }
+        List<JudgeReadyShowVO> judgeReadyShowVOList = new ArrayList<>();
+        for(int i = 0; i < judgeSeatIdArray.length; i++){
+            judgeReadyShowVOList.add(judgeDrawResultService.getJudgeReadyShowVO(judgeSeatIdArray[i]));
+        }
+        return judgeReadyShowVOList;
+    }
 
+    /**
+     * 获取左侧裁判就绪状态
+     * @return
+     */
+    @GetMapping("/getLeftJudgeReadyList")
+    List<JudgeReadyShowVO> getLeftJudgeReadyList(){
+        return getJudgeReadyListOne(0);
+    }
+    /**
+     * 获取右侧裁判就绪状态
+     * @return
+     */
+    @GetMapping("/getRightJudgeReadyList")
+    List<JudgeReadyShowVO> getRightJudgeReadyList(){
+        return getJudgeReadyListOne(1);
+    }
 
+    /**
+     * 获取全部才哦按
+     * @return
+     */
     @GetMapping("/getJudgeReadyList")
     List<JudgeReadyShowVO> getJudgeReadyList(){
         // 根据当前场次轮次找到对应考生座位id

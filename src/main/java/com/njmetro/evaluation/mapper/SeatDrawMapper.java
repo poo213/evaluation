@@ -60,7 +60,7 @@ public interface SeatDrawMapper extends BaseMapper<SeatDraw> {
      * @param gameRound 轮次
      * @return
      */
-    @Select("SELECT student.name,seat_draw.id,seat_draw.state\n" +
+    @Select("SELECT student.name,student.code,seat_draw.id,seat_draw.state\n" +
             "FROM seat_draw,student\n" +
             "WHERE seat_draw.game_number = #{gameNumber} AND seat_draw.game_round = #{gameRound} AND seat_draw.student_id = student.id;")
     List<StudentReadyShowVO> selectListByGameNumberAndGameRound(Integer gameNumber, Integer gameRound);
