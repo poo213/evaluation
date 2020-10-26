@@ -55,7 +55,7 @@ public class MyBatisGenerator {
                 .setRestControllerStyle(true)
                 .setControllerMappingHyphenStyle(true)
                 .setEntityTableFieldAnnotationEnable(true)
-                .setInclude("judge_submit_state");
+                .setInclude("test_final_result");
 
         /*
          * 包名配置，通过该配置，指定生成代码的包路径

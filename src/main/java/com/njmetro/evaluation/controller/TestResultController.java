@@ -9,18 +9,13 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.njmetro.evaluation.domain.Config;
-import com.njmetro.evaluation.domain.SeatDraw;
-import com.njmetro.evaluation.domain.Student;
-import com.njmetro.evaluation.domain.TestResult;
+import com.njmetro.evaluation.domain.*;
 import com.njmetro.evaluation.dto.ComputerTestResultExcelDTO;
 import com.njmetro.evaluation.exception.StudentException;
-import com.njmetro.evaluation.service.ConfigService;
-import com.njmetro.evaluation.service.SeatDrawService;
-import com.njmetro.evaluation.service.StudentService;
-import com.njmetro.evaluation.service.TestResultService;
+import com.njmetro.evaluation.service.*;
 import com.njmetro.evaluation.util.StatisticUtil;
 import com.njmetro.evaluation.vo.FinalResultVO;
+import com.njmetro.evaluation.vo.TestResultDetailByJudgeIdVO;
 import com.njmetro.evaluation.vo.TestResultDetailVO;
 import com.njmetro.evaluation.vo.TestResultVO;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +26,7 @@ import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -62,6 +58,7 @@ public class TestResultController {
     private final StudentService studentService;
     private final SeatDrawService seatDrawService;
     private final ConfigService configService;
+    private final EditResultLogService editResultLogService;
 
     /**
      * 获取校验成绩的结果，两个裁判的打分结果的对比
@@ -107,17 +104,16 @@ public class TestResultController {
      * @return
      */
     @GetMapping("/getResultByStudentCode")
-    public List<TestResultDetailVO> getResultByStudentCode(@RequestParam("gameNumber") Integer gameNumber, @RequestParam("gameRound") Integer gameRound, @RequestParam("studentId") Integer studentId) {
-        System.out.println("game_number = " + gameNumber + ", game_round = " + gameRound + ", student_id = " + studentId);
-//        QueryWrapper<TestResult> testResultQueryWrapper = new QueryWrapper<>();
-//        testResultQueryWrapper.eq("game_number",gameNumber)
-//                              .eq("game_round",gameRound)
-//                .eq("student_id",studentId).orderByAsc("question_standard_id");
-//
-//
-//
-//        return testResultService.list(testResultQueryWrapper);
-        return testResultService.getTestResultDetail(gameNumber, gameRound, studentId);
+    public TestResultDetailByJudgeIdVO getResultByStudentCode(@RequestParam("gameNumber") Integer gameNumber, @RequestParam("gameRound") Integer gameRound, @RequestParam("studentId") Integer studentId) {
+        List<Integer> integerList =testResultService.getJudgeId(gameNumber, gameRound, studentId);
+        log.info(integerList.toString());
+        List<TestResultDetailVO> testResultDetailVOListOne = testResultService.getTestResultDetailByJudgeId(gameNumber, gameRound, studentId,integerList.get(0));
+        List<TestResultDetailVO> testResultDetailVOListTwo = testResultService.getTestResultDetailByJudgeId(gameNumber, gameRound, studentId,integerList.get(1));
+        TestResultDetailByJudgeIdVO  testResultDetailByJudgeIdVO = new TestResultDetailByJudgeIdVO();
+        testResultDetailByJudgeIdVO.setTestResultDetailVOListOne(testResultDetailVOListOne);
+        testResultDetailByJudgeIdVO.setTestResultDetailVOListTwo(testResultDetailVOListTwo);
+        return testResultDetailByJudgeIdVO;
+
     }
 
     /**
@@ -127,10 +123,18 @@ public class TestResultController {
      * @param cent
      * @return
      */
+    @Transactional
     @GetMapping("/editCent")
     public Boolean getResultByStudentCode(@RequestParam("id") Integer id, @RequestParam("cent") Double cent) {
         log.info("主裁校正成绩id：{}", id);
         log.info("主裁校正成绩分值：{}", cent);
+        //记录修改记录
+        EditResultLog editResultLog = new EditResultLog();
+        editResultLog.setTestResultId(id);
+        editResultLog.setCentAfter(cent);
+        editResultLog.setEditUser("xxx");
+        editResultLog.setCentBefore(testResultService.getById(id).getCent());
+        editResultLogService.save(editResultLog);
         UpdateWrapper<TestResult> testResultUpdateWrapper = new UpdateWrapper<>();
         testResultUpdateWrapper.eq("id", id).set("cent", cent);
         return testResultService.update(testResultUpdateWrapper);

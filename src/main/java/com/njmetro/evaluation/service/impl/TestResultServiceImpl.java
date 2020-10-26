@@ -45,4 +45,14 @@ public class TestResultServiceImpl extends ServiceImpl<TestResultMapper, TestRes
     public List<TestResultDetailVO> getTestResultDetail(Integer gameNumber, Integer gameRound, Integer studentId) {
         return testResultMapper.getTestResultDetail(gameNumber, gameRound, studentId);
     }
+
+    @Override
+    public List<Integer> getJudgeId(Integer gameNumber, Integer gameRound, Integer studentId) {
+        return testResultMapper.getJudgeId(gameNumber, gameRound, studentId);
+    }
+
+    @Override
+    public List<TestResultDetailVO> getTestResultDetailByJudgeId(Integer gameNumber, Integer gameRound, Integer studentId,Integer judgeId) {
+        return testResultMapper.getTestResultDetailByJudgeId(gameNumber, gameRound, studentId,judgeId);
+    }
 }

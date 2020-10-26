@@ -209,7 +209,7 @@ CREATE TABLE IF NOT EXISTS test_result
     game_round           INT UNSIGNED NOT NULL COMMENT '轮次',
     question_id          INT UNSIGNED NOT NULL COMMENT '题目id',
     question_standard_id INT UNSIGNED NOT NULL COMMENT '评分标准Id',
-    cent                 DOUBLE       NOT NULL COMMENT '评分标准Id',
+    cent                 DOUBLE       NOT NULL COMMENT '得分',
     student_id           INT UNSIGNED NOT NULL COMMENT '考生id',
     judge_id             INT UNSIGNED NOT NULL COMMENT '裁判id',
     `create_time`        DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -304,6 +304,35 @@ CREATE TABLE IF NOT EXISTS menu_role
     role_name     VARCHAR(100) NOT NULL COMMENT '权限',
     `create_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `update_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+    PRIMARY KEY (id)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = UTF8MB4;
+###  修改分数的记录
+CREATE TABLE IF NOT EXISTS edit_result_log
+(
+    id            INT UNSIGNED AUTO_INCREMENT COMMENT '用户自增Id',
+    edit_user      VARCHAR(100) NOT NULL COMMENT '修改人',
+    test_result_id INT UNSIGNED NOT NULL COMMENT '该条记录在最终结果表中的id',
+    cent_before    DOUBLE       NOT NULL COMMENT '修改前得分',
+    cent_after     DOUBLE       NOT NULL COMMENT '修改后得分',
+    `create_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+    PRIMARY KEY (id)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = UTF8MB4;
+###  保存最终统计结果
+CREATE TABLE IF NOT EXISTS test_final_result
+(
+    id             INT UNSIGNED AUTO_INCREMENT COMMENT '用户自增Id',
+    student_id     INT UNSIGNED NOT NULL COMMENT '学生id',
+    student_name   varchar(20) NOT NULL COMMENT '学生姓名',
+    student_code   varchar(20) NOT NULL COMMENT '学生编码',
+    company_name   varchar(20) NOT NULL COMMENT '公司名',
+    result         Decimal(5,2) NOT NULL COMMENT '实操得分',
+    computer_test_result         Decimal(5,2) NOT NULL COMMENT '机考得分',
+    comprehensive_result         Decimal(5,2) NOT NULL COMMENT '综合得分',
+    `create_time`  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time`  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
     PRIMARY KEY (id)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = UTF8MB4;
