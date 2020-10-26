@@ -54,7 +54,7 @@ public class Judge implements Serializable {
      * 性别 0：男 1：女
      */
     @TableField("sex")
-    private Integer sex;
+    private String sex;
 
     /**
      * 年龄
