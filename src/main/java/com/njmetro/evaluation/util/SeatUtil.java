@@ -159,4 +159,56 @@ public class SeatUtil {
         }
         return typeName;
     }
+    /**
+     * 根据学生座位ID转换成123
+     *
+     * @param studentSeatId 学生座位id
+     * @return
+     */
+    public static Integer getTypeNumByStudentSeatId(Integer studentSeatId){
+        Integer type=0;
+        switch (studentSeatId % 3){
+            case 0:
+                type = 3;
+                break;
+            case 1:
+                type = 1;
+                break;
+            case 2:
+                type = 2;
+                break;
+        }
+        return type;
+    }
+
+    /**
+     * 根据学生座位ID转换成字母
+     *
+     * @param num 学生座位id
+     * @return
+     */
+    public static String exchangeGroup(Integer num){
+        String groupName="";
+        switch (num){
+            case 1:
+                groupName = "A";
+                break;
+            case 2:
+                groupName = "B";
+                break;
+            case 3:
+                groupName = "C";
+                break;
+            case 4:
+                groupName = "D";
+                break;
+            case 5:
+                groupName = "E";
+                break;
+            case 6:
+                groupName = "F";
+                break;
+        }
+        return groupName;
+    }
 }
