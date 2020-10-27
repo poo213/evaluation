@@ -104,15 +104,19 @@ public class JudgeApi {
      * @return
      */
     @GetMapping("/beReady")
-    public Boolean getBeReady(@RequestAttribute("pad") Pad pad) {
+    public Boolean getBeReady(@RequestAttribute("pad") Pad pad,Integer gameNumber,Integer gameRound) {
         log.info("pad: {}",pad);
+        Config config = configService.getById(1);
+        if (config.getGameNumber().equals(gameNumber) && config.getGameRound().equals(gameRound)) {
         // 通过padId 在 JudgeDrawResult 中找到对应的记录
         QueryWrapper<JudgeDrawResult> judgeDrawResultQueryWrapper = new QueryWrapper<>();
         judgeDrawResultQueryWrapper.eq("pad_id", pad.getId());
         JudgeDrawResult judgeDrawResult = judgeDrawResultService.getOne(judgeDrawResultQueryWrapper);
         // 修改就绪状态为 1
         judgeDrawResult.setState(1);
-        return judgeDrawResultService.updateById(judgeDrawResult);
+        return judgeDrawResultService.updateById(judgeDrawResult);}else {
+            throw new TestQuestionException("场次和轮次信息与数据库不匹配，核验后再上报就绪");
+        }
     }
 
     /**

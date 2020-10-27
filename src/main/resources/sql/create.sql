@@ -284,6 +284,8 @@ CREATE TABLE IF NOT EXISTS admin
     id            INT UNSIGNED AUTO_INCREMENT COMMENT '用户自增Id',
     user_name     VARCHAR(20)  NOT NULL COMMENT '用户名',
     password      VARCHAR(100) NOT NULL COMMENT '密码',
+    role_name     VARCHAR(100) NOT NULL COMMENT '权限',
+    menu_list     VARCHAR(100) NOT NULL COMMENT '拥有权限列表',
     `create_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `update_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
     PRIMARY KEY (id)
@@ -291,10 +293,10 @@ CREATE TABLE IF NOT EXISTS admin
   DEFAULT CHARSET = UTF8MB4;
 
 ### 插入系统管理员数据
-INSERT INTO admin(user_name, password)
-VALUES ('mh', '123456'),
-       ('zc', '123456'),
-       ('tcl', '123456');
+INSERT INTO admin(user_name, password,role_name,menu_list)
+VALUES ('mh', '123456','ROLE_SUPER_ADMIN','1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26'),
+       ('zc', '123456','ROLE_ADMIN','3,7,8,9,10,11,4,12,13,14,15,16,17'),
+       ('tcl', '123456','ROLE_MASTER','6,23,24,25,26');
 
 ###  不同权限对应的menu  menu_role
 CREATE TABLE IF NOT EXISTS menu_role

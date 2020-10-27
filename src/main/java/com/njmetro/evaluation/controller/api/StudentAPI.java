@@ -117,7 +117,7 @@ public class StudentAPI {
             testQuestionQueryWrapper.eq("id", questionDrawService.getOne(questionDrawQueryWrapper).getQuestionId());
             UpdateWrapper<SeatDraw> seatDrawUpdateWrapper = new UpdateWrapper<>();
             //得到考题，变成考试中
-            seatDrawUpdateWrapper.eq("game_number",config.getGameNumber()).eq("game_round",config.getGameRound()).eq("seat_id",pad.getSeatId()).set("state",2);
+            seatDrawUpdateWrapper.eq("game_number", config.getGameNumber()).eq("game_round", config.getGameRound()).eq("seat_id", pad.getSeatId()).set("state", 2);
             seatDrawService.update(seatDrawUpdateWrapper);
             TestQuestion testQuestion = testQuestionService.getOne(testQuestionQueryWrapper);
             String url = testQuestion.getUrl();
@@ -142,15 +142,18 @@ public class StudentAPI {
      */
     @GetMapping("/getUrlNew")
     public QuestionVO getUrlNew(HttpServletRequest httpServletRequest) {
-        Config config = configService.getById(1);//获取当前的场次和轮次
+        //获取当前的场次和轮次
+        Config config = configService.getById(1);
         String ipAddress = IpUtil.getIpAddr(httpServletRequest);
         log.info("调用次接口的IP:{}", ipAddress);
         QueryWrapper<Pad> padQueryWrapper = new QueryWrapper<>();
         padQueryWrapper.eq("ip", ipAddress).eq("type", 1);
-        Pad pad = padService.getOne(padQueryWrapper);//获取对应pad
+        //获取对应pad
+        Pad pad = padService.getOne(padQueryWrapper);
         QueryWrapper<QuestionDraw> questionDrawQueryWrapper = new QueryWrapper<>();
         questionDrawQueryWrapper.eq("game_number", config.getGameRound()).eq("game_type", SeatUtil.getGameTypeByStudentSeatId(pad.getSeatId()));
-        log.info("考题id：{}", questionDrawService.getOne(questionDrawQueryWrapper).getQuestionId());//考题Id
+        //考题Id
+        log.info("考题id：{}", questionDrawService.getOne(questionDrawQueryWrapper).getQuestionId());
         QueryWrapper<TestQuestion> testQuestionQueryWrapper = new QueryWrapper<>();
         testQuestionQueryWrapper.eq("id", questionDrawService.getOne(questionDrawQueryWrapper).getQuestionId());
         TestQuestion testQuestion = testQuestionService.getOne(testQuestionQueryWrapper);
@@ -173,17 +176,6 @@ public class StudentAPI {
      */
     @GetMapping("/pauseOrStart")
     public PauseOrStartVO pauseOrStart(@RequestParam("type") Integer type, @RequestParam("remainingTime") Integer remainingTime, Integer gameNumber, Integer gameRound, @RequestAttribute("config") Config config, @RequestAttribute("pad") Pad pad) {
-        //获取当前的场次和轮次
-//        //Config config = configService.getById(1);
-//        String ipAddress = IpUtil.getIpAddr(httpServletRequest);
-//        if (ipAddress.equals("0:0:0:0:0:0:0:1")) {
-//            ipAddress = "192.168.96.9";
-//        }
-//        ipAddress = "192.168.96.9";
-//        QueryWrapper<Pad> padQueryWrapper = new QueryWrapper<>();
-//        padQueryWrapper.eq("ip", ipAddress).eq("type", 1);
-//        Pad pad = padService.getOne(padQueryWrapper);
-//        log.info("调用暂停or开始接口的IP:{}", ipAddress);
         log.info("pauseOrStart -- 获取到拦截器pad {} ", pad);
         log.info("pauseOrStart -- 获取到拦截器config {} ", config);
         QueryWrapper<SeatDraw> seatDrawQueryWrapper = new QueryWrapper<>();
@@ -203,8 +195,10 @@ public class StudentAPI {
             seatDrawService.updateById(seatDraw);
             PauseOrStartVO pauseOrStartVO = new PauseOrStartVO();
             pauseOrStartVO.setRemainingTime(remainingTime);
-            pauseOrStartVO.setState(3);//表示暂停
-            return pauseOrStartVO;//返回剩余时间
+            //表示暂停
+            pauseOrStartVO.setState(3);
+            //返回剩余时间
+            return pauseOrStartVO;
         } else {//开始
             PauseRecord pauseRecord = new PauseRecord();
             pauseRecord.setSeatDrawId(seatDraw.getId());
@@ -237,7 +231,8 @@ public class StudentAPI {
                 .eq("game_round", gameRound)
                 .set("use_time", 1200 - remainingTime)
                 .set("remaining_time", remainingTime)
-                .set("state", 4);//选手完成考试
+                //选手完成考试
+                .set("state", 4);
         return seatDrawService.update(seatDrawUpdateWrapper);
     }
 
@@ -250,22 +245,22 @@ public class StudentAPI {
      */
     @GetMapping("/beReady")
     public Boolean beReady(Integer gameNumber, Integer gameRound, @RequestAttribute("pad") Pad pad) {
-        UpdateWrapper<SeatDraw> seatDrawUpdateWrapper = new UpdateWrapper<>();
-
-        seatDrawUpdateWrapper.eq("seat_id", pad.getSeatId())
-                .eq("game_number", gameNumber)
-                .eq("game_round", gameRound)
-                .set("state", 1);//选手准备就绪
-        return seatDrawService.update(seatDrawUpdateWrapper);
+        Config config = configService.getById(1);
+        if (config.getGameNumber().equals(gameNumber) && config.getGameRound().equals(gameRound)) {
+            UpdateWrapper<SeatDraw> seatDrawUpdateWrapper = new UpdateWrapper<>();
+            seatDrawUpdateWrapper.eq("seat_id", pad.getSeatId())
+                    .eq("game_number", gameNumber)
+                    .eq("game_round", gameRound)
+                    //选手准备就绪
+                    .set("state", 1);
+            return seatDrawService.update(seatDrawUpdateWrapper);
+        } else {
+            throw new StudentException("场次和轮次信息与数据库不匹配，核验后再上报就绪");
+        }
     }
 
     @GetMapping("/writeQRcode")
     public Boolean writeQRcode(@RequestParam("qrcode") String qrcode, @RequestAttribute("ip") String ip) {
-//        String ipAddress = IpUtil.getIpAddr(httpServletRequest);
-//        if (ipAddress.equals("0:0:0:0:0:0:0:1")) {
-//            ipAddress = "192.168.96.9";
-//        }
-//        ipAddress = "192.168.96.9";
         log.info("获取到拦截器ip {} ", ip);
         log.info("扫码枪二维码打印 {} ", qrcode);
         QueryWrapper<Student> studentQueryWrapper = new QueryWrapper<>();
