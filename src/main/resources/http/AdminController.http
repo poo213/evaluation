@@ -1,0 +1,3 @@
+###  api 1. 模拟考生就绪    ipId  1,2,3
+GET http://localhost:8889/admin/getMenuByRole
+Accept: application/json

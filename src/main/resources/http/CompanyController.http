@@ -1,0 +1,3 @@
+###  api 1. 切换下一轮场次
+GET http://localhost:8889/company/getAfterCompanyList
+Accept: application/json

@@ -21,7 +21,7 @@ public interface JudgeDrawResultMapper extends BaseMapper<JudgeDrawResult> {
      * @param seatId 座位id
      * @return
      */
-    @Select("SELECT judge.name,judge_draw_result.id,judge_draw_result.state\n" +
+    @Select("SELECT judge.name,judge.code,judge_draw_result.id,judge_draw_result.state\n" +
             "FROM judge_draw_result,judge\n" +
             "WHERE judge_draw_result.seat_id = #{seatId} and judge_draw_result.judge_id = judge.id")
     public JudgeReadyShowVO selectOneBySeatId(Integer seatId);

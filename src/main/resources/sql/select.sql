@@ -36,7 +36,17 @@ SELECT judge.name,judge_draw_result.id,judge_draw_result.state
 FROM judge_draw_result,judge
 WHERE judge_draw_result.seat_id = 1 and judge_draw_result.judge_id = judge.id;
 
-SELECT id,two_dimensional_code,state,create_time,update_time,ip FROM code_state WHERE (two_dimensional_code = 'njdt01' AND ip = '172.18.1.239' AND (state = 0 OR state = 1))
+SELECT id,two_dimensional_code,state,create_time,update_time,ip FROM code_state WHERE (two_dimensional_code = 'njdt01' AND ip = '172.18.1.239' AND (state = 0 OR state = 1));
 
 
+SELECT student_id,student.company_name as company_name,student.code as student_code,student.name as student_name,sum(cent) as result ,judge_id,judge.name as judge_name
+FROM test_result,student,judge
+where test_result.game_number = 1 and test_result.game_round = 1  and judge.id = test_result.judge_id and student.id = test_result.student_id   GROUP BY judge_id  ;
+
+###3 分页查询
+
+SELECT  *
+FROM company
+ORDER BY draw_result
+LIMIT 22 OFFSET 22;
 

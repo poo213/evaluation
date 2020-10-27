@@ -182,13 +182,6 @@ public class JudgeController {
         return bigShowVO;
     }
 
-
-
-
-
-
-
-  
     /**
      * 根据考生场次轮次
      *
