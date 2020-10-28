@@ -2,7 +2,10 @@ package com.njmetro.evaluation.service;
 
 import com.njmetro.evaluation.domain.JudgeDrawResult;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.njmetro.evaluation.vo.JudgeDrawResultShowVO;
 import com.njmetro.evaluation.vo.JudgeReadyShowVO;
+
+import java.util.List;
 
 /**
  * <p>
@@ -26,5 +29,11 @@ public interface JudgeDrawResultService extends IService<JudgeDrawResult> {
      * @return
      */
     JudgeReadyShowVO getJudgeReadyShowVO(Integer seatId);
+
+    /**
+     * 当前主裁列表
+     * @return
+     */
+    public List<JudgeDrawResultShowVO>getJudgeDrawResultShowVOList();
 
 }

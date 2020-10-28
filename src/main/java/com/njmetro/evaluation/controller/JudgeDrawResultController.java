@@ -3,11 +3,15 @@ package com.njmetro.evaluation.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.njmetro.evaluation.domain.Config;
+import com.njmetro.evaluation.domain.Judge;
+import com.njmetro.evaluation.domain.JudgeDrawResult;
 import com.njmetro.evaluation.domain.SeatDraw;
 import com.njmetro.evaluation.service.ConfigService;
 import com.njmetro.evaluation.service.JudgeDrawResultService;
+import com.njmetro.evaluation.service.JudgeService;
 import com.njmetro.evaluation.service.SeatDrawService;
 import com.njmetro.evaluation.util.SeatUtil;
+import com.njmetro.evaluation.vo.JudgeDrawResultShowVO;
 import com.njmetro.evaluation.vo.JudgeReadyShowVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +39,7 @@ public class JudgeDrawResultController {
     public final JudgeDrawResultService judgeDrawResultService;
     public final SeatDrawService seatDrawService;
     public final ConfigService configService;
+    public final JudgeService judgeService;
 
 
     /**
@@ -75,6 +80,7 @@ public class JudgeDrawResultController {
     List<JudgeReadyShowVO> getLeftJudgeReadyList(){
         return getJudgeReadyListOne(0);
     }
+
     /**
      * 获取右侧裁判就绪状态
      * @return
@@ -108,6 +114,36 @@ public class JudgeDrawResultController {
             judgeReadyShowVOList.add(judgeDrawResultService.getJudgeReadyShowVO(judgeSeatIdArray[i]));
         }
         return judgeReadyShowVOList;
+    }
+
+    /**
+     * 获取当前执行裁判列表
+     * @return
+     */
+    @GetMapping("/getJudgeDrawResultShowVOList")
+    List<JudgeDrawResultShowVO> getJudgeDrawResultShowVOList(){
+        return judgeDrawResultService.getJudgeDrawResultShowVOList();
+    }
+
+    /**
+     * 修改 执行裁判
+     */
+    @GetMapping("/doChangeJudge")
+    Boolean doChangeJudge(Integer seatId,Integer judgeId){
+        // 修改 赛位中裁判id
+        JudgeDrawResult judgeDrawResult = judgeDrawResultService.getById(seatId);
+        Integer backUpJudgeId = judgeDrawResult.getJudgeId();
+        judgeDrawResult.setJudgeId(judgeId);
+        judgeDrawResultService.updateById(judgeDrawResult);
+        // 被换下裁判,改为候补裁判
+        Judge judgeMaster = judgeService.getById(backUpJudgeId);
+        judgeMaster.setMaster(0);
+        judgeService.updateById(judgeMaster);
+        // 被换上裁判，改为主裁
+        Judge judgeBackUp = judgeService.getById(judgeId);
+        judgeBackUp.setMaster(1);
+        judgeService.updateById(judgeBackUp);
+        return true;
     }
 }
 

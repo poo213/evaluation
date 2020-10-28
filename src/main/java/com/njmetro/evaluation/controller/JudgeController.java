@@ -203,10 +203,6 @@ public class JudgeController {
         }
         return GroupShowVOList;
     }
-    
-    
-    
-    
 
     /**
      * 获取裁判列表
@@ -516,6 +512,18 @@ public class JudgeController {
         drawState.setState(false);
         drawStateService.updateById(drawState);
         return true;
+    }
+
+    /**
+     * 根据监考类型来获取备用裁判列表
+     */
+    @GetMapping("/getBackUpJudgeListByType")
+    List<Judge> getBackUpJudgeListByType(String judgeType){
+        QueryWrapper<Judge> judgeQueryWrapper = new QueryWrapper<>();
+        judgeQueryWrapper.eq("judge_type",judgeType)
+                .eq("master",0)
+                .eq("sign_state",1);
+        return judgeService.list(judgeQueryWrapper);
     }
 }
 

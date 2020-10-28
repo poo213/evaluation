@@ -50,3 +50,8 @@ FROM company
 ORDER BY draw_result
 LIMIT 22 OFFSET 22;
 
+
+### 4. 所有监考裁判列表
+SELECT judge_draw_result.id,code,seat_id,group_id,type_name
+FROM judge_draw_result,judge
+WHERE judge_draw_result.judge_id = judge.id order by seat_id;
