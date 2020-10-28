@@ -36,4 +36,9 @@ public class StudentServiceImpl extends ServiceImpl<StudentMapper, Student> impl
 
     @Override
     public List<SignVO> getSignVOList(){ return studentMapper.getSignVOList(); }
+
+    @Override
+    public Double checkComputerTestResult() {
+        return studentMapper.checkComputerTestResult();
+    }
 }
