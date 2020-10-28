@@ -20,4 +20,6 @@ public interface StudentService extends IService<Student> {
     List<String> getHaveSighCompanyList();
     List<Integer> getStudentIdList();//获取所有考生id
     List<SignVO> getSignVOList();
+    //获取机考成绩求和，如果和为0，表示没有上传成功
+    Double checkComputerTestResult();
 }

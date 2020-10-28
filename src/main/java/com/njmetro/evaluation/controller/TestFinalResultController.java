@@ -39,8 +39,6 @@ public class TestFinalResultController {
 
     @GetMapping("/getCompanyResult")
     public List<TestCompanyResultVO> getCompanyResult() {
-        System.out.println(testFinalResultService.getCompanyResult());
-
         List<TestCompanyResultVO> testCompanyResultVOList=testFinalResultService.getCompanyResult();
         Integer i = 1;
         for (TestCompanyResultVO item :testCompanyResultVOList

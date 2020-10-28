@@ -222,7 +222,7 @@ public class StudentAPI {
      * @return
      */
     @GetMapping("/submit")
-    public Boolean finishTest(Integer gameNumber, Integer gameRound, Integer remainingTime, @RequestAttribute("pad") Pad pad, @RequestAttribute("config") Config config) {
+    public Boolean finishTest(Integer gameNumber, Integer gameRound, Integer pauseTime,Integer remainingTime, @RequestAttribute("pad") Pad pad, @RequestAttribute("config") Config config) {
         log.info("finishTest -- 获取到拦截器pad {} ", pad);
         log.info("finishTest -- 获取到拦截器config {} ", config);
         UpdateWrapper<SeatDraw> seatDrawUpdateWrapper = new UpdateWrapper<>();
@@ -231,8 +231,9 @@ public class StudentAPI {
                 .eq("game_round", gameRound)
                 .set("use_time", 1200 - remainingTime)
                 .set("remaining_time", remainingTime)
-                //选手完成考试
-                .set("state", 4);
+                .set("pause_time",pauseTime)
+                .set("state", 4);//选手完成考试
+
         return seatDrawService.update(seatDrawUpdateWrapper);
     }
 

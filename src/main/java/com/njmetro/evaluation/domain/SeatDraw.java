@@ -109,4 +109,10 @@ public class SeatDraw implements Serializable {
      */
     @TableField("remaining_time")
     private Integer remainingTime;
+
+    /**
+     * 暂停时间
+     */
+    @TableField("pause_time")
+    private Integer pauseTime;
 }

@@ -10,6 +10,7 @@ import com.njmetro.evaluation.service.CodeStateService;
 import com.njmetro.evaluation.service.SeatDrawService;
 import com.njmetro.evaluation.service.StudentService;
 import com.njmetro.evaluation.util.IpUtil;
+import com.njmetro.evaluation.util.SeatUtil;
 import com.njmetro.evaluation.vo.SignVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -63,12 +64,10 @@ public class CodeStateController {
         log.info("离开考场扫码枪ip：{}",ipListAway.toString());
         System.out.println(1);
         if (ipListOne.contains(ipAddress)){
-            System.out.println(11);
             log.info("进入候考区pad签到:{}", ipAddress);
             QueryWrapper<CodeState> queryWrapper = new QueryWrapper<>();
             queryWrapper.eq("ip", ipAddress).eq("state", 0);
             List<CodeState> codeStateList = codeStateService.list(queryWrapper);
-            log.info("size:{}", codeStateList.size());
             if (codeStateList.size() > 0)//每次只取一个
             {
                 System.out.println(22);
@@ -93,11 +92,13 @@ public class CodeStateController {
                 return signVO;
             }
             else{
-                return null;
+                System.out.println(11);
+                SignVO signVO = new SignVO();
+                signVO.setType(1);
+                return signVO;
             }
         } else if (ipListTwo.contains(ipAddress)) {
             log.info("进入备考考区pad签到:{}", ipAddress);
-            System.out.println(2);
             QueryWrapper<CodeState> queryWrapper = new QueryWrapper<>();
             queryWrapper.eq("ip", ipAddress).eq("state", 0);
             List<CodeState> codeStateList = codeStateService.list(queryWrapper);
@@ -120,6 +121,7 @@ public class CodeStateController {
                 //获取考生赛位信息(只需要第一轮的信息)
                 SeatDraw seatDraw =  seatDrawService.getOne(seatDrawQueryWrapper);
                 Integer seatId = seatDraw.getSeatId();
+
                 Integer groupId = seatDraw.getGroupId();
                 SignVO signVO = new SignVO();
                 signVO.setId(student.getId());
@@ -131,11 +133,14 @@ public class CodeStateController {
                 signVO.setCompanyName(student.getCompanyName());
                 signVO.setPhone(student.getPhone());
                 signVO.setType(2);//进入候考区的pad，状态标记为2
-                signVO.setSeatInfo(groupId +"-"+seatId);
+                signVO.setSeatInfo(SeatUtil.exchangeGroup(groupId) +"-"+ SeatUtil.getTypeNumByStudentSeatId(seatId));
                 return signVO;
             }
             else{
-                return null;
+                System.out.println(2);
+                SignVO signVO = new SignVO();
+                signVO.setType(2);
+                return signVO;
             }
         } else if (ipListAway.contains(ipAddress)) {
             log.info("离开考区pad签出:{}", ipAddress);
@@ -165,7 +170,10 @@ public class CodeStateController {
                 return signVO;
             }
             else{
-                return null;
+                System.out.println(4);
+                SignVO signVO = new SignVO();
+                signVO.setType(4);
+                return signVO;
             }
         } else {
             throw new StudentException("非签到设备,扫码设备只包括"+ipListOne.toString()+ipListTwo.toString()+ipListAway.toString());
