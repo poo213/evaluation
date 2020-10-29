@@ -6,6 +6,7 @@ import com.njmetro.evaluation.domain.*;
 import com.njmetro.evaluation.param.student.SaveStudentParam;
 import com.njmetro.evaluation.param.student.UpdateStudentParam;
 import com.njmetro.evaluation.service.*;
+import com.njmetro.evaluation.util.SeatUtil;
 import com.njmetro.evaluation.vo.SignVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -113,7 +114,14 @@ public class StudentController {
      */
     @GetMapping("/getStudentListHaveSignTwo")
     public List<SignVO> getStudentListHaveSignTwo() {
-        return studentService.getSignVOList();
+
+        List<SignVO> signVOList = studentService.getSignVOList();
+
+        for (SignVO item:signVOList
+        ) {
+            item.setSeatInfo(SeatUtil.getSeatNameById(item.getSeatId()));
+        }
+        return signVOList;
     }
     /**
      * 获取考试中的考生列表

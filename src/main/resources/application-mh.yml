@@ -8,7 +8,7 @@ server:
   port: 8889
 logging:
   file:
-    path: c:/log/evaluation
+    path: C:/log/evaluation
   level:
     root: info
-    com.njmetro.evaluation.mapper: info
+    com.njmetro.evaluation.mapper: debug

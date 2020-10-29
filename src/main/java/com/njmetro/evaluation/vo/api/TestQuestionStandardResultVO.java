@@ -34,7 +34,7 @@ public class TestQuestionStandardResultVO {
      */
     private Integer judgeId;
     /**
-     * 裁判Id
+     * 考生id
      */
     private Integer studentId;
     /**
