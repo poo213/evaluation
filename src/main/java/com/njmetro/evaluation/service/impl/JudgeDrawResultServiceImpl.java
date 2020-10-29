@@ -7,6 +7,7 @@ import com.njmetro.evaluation.mapper.DrawStateMapper;
 import com.njmetro.evaluation.mapper.JudgeDrawResultMapper;
 import com.njmetro.evaluation.service.JudgeDrawResultService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.njmetro.evaluation.vo.JudgeDrawResultShowVO;
 import com.njmetro.evaluation.vo.JudgeReadyShowVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -47,5 +48,10 @@ public class JudgeDrawResultServiceImpl extends ServiceImpl<JudgeDrawResultMappe
     @Override
     public JudgeReadyShowVO getJudgeReadyShowVO(Integer seatId) {
         return judgeDrawResultMapper.selectOneBySeatId(seatId);
+    }
+
+    @Override
+    public List<JudgeDrawResultShowVO> getJudgeDrawResultShowVOList() {
+        return judgeDrawResultMapper.selectJudgeDrawResultShowVOList();
     }
 }

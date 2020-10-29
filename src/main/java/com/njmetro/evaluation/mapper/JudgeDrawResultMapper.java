@@ -2,9 +2,12 @@ package com.njmetro.evaluation.mapper;
 
 import com.njmetro.evaluation.domain.JudgeDrawResult;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.njmetro.evaluation.vo.JudgeDrawResultShowVO;
 import com.njmetro.evaluation.vo.JudgeReadyShowVO;
 import org.apache.ibatis.annotations.Select;
 import org.apache.xmlbeans.impl.xb.xsdschema.Public;
+
+import java.util.List;
 
 /**
  * <p>
@@ -25,5 +28,15 @@ public interface JudgeDrawResultMapper extends BaseMapper<JudgeDrawResult> {
             "FROM judge_draw_result,judge\n" +
             "WHERE judge_draw_result.seat_id = #{seatId} and judge_draw_result.judge_id = judge.id")
     public JudgeReadyShowVO selectOneBySeatId(Integer seatId);
+
+
+    /**
+     *  当前主裁列表
+     * @return
+     */
+    @Select("SELECT judge_draw_result.id,code,seat_id,group_id,type_name\n" +
+            "FROM judge_draw_result,judge\n" +
+            "WHERE judge_draw_result.judge_id = judge.id order by seat_id")
+    public List<JudgeDrawResultShowVO> selectJudgeDrawResultShowVOList();
 
 }
