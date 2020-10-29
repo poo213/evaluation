@@ -1,18 +1,20 @@
 package com.njmetro.evaluation.controller;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.njmetro.evaluation.domain.Admin;
+import com.njmetro.evaluation.domain.Company;
 import com.njmetro.evaluation.domain.Menu;
+import com.njmetro.evaluation.exception.AdminException;
+import com.njmetro.evaluation.param.login.LoginParam;
 import com.njmetro.evaluation.service.AdminService;
 import com.njmetro.evaluation.service.MenuService;
 import com.njmetro.evaluation.vo.MenuVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
-import org.springframework.web.bind.annotation.RestController;
-
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,6 +33,29 @@ import java.util.List;
 public class AdminController {
     public final AdminService adminService;
     public final MenuService menuService;
+    @PostMapping("/login")
+
+    /**
+     * 用户登录
+     * @param loginParam
+     * @return
+     */
+    String login(@Valid @RequestBody LoginParam loginParam){
+        log.info("loginParam {}",loginParam);
+        QueryWrapper<Admin> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_name",loginParam.getUsername())
+                .eq("password",loginParam.getPassword());
+        Admin admin = adminService.getOne(queryWrapper);
+        if(admin == null){
+            throw new AdminException("用户名或密码错误");
+        }else {
+            return admin.getMenuList();
+        }
+    }
+
+
+
+
 
 
     /**

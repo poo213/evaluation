@@ -294,9 +294,9 @@ CREATE TABLE IF NOT EXISTS admin
 
 ### 插入系统管理员数据
 INSERT INTO admin(user_name, password,role_name,menu_list)
-VALUES ('mh', '123456','ROLE_SUPER_ADMIN','1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26'),
-       ('zc', '123456','ROLE_ADMIN','3,7,8,9,10,11,4,12,13,14,15,16,17'),
-       ('tcl', '123456','ROLE_MASTER','6,23,24,25,26');
+VALUES ('mh', '123','ROLE_SUPER_ADMIN','1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26'),
+       ('zc', '123','ROLE_ADMIN','3,7,8,9,10,11,4,12,13,14,15,16,17'),
+       ('tcl', '123','ROLE_MASTER','6,23,24,25,26');
 
 ###  不同权限对应的menu  menu_role
 CREATE TABLE IF NOT EXISTS menu_role
