@@ -211,4 +211,66 @@ public class SeatUtil {
         }
         return groupName;
     }
+
+    public static String getSeatNameById(Integer id){
+        String seatName = "";
+        switch (id){
+            case 1:
+                seatName = "A-1";
+                break;
+            case 2:
+                seatName = "A-2";
+                break;
+            case 3:
+                seatName = "A-3";
+                break;
+            case 4:
+                seatName = "B-1";
+                break;
+            case 5:
+                seatName = "B-2";
+                break;
+            case 6:
+                seatName = "B-3";
+                break;
+            case 7:
+                seatName = "C-1";
+                break;
+            case 8:
+                seatName = "C-2";
+                break;
+            case 9:
+                seatName = "C-3";
+                break;
+            case 10:
+                seatName = "D-1";
+                break;
+            case 11:
+                seatName = "D-2";
+                break;
+            case 12:
+                seatName = "D-3";
+                break;
+            case 13:
+                seatName = "E-1";
+                break;
+            case 14:
+                seatName = "E-2";
+                break;
+            case 15:
+                seatName = "E-3";
+                break;
+            case 16:
+                seatName = "F-1";
+                break;
+            case 17:
+                seatName = "F-2";
+                break;
+            case 18:
+                seatName = "F-3";
+                break;
+        }
+        return seatName;
+    }
+
 }

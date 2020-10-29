@@ -123,11 +123,19 @@ public class StudentController {
      */
     @GetMapping("/getStudentListHaveSignTwo")
     public List<SignVO> getStudentListHaveSignTwo() {
+<<<<<<< HEAD
+=======
+
+>>>>>>> 058f7ce9523d484dd0b86041931c9391ffc55f9b
         List<SignVO> signVOList = studentService.getSignVOList();
 
         for (SignVO item:signVOList
         ) {
+<<<<<<< HEAD
             item.setSeatInfo(SeatUtil.getTypeNumByStudentSeatId(item.getSeatId()).toString());
+=======
+            item.setSeatInfo(SeatUtil.getSeatNameById(item.getSeatId()));
+>>>>>>> 058f7ce9523d484dd0b86041931c9391ffc55f9b
         }
         return signVOList;
     }

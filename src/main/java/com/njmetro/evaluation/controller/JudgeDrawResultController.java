@@ -52,7 +52,8 @@ public class JudgeDrawResultController {
         Config config = configService.getById(1);
         QueryWrapper<SeatDraw> seatDrawQueryWrapper = new QueryWrapper<>();
         seatDrawQueryWrapper.eq("game_number",config.getGameNumber())
-                .eq("game_round",config.getGameRound());
+                .eq("game_round",config.getGameRound())
+                .orderByAsc("seat_id");
         List<SeatDraw> seatDrawList = seatDrawService.list(seatDrawQueryWrapper);
         // 存放裁判 seatId的数组
         int[] judgeSeatIdArray = new int[seatDrawList.size()];

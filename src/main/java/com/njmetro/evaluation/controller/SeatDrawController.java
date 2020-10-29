@@ -57,6 +57,9 @@ public class SeatDrawController {
         if (studentReadyShowVOS.isEmpty()) {
             return null;
         } else {
+            for(StudentReadyShowVO studentReadyShowVO : studentReadyShowVOS){
+                studentReadyShowVO.setSeatName(SeatUtil.getSeatNameById(studentReadyShowVO.getSeatId()));
+            }
             return studentReadyShowVOS;
         }
     }

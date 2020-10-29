@@ -28,4 +28,13 @@ public class StudentReadyShowVO {
      */
     public Integer state;
 
+    /**
+     * 赛位id
+     */
+    public Integer seatId;
+    /**
+     * 赛位名称
+     */
+    public String seatName;
+
 }
