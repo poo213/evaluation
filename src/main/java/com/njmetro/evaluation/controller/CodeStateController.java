@@ -62,7 +62,6 @@ public class CodeStateController {
         log.info("候考区扫码枪ip：{}",ipListOne.toString());
         log.info("备考区扫码枪ip：{}",ipListTwo.toString());
         log.info("离开考场扫码枪ip：{}",ipListAway.toString());
-        System.out.println(1);
         if (ipListOne.contains(ipAddress)){
             log.info("进入候考区pad签到:{}", ipAddress);
             QueryWrapper<CodeState> queryWrapper = new QueryWrapper<>();

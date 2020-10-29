@@ -206,8 +206,8 @@ public class StudentAPI {
             pauseRecordService.save(pauseRecord);
             //恢复比赛，切换为考试中 状态2
             seatDraw.setState(2);
+            seatDraw.setRemainingTime(remainingTime);
             seatDrawService.updateById(seatDraw);
-
             PauseOrStartVO pauseOrStartVO = new PauseOrStartVO();
             //返回剩余时间
             pauseOrStartVO.setRemainingTime(seatDraw.getRemainingTime());
