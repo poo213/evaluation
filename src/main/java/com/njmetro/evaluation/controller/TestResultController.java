@@ -69,7 +69,9 @@ public class TestResultController {
      */
     @GetMapping("/getTempResult")
     public List<TestResultVO> getTempResult(@RequestParam("gameNumber") Integer gameNumber, @RequestParam("gameRound") Integer gameRound) {
+        //获取指定场次轮次的成绩
         List<TestResultVO> testResultVOList = testResultService.getTempResult(gameNumber, gameRound);
+        //获取指定场次轮次的考生列表
         List<Integer> studentIdList = testResultService.getStudentIdList(gameNumber, gameRound);
         for (Integer num : studentIdList) {
             List<TestResultVO> testResultVOArrayList = new ArrayList<>();
@@ -79,6 +81,8 @@ public class TestResultController {
                     testResultVOArrayList.add(testResultVO);//将两个裁判的打分存入该list
                 }
             }
+            if(testResultVOArrayList.size()==2)
+            {
             if (testResultVOArrayList.get(0).getResult().subtract(testResultVOArrayList.get(1).getResult()).abs().compareTo(new BigDecimal("10")) > -1) {
                 log.info("考生{}得分差的绝对值>=10", testResultVOArrayList.get(0).getStudentName());
                 for (TestResultVO testResultVO : testResultVOList) {
@@ -86,7 +90,7 @@ public class TestResultController {
                         testResultVO.setFlag(1);//标记分差大的项
                     }
                 }
-            }
+            }}
         }
         int i = 1;
         for (TestResultVO testResultVO : testResultVOList) {
@@ -105,10 +109,18 @@ public class TestResultController {
      */
     @GetMapping("/getResultByStudentCode")
     public TestResultDetailByJudgeIdVO getResultByStudentCode(@RequestParam("gameNumber") Integer gameNumber, @RequestParam("gameRound") Integer gameRound, @RequestParam("studentId") Integer studentId) {
+        //获取指定场次，轮次的考生的两个裁判
         List<Integer> integerList = testResultService.getJudgeId(gameNumber, gameRound, studentId);
-        log.info(integerList.toString());
+
         List<TestResultDetailVO> testResultDetailVOListOne = testResultService.getTestResultDetailByJudgeId(gameNumber, gameRound, studentId, integerList.get(0));
-        List<TestResultDetailVO> testResultDetailVOListTwo = testResultService.getTestResultDetailByJudgeId(gameNumber, gameRound, studentId, integerList.get(1));
+        List<TestResultDetailVO> testResultDetailVOListTwo = new ArrayList<>();
+        if(integerList.size()==2)
+        {
+            testResultDetailVOListTwo = testResultService.getTestResultDetailByJudgeId(gameNumber, gameRound, studentId, integerList.get(1));
+        }
+        else {
+            testResultDetailVOListTwo=null;
+        }
         TestResultDetailByJudgeIdVO testResultDetailByJudgeIdVO = new TestResultDetailByJudgeIdVO();
         testResultDetailByJudgeIdVO.setTestResultDetailVOListOne(testResultDetailVOListOne);
         testResultDetailByJudgeIdVO.setTestResultDetailVOListTwo(testResultDetailVOListTwo);
@@ -125,7 +137,7 @@ public class TestResultController {
      */
     @Transactional
     @GetMapping("/editCent")
-    public Boolean getResultByStudentCode(@RequestParam("id") Integer id, @RequestParam("cent") Double cent) {
+    public Boolean editCent(@RequestParam("id") Integer id, @RequestParam("cent") Double cent) {
         log.info("主裁校正成绩id：{}", id);
         log.info("主裁校正成绩分值：{}", cent);
         //记录修改记录
