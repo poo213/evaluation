@@ -67,7 +67,7 @@ public class GlobalExceptionHandler {
      * @param e Exception
      * @return Result
      */
-    @ExceptionHandler(Exception.class)
+   // @ExceptionHandler(Exception.class)
     public Result<String> handle(Exception e) {
         if (e instanceof HttpRequestMethodNotSupportedException) {
             return Result.error(ExceptionEnum.HttpRequestMethodNotSupportedException);
