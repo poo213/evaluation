@@ -232,7 +232,8 @@ public class StudentAPI {
                 .set("use_time", 1200 - remainingTime)
                 .set("remaining_time", remainingTime)
                 .set("pause_time",pauseTime)
-                .set("state", 4);//选手完成考试
+                //选手完成考试 TODO 如果是6的话，不要修改这个状态
+                .set("state", 4);
 
         return seatDrawService.update(seatDrawUpdateWrapper);
     }

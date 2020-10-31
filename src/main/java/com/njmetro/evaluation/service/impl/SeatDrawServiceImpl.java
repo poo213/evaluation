@@ -57,4 +57,9 @@ public class SeatDrawServiceImpl extends ServiceImpl<SeatDrawMapper, SeatDraw> i
     public List<StudentReadyShowVO> listStudentReady(Integer gameNumber, Integer gameRound) {
         return seatDrawMapper.selectListByGameNumberAndGameRound(gameNumber,gameRound);
     }
+
+    @Override
+    public List<Integer> getBreakRuleStudentList(Integer gameNumber, Integer gameRound) {
+        return seatDrawMapper.getBreakRuleStudentList(gameNumber,gameRound);
+    }
 }

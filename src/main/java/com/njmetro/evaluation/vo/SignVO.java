@@ -1,5 +1,6 @@
 package com.njmetro.evaluation.vo;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 
 /**
@@ -66,5 +67,8 @@ public class SignVO {
      * 座位号
      */
     private Integer seatId;
-
+    /**
+     * 记录二维码的表中的id
+     */
+    private Integer codeId;
 }

@@ -9,6 +9,7 @@ import com.njmetro.evaluation.service.*;
 import com.njmetro.evaluation.util.KnuthUtil;
 import com.njmetro.evaluation.util.SeatUtil;
 import com.njmetro.evaluation.vo.JudgeShowVO;
+import org.apache.commons.collections4.CollectionUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -121,6 +122,7 @@ class EvaluationApplicationTests {
              codeStateService.save(codeState);
         }
     }
+
 
 
 }

@@ -21,7 +21,9 @@ import com.njmetro.evaluation.vo.TestResultVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.springframework.aop.scope.ScopedProxyUtils;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -36,10 +38,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * <p>
@@ -180,7 +179,13 @@ public class TestResultController {
                 // 获取指定场次的所有考生的考试结果,通过裁判区分，包含两个裁判的打分
                 List<TestResultVO> testResultVOList = testResultService.getTempResult(gameNumber, gameRound);
                 log.info("获取指定场次的所有考生的考试结果：{}", testResultVOList);
+
                 List<Integer> studentIdList = testResultService.getStudentIdList(gameNumber, gameRound);
+                //System.out.println("studentIdList="+studentIdList);
+                //获取违纪的考生，本场本轮不应该计算成绩的人
+                List<Integer> breakRuleStudentList = seatDrawService.getBreakRuleStudentList(gameNumber, gameRound);
+                //将违纪的考生直接去除，下方不计算成绩
+                studentIdList.removeAll(breakRuleStudentList);
                 log.info("获取指定场次的考生：{}", studentIdList);
                 for (Integer num : studentIdList) {
                     log.info("计算得分时遍历考生id：{}", num);
@@ -210,6 +215,7 @@ public class TestResultController {
                     }
                     //表示结果异常，正常情况下一个考生应该有两条成绩
                     if (testResultVOArrayList.size() < 2) {
+                        System.out.println(testResultVOArrayList);
                         throw new StudentException("第" + gameNumber + "场，第" + gameRound + "轮的考生" + num + "号考生缺少成绩（每个考生需要有两个裁判打分成绩）");
                     }
                     //两个裁判打分取中值，包含时间分
@@ -301,6 +307,10 @@ public class TestResultController {
                 List<TestResultVO> testResultVOList = testResultService.getTempResult(gameNumber, gameRound);
                 log.info("获取指定场次的所有考生的考试结果：{}", testResultVOList);
                 List<Integer> studentIdList = testResultService.getStudentIdList(gameNumber, gameRound);
+                //获取违纪的考生，本场本轮不应该计算成绩的人
+                List<Integer> breakRuleStudentList = seatDrawService.getBreakRuleStudentList(gameNumber, gameRound);
+                //将违纪的考生直接去除，下方不计算成绩
+                studentIdList.removeAll(breakRuleStudentList);
                 log.info("获取指定场次的考生：{}", studentIdList);
                 for (Integer num : studentIdList) {
                     log.info("计算得分时遍历考生id：{}", num);
@@ -483,6 +493,10 @@ public class TestResultController {
                 List<TestResultVO> testResultVOList = testResultService.getTempResult(gameNumber, gameRound);
                 log.info("获取指定场次的所有考生的考试结果：{}", testResultVOList);
                 List<Integer> studentIdList = testResultService.getStudentIdList(gameNumber, gameRound);
+                //获取违纪的考生，本场本轮不应该计算成绩的人
+                List<Integer> breakRuleStudentList = seatDrawService.getBreakRuleStudentList(gameNumber, gameRound);
+                //将违纪的考生直接去除，下方不计算成绩
+                studentIdList.removeAll(breakRuleStudentList);
                 log.info("获取指定场次的考生：{}", studentIdList);
                 for (Integer num : studentIdList) {
                     log.info("计算得分时遍历考生id：{}", num);
