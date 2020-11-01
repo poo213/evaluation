@@ -1,5 +1,7 @@
 package com.njmetro.evaluation.controller;
 
+import cn.afterturn.easypoi.excel.ExcelExportUtil;
+import cn.afterturn.easypoi.excel.entity.TemplateExportParams;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.njmetro.evaluation.domain.Config;
 import com.njmetro.evaluation.domain.JudgeDrawResult;
@@ -10,16 +12,28 @@ import com.njmetro.evaluation.service.JudgeDrawResultService;
 import com.njmetro.evaluation.service.JudgeSubmitStateService;
 import com.njmetro.evaluation.service.SeatDrawService;
 import com.njmetro.evaluation.util.SeatUtil;
+import com.njmetro.evaluation.vo.FinalResultVO;
 import com.njmetro.evaluation.vo.SeatDrawVO;
 import com.njmetro.evaluation.vo.StudentReadyShowVO;
 import com.njmetro.evaluation.vo.StudentShowVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -57,7 +71,7 @@ public class SeatDrawController {
         if (studentReadyShowVOS.isEmpty()) {
             return null;
         } else {
-            for(StudentReadyShowVO studentReadyShowVO : studentReadyShowVOS){
+            for (StudentReadyShowVO studentReadyShowVO : studentReadyShowVOS) {
                 studentReadyShowVO.setSeatName(SeatUtil.getSeatNameById(studentReadyShowVO.getSeatId()));
             }
             return studentReadyShowVOS;
@@ -138,7 +152,7 @@ public class SeatDrawController {
      */
     @GetMapping("/miss/beReady")
     public Boolean doStudentMiss(Integer seatDrawId) {
-       return changeStudentState(seatDrawId,5);
+        return changeStudentState(seatDrawId, 5);
     }
 
     /**
@@ -149,9 +163,45 @@ public class SeatDrawController {
      */
     @GetMapping("/error/beReady")
     public Boolean doStudentError(Integer seatDrawId) {
-        return changeStudentState(seatDrawId,6);
+        return changeStudentState(seatDrawId, 6);
     }
 
 
+    @GetMapping("/exportSeatDrawResult")
+    public ResponseEntity<byte[]> exportFile() throws IOException {
+        List<SeatDrawVO> seatDrawList = seatDrawService.getSeatDraw();
+
+        TemplateExportParams params = new TemplateExportParams(
+                "c:/赛位抽签模板.xlsx");
+        Map<String, Object> map = new HashMap<String, Object>();
+        List<Map<String, Object>> listMap = new ArrayList<Map<String, Object>>();
+        for (SeatDrawVO item : seatDrawList
+        ) {
+
+            Map<String, Object> lm = new HashMap<String, Object>();
+            lm.put("id",item.getId());
+            lm.put("companyName", item.getCompanyName());
+            lm.put("studentCode", item.getCode());
+            lm.put("studentName", item.getName());
+            lm.put("gameNumber", item.getGameNumber());
+            lm.put("gameRound", item.getGameRound());
+            lm.put("result", SeatUtil.getSeatNameById(item.getSeatId()) );
+            listMap.add(lm);
+        }
+
+        map.put("maplist", listMap);
+        System.out.println(map);
+        Workbook workbook = ExcelExportUtil.exportExcel(params, map);
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        workbook.write(outputStream);
+        Map<String, Object> resultMap = new HashMap<>(2);
+        resultMap.put("fileName", "赛位抽签结果表.xlsx");
+        resultMap.put("fileStream", outputStream.toByteArray());
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.setContentDisposition(ContentDisposition.builder("attachment").filename(new String(String.valueOf(resultMap.get("fileName")).getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1)).build());
+        return ResponseEntity.ok().headers(headers).body((byte[]) resultMap.get("fileStream"));
+    }
 }
 

@@ -1,5 +1,6 @@
 package com.njmetro.evaluation.domain;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -44,6 +45,7 @@ public class Student implements Serializable {
      * 考生编号
      */
     @TableField("code")
+    @Excel(name="编码")
     private String code;
 
     /**
@@ -51,48 +53,56 @@ public class Student implements Serializable {
      */
     @TableField("name")
     @NotBlank(message = "考生姓名不能为空")
+    @Excel(name="姓名")
     private String name;
 
     /**
      * 身份证号
      */
     @TableField("id_card")
+    @Excel(name="身份证号")
     private String idCard;
 
     /**
      * 性别
      */
     @TableField("sex")
+    @Excel(name="性别")
     private String sex;
 
     /**
      * 年龄
      */
     @TableField("age")
+    @Excel(name="年龄")
     private Integer age;
 
     /**
      * 考生手机号
      */
     @TableField("phone")
+    @Excel(name="手机")
     private String phone;
 
     /**
      * 考生单位名称
      */
     @TableField("company_name")
+    @Excel(name="公司")
     private String companyName;
 
     /**
      * 二维码编号
      */
     @TableField("two_dimensional_code")
+    @Excel(name="二维码")
     private String twoDimensionalCode;
 
     /**
      * 是否为队长 1: 是队长 0：不是队长
      */
     @TableField("leader")
+    @Excel(name="是否领队")
     private Integer leader;
 
     /**

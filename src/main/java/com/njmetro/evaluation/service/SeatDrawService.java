@@ -45,4 +45,13 @@ public interface SeatDrawService extends IService<SeatDraw> {
      * @return
      */
     List<StudentReadyShowVO> listStudentReady(Integer gameNumber, Integer gameRound);
+
+    /**
+     *  根据场次轮次信息获取违纪考生id列表
+     *
+     * @param gameNumber 场次
+     * @param gameRound 轮次
+     * @return
+     */
+    List<Integer> getBreakRuleStudentList(Integer gameNumber, Integer gameRound);
 }

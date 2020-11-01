@@ -1,8 +1,11 @@
 package com.njmetro.evaluation.controller;
 
+import cn.afterturn.easypoi.excel.ExcelImportUtil;
+import cn.afterturn.easypoi.excel.entity.ImportParams;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.njmetro.evaluation.domain.*;
+import com.njmetro.evaluation.dto.ComputerTestResultExcelDTO;
 import com.njmetro.evaluation.param.student.SaveStudentParam;
 import com.njmetro.evaluation.param.student.UpdateStudentParam;
 import com.njmetro.evaluation.service.*;
@@ -16,7 +19,9 @@ import javax.validation.Valid;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -343,6 +348,25 @@ public class StudentController {
             return "签离成功";
         } else {
             return errorInfo.toString();
+        }
+    }
+
+    /**
+     * 上传考生数据
+     */
+    @PostMapping("/uploadStudent")
+    public void uploadStudent(@RequestParam("file") MultipartFile uploadFile) {
+        log.info("上传考生数据！");
+        try {
+            //存储并解析Excel
+            File file = new File("C:/UploadFile/考生信息表.xlsx");
+            uploadFile.transferTo(file);
+            ImportParams importParams = new ImportParams();
+            importParams.setHeadRows(1);
+            List<Student> studentList = ExcelImportUtil.importExcel(file, Student.class, importParams);
+            studentService.saveBatch(studentList);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

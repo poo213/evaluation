@@ -7,6 +7,7 @@ import com.njmetro.evaluation.domain.SeatDraw;
 import com.njmetro.evaluation.domain.Student;
 import com.njmetro.evaluation.exception.StudentException;
 import com.njmetro.evaluation.service.CodeStateService;
+import com.njmetro.evaluation.service.ConfigService;
 import com.njmetro.evaluation.service.SeatDrawService;
 import com.njmetro.evaluation.service.StudentService;
 import com.njmetro.evaluation.util.IpUtil;
@@ -14,11 +15,7 @@ import com.njmetro.evaluation.util.SeatUtil;
 import com.njmetro.evaluation.vo.SignVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -42,6 +39,7 @@ public class CodeStateController {
     private final CodeStateService codeStateService;
     private final StudentService studentService;
     private final SeatDrawService seatDrawService;
+    private final ConfigService configService;
     /**
      * 前端轮询调用
      *
@@ -64,7 +62,6 @@ public class CodeStateController {
             List<CodeState> codeStateList = codeStateService.list(queryWrapper);
             if (codeStateList.size() > 0)//每次只取一个
             {
-                System.out.println(22);
                 String qrCode = codeStateList.get(0).getTwoDimensionalCode();//获取二维码
                 QueryWrapper<Student> studentQueryWrapper = new QueryWrapper<>();
                 studentQueryWrapper.eq("two_dimensional_code", qrCode);
@@ -82,6 +79,7 @@ public class CodeStateController {
                 signVO.setCode(student.getCode());
                 signVO.setCompanyName(student.getCompanyName());
                 signVO.setPhone(student.getPhone());
+                signVO.setCodeId(codeStateList.get(0).getId());
                 signVO.setType(1);//进入候考区的pad，状态标记为1
                 return signVO;
             }
@@ -99,6 +97,7 @@ public class CodeStateController {
             //每次只取一个
             if (codeStateList.size() > 0)
             {
+               Integer gameNumber =  configService.getById(1).getGameNumber();
                 //获取二维码
                 String qrCode = codeStateList.get(0).getTwoDimensionalCode();
                 QueryWrapper<Student> studentQueryWrapper = new QueryWrapper<>();
@@ -110,10 +109,16 @@ public class CodeStateController {
                     throw new StudentException("没有此考生信息");
                 }
                 QueryWrapper<SeatDraw> seatDrawQueryWrapper= new QueryWrapper<>();
+                //查询下一场，应该 出席的人员
                 seatDrawQueryWrapper.eq("student_id",student.getId())
-                        .eq("game_round",1);
+                        .eq("game_round",1).eq("game_Number",gameNumber+1);
                 //获取考生赛位信息(只需要第一轮的信息)
                 SeatDraw seatDraw =  seatDrawService.getOne(seatDrawQueryWrapper);
+                if(seatDraw==null)
+                {
+                    codeStateService.removeById(codeStateList.get(0).getId());
+                    throw new StudentException("非本场比赛的考生，请检查自己的考试场次！");
+                }
                 Integer seatId = seatDraw.getSeatId();
 
                 Integer groupId = seatDraw.getGroupId();
@@ -126,6 +131,7 @@ public class CodeStateController {
                 signVO.setCode(student.getCode());
                 signVO.setCompanyName(student.getCompanyName());
                 signVO.setPhone(student.getPhone());
+                signVO.setCodeId(codeStateList.get(0).getId());
                 signVO.setType(2);//进入候考区的pad，状态标记为2
                 signVO.setSeatInfo(SeatUtil.exchangeGroup(groupId) +"-"+ SeatUtil.getTypeNumByStudentSeatId(seatId));
                 return signVO;
@@ -160,6 +166,7 @@ public class CodeStateController {
                 signVO.setCode(student.getCode());
                 signVO.setCompanyName(student.getCompanyName());
                 signVO.setPhone(student.getPhone());
+                signVO.setCodeId(codeStateList.get(0).getId());
                 signVO.setType(4);//进入候考区的pad，状态标记为3
                 return signVO;
             }
@@ -171,6 +178,20 @@ public class CodeStateController {
             }
         } else {
             throw new StudentException("非签到设备,扫码设备只包括"+ipListOne.toString()+ipListTwo.toString()+ipListAway.toString());
+        }
+    }
+
+    @DeleteMapping("/deleteCodeById")
+    public Integer deleteCodeById(@RequestParam("id") Integer id)
+    {
+        log.info("删除二维码扫码记录通过Id：{}",id);
+        if(codeStateService.removeById(id))
+        {
+            //删除成功
+            return 1;
+        }
+        else {
+            return 0;
         }
     }
 }

@@ -1,5 +1,7 @@
 package com.njmetro.evaluation.controller;
 
+import cn.afterturn.easypoi.excel.ExcelImportUtil;
+import cn.afterturn.easypoi.excel.entity.ImportParams;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.njmetro.evaluation.common.SystemCommon;
@@ -15,8 +17,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.IndexedReadOnlyStringMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -525,6 +529,25 @@ public class JudgeController {
                 .eq("master", 0)
                 .eq("sign_state", 1);
         return judgeService.list(judgeQueryWrapper);
+    }
+
+    /**
+     * 上传裁判数据
+     */
+    @PostMapping("/uploadJudge")
+    public void uploadJudge(@RequestParam("file") MultipartFile uploadFile) {
+        log.info("上传裁判数据！");
+        try {
+            //存储并解析Excel
+            File file = new File("C:/UploadFile/裁判信息表.xlsx");
+            uploadFile.transferTo(file);
+            ImportParams importParams = new ImportParams();
+            importParams.setHeadRows(1);
+            List<Judge> judgeList = ExcelImportUtil.importExcel(file, Judge.class, importParams);
+            judgeService.saveBatch(judgeList);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
 
