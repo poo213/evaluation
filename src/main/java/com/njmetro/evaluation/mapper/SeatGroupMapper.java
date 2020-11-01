@@ -23,7 +23,7 @@ public interface SeatGroupMapper extends BaseMapper<SeatGroup> {
      * @param seatId 赛位Id
      * @return
      */
-     @Select("SELECT judge.code,judge.name,judge_draw_result.state FROM judge,judge_draw_result WHERE judge.id = judge_draw_result.judge_id and judge_draw_result.seat_id = #{seatId}")
+     @Select("SELECT judge.code,judge.name,judge_draw_result.state,judge.id_card FROM judge,judge_draw_result WHERE judge.id = judge_draw_result.judge_id and judge_draw_result.seat_id = #{seatId}")
      List<JudgeShowVO> getGroupTypeJudgeVOBySeatId(@Param("seatId") Integer seatId);
 
 

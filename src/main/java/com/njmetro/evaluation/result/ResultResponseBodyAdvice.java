@@ -16,7 +16,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
  * @author RCNJTECH
  * @since 0.1.0
  */
-@RestControllerAdvice("com.njmetro.evaluation.controller")
+@RestControllerAdvice("com.njmetro.evaluation")
 public class ResultResponseBodyAdvice implements ResponseBodyAdvice<Object> {
 
     @Override

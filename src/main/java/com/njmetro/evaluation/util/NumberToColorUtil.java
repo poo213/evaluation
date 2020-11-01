@@ -8,31 +8,78 @@ package com.njmetro.evaluation.util;
  */
 public class NumberToColorUtil {
 
-    public static final String readyColor = "#00baff";
-    public static final String testColor = "#3de7c9";
-    public static final String breakColor = "#ffc530";
-    public static final String endColor = "#ffffff";
+    /**
+     * 考生状态 对应颜色
+     */
+    public static final String studentNoReadyColor = "#ffffff";
+    public static final String studentReadyColor = "#00baff";
+    public static final String studentTestColor = "#3de7c9";
+    public static final String studentBreakColor = "#ffc530";
+    public static final String studentEndColor = "#a0d911";
+    public static final String studentMissColor = "#722ed1";
+    public static final String studentErrorColor = "#f5222d";
+    /**
+     * 裁判状态对应颜色
+     */
+    public static final String judgeNoReadyColor = "#ffffff";
+    public static final String judgeReadyColor = "#00baff";
+    public static final String judgeTestColor = "#3de7c9";
+    public static final String judgeOkColor = "#a0d911";
 
     /**
-     * 根据 number(1-4) 转换为对应的状态
+     * 根据 number(1-6) 转换为对应的状态
      *
-     * @param number 1:  就绪中  2： 考试中  3. 比赛中断  4. 考试结束
+     * @param number 1:  就绪中  2： 考试中  3. 比赛中断  4. 考试结束 5. 考生缺考  6. 考生违纪
      * @return
      */
-    public static String getBackColor(Integer number){
+    public static String getStudentBackColor(Integer number){
+        String result = "";
+        switch (number){
+            case 0 :
+                result = studentNoReadyColor;
+                break;
+            case 1 :
+                result = studentReadyColor;
+                break;
+            case 2 :
+                result = studentTestColor;
+                break;
+            case 3 :
+                result = studentBreakColor;
+                break;
+            case 4 :
+                result = studentEndColor;
+                break;
+            case 5 :
+                result = studentMissColor;
+                break;
+            case 6 :
+                result = studentErrorColor;
+                break;
+        }
+        return result;
+    }
+
+    /**
+     * 根据 number(1-6) 转换为对应的状态
+     *
+     * @param number 1:  未就绪  2： 已就绪  3. 监考中  4. 成绩以及叫
+     * @return
+     */
+    public static String getJudgeBackColor(Integer number){
         String result = "";
         switch (number){
             case 1 :
-                result = readyColor;
+                result = judgeNoReadyColor;
                 break;
             case 2 :
-                result = testColor;
+                result = judgeReadyColor;
                 break;
             case 3 :
-                result = breakColor;
+                result = judgeTestColor;
                 break;
             case 4 :
-                result = endColor;
+                result = judgeOkColor;
                 break;
         }
         return result;

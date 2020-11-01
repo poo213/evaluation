@@ -117,6 +117,13 @@ public class ConfigController {
      */
     @GetMapping("/doIssue")
     public Boolean doIssue(){
+        // 将裁判状态改为2： 监考中
+        List<JudgeDrawResult> judgeDrawResultList = judgeDrawResultService.list();
+        for(JudgeDrawResult judgeDrawResult : judgeDrawResultList){
+            judgeDrawResult.setState(2);
+            judgeDrawResultService.updateById(judgeDrawResult);
+        }
+        // 将config 状态改为 2
         Config config = configService.getById(1);
         config.setState(3);
         return configService.updateById(config);

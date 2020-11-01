@@ -48,7 +48,7 @@ public interface SeatDrawMapper extends BaseMapper<SeatDraw> {
      * @param seatId 学生座位ID
      * @return
      */
-    @Select("SELECT student.name,student.code,student.sign_state\n" +
+    @Select("SELECT student.name,student.id_card,student.code,student.sign_state\n" +
             "FROM seat_draw,student\n" +
             "WHERE seat_draw.game_number = #{gameNumber} and seat_draw. game_round = #{gameRound} and seat_id =#{seatId} and student.id = seat_draw.student_id")
     List<Student> selectShowStudentBySeatId(Integer gameNumber, Integer gameRound, Integer seatId);

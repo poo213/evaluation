@@ -25,7 +25,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @Component
-public class ReadyInterceptor implements HandlerInterceptor {
+public class  ReadyInterceptor implements HandlerInterceptor {
 
     public final ConfigService configService;
     public final SeatDrawService seatDrawService;
@@ -42,6 +42,7 @@ public class ReadyInterceptor implements HandlerInterceptor {
         JudgeDrawResult judgeDrawResult = judgeDrawResultService.getOne(judgeDrawResultQueryWrapper);
         log.info(seatId + "  "+judgeDrawResult.getState().toString());
         if(judgeDrawResult.getState() == 0){
+            log.info("裁判没有全部准备就绪 未就绪裁判{}",judgeDrawResult.getJudgeId());
             return false;
         }else {
             return true;
@@ -60,7 +61,7 @@ public class ReadyInterceptor implements HandlerInterceptor {
                 .eq("game_round",config.getGameRound());
         List<SeatDraw> seatDrawList = seatDrawService.list(seatDrawQueryWrapper);
         for(SeatDraw seatDraw : seatDrawList){
-            if(!(seatDraw.getState() == 1 || seatDraw.getState() == 5 || seatDraw.getState() == 6)){
+            if(!(seatDraw.getState() == 1 || seatDraw.getState() == 5)){
                 return false;
             }else {
                 Integer studentSeatId = seatDraw.getSeatId();

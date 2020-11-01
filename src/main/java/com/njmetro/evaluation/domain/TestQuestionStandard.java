@@ -53,10 +53,13 @@ public class TestQuestionStandard implements Serializable {
     private String point;
 
     /**
-     * 分值
+     * 最大分值
      */
     @TableField("score")
     private Double score;
+
+    @TableField("min_score")
+    private Double minScore;
 
     /**
      * 评分标准

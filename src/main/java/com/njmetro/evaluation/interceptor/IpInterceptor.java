@@ -44,7 +44,6 @@ public class IpInterceptor implements HandlerInterceptor {
             request.setAttribute("pad", pad);
             request.setAttribute("ip", ip);
         }
-
         // 获取比赛场次和轮次信息
         Config config = configService.getById(1);
         request.setAttribute("config", config);

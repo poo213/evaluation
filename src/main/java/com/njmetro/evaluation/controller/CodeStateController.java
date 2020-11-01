@@ -50,12 +50,7 @@ public class CodeStateController {
     @GetMapping("/getInfoAndSign")
     public SignVO getInfoAndSign(HttpServletRequest httpServletRequest) {
         String ipAddress = IpUtil.getIpAddr(httpServletRequest);//获取IP
-//        if (ipAddress.equals("0:0:0:0:0:0:0:1")) {
-//            ipAddress = "192.168.99.9";
-//        }
-        //ipAddress = "192.168.96.9";//模拟ip，进入候考区，备考区，离场，3台设备ip
         log.info("调用次接口的IP:{}", ipAddress);
-       // log.info("获取到拦截器ip {} ",ip);
         List<String> ipListOne = codeStateService.getIpList(3);
         List<String> ipListTwo = codeStateService.getIpList(4);
         List<String> ipListAway = codeStateService.getIpList(5);

@@ -22,7 +22,11 @@ public class JudgeShowVO {
     /**
      * 裁判就绪状态
      */
-    private Boolean state;
+    private Integer state;
+    /**
+     * 裁判照片地址
+     */
+    private String idCard;
     private String stateColor;
 
     /**
@@ -32,15 +36,10 @@ public class JudgeShowVO {
      * @param name  裁判姓名
      * @param state 裁判就绪状态
      */
-    public JudgeShowVO(String code, String name, Boolean state) {
+    public JudgeShowVO(String code, String name, Integer state) {
         this.code = code;
         this.name = name;
-        if(state){
-            this.stateColor = NumberToColorUtil.readyColor;
-        }else {
-            this.stateColor = NumberToColorUtil.breakColor;
-        }
-
+        this.stateColor = NumberToColorUtil.getJudgeBackColor(state);
     }
 
     public JudgeShowVO() {

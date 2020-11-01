@@ -81,7 +81,6 @@ public class JudgeApi {
 
     @GetMapping("/pauseOrStart")
     public StudentStateVO pauseOrStart(@RequestAttribute("pad") Pad pad,@RequestAttribute("config")Config config) {
-
         Integer studentSeatId = SeatUtil.getStudentSeatIdByJudgeSeatId(pad.getSeatId());
         // 根据 studentSeatId 场次 和 轮次 在 seat_draw 中查找 studentId
         QueryWrapper<SeatDraw> seatDrawQueryWrapper = new QueryWrapper<>();
@@ -262,7 +261,7 @@ public class JudgeApi {
      * @return
      */
     @PostMapping("/submit")
-    public Boolean submitResults(@RequestBody List<StudentResultDTO> list, Integer gameNumber, Integer gameRound, Integer state, Integer studentId, Integer questionId, Integer judgeId) {
+    public Boolean submitResults(@RequestBody List<StudentResultDTO> list, Integer gameNumber, Integer gameRound, Integer state, Integer studentId, Integer questionId, Integer judgeId,@RequestAttribute("pad") Pad pad) {
         log.info("gameNumber {}", gameNumber);
         log.info("gameRound {}", gameRound);
         log.info("state {}", state);
@@ -300,6 +299,12 @@ public class JudgeApi {
                         JudgeSubmitState judgeSubmitState = judgeSubmitStateService.getOne(judgeSubmitStateQueryWrapper);
                         judgeSubmitState.setState(1);
                         judgeSubmitStateService.updateById(judgeSubmitState);
+                        // judgeDrawResult 状态修改为 3，表示成绩提交成功
+                        QueryWrapper<JudgeDrawResult> judgeDrawResultQueryWrapper = new QueryWrapper<>();
+                        judgeDrawResultQueryWrapper.eq("pad_id",pad.getId());
+                        JudgeDrawResult judgeDrawResult = judgeDrawResultService.getOne(judgeDrawResultQueryWrapper);
+                        judgeDrawResult.setState(3);
+                        judgeDrawResultService.updateById(judgeDrawResult);
                         log.info("最终提交，写入数据库成功");
                     }
                 }
@@ -340,13 +345,18 @@ public class JudgeApi {
                         JudgeSubmitState judgeSubmitState = judgeSubmitStateService.getOne(judgeSubmitStateQueryWrapper);
                         judgeSubmitState.setState(1);
                         judgeSubmitStateService.updateById(judgeSubmitState);
+                        // judgeDrawResult 状态修改为 3， 表示成绩提交成功
+                        QueryWrapper<JudgeDrawResult> judgeDrawResultQueryWrapper = new QueryWrapper<>();
+                        judgeDrawResultQueryWrapper.eq("pad_id",pad.getId());
+                        JudgeDrawResult judgeDrawResult = judgeDrawResultService.getOne(judgeDrawResultQueryWrapper);
+                        judgeDrawResult.setState(3);
+                        judgeDrawResultService.updateById(judgeDrawResult);
                         log.info("最终提交，写入数据库成功");
                     }
                 }else {
                     log.info("成绩上传截至！请核对后再上传");
                     throw new JudgeApiException("成绩上传截至！请核对后再上传");
                 }
-
             }
             return true;
         } else {

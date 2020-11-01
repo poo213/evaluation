@@ -1,5 +1,6 @@
 package com.njmetro.evaluation.vo;
 
+import com.njmetro.evaluation.common.SystemCommon;
 import com.njmetro.evaluation.domain.Student;
 import com.njmetro.evaluation.util.NumberToColorUtil;
 import lombok.Data;
@@ -29,27 +30,22 @@ public class StudentShowVO {
     private String stateColor;
 
     /**
+     *  考生照片 url(根据身份证 查找用户照片)
+     */
+    private String idCard;
+    /**
      * 自定义构造函数
      *
      * @param student 学生信息
      */
     public StudentShowVO(Student student,Integer state) {
+        /**
+         *  读取考生照片地址
+         */
+        this.setIdCard(SystemCommon.PHOTO_URL+student.getIdCard()+".jpg");
         this.studentName = student.getName();
         this.studentCode = student.getCode();
-        switch (state){
-            case 1 :
-                this.setStateColor(NumberToColorUtil.getBackColor(1));
-                break;
-            case 2 :
-                this.setStateColor(NumberToColorUtil.getBackColor(2));
-                break;
-            case 3 :
-                this.setStateColor(NumberToColorUtil.getBackColor(3));
-                break;
-            case 4 :
-                this.setStateColor(NumberToColorUtil.getBackColor(4));
-                break;
-        }
+        this.setStateColor(NumberToColorUtil.getStudentBackColor(state));
 
     }
 

@@ -17,18 +17,19 @@ public class SystemCommon {
     /**
      * 前端访问静态资源映射
      */
-    public static final String WEB_CONFIG_HANDLER = "/api/file/**";
+    public static final String WEB_CONFIG_HANDLER = "/res/file/**";
 
     /**
      *  水印服务器下载 文件的 根地址
      */
-    public static final String DOWNLOAD_BASE_URL = "http://172.18.10.201:8889/api/file/";
+    //172.18.10.201
+    public static final String DOWNLOAD_BASE_URL = "http://192.168.96.7:8889/res/file/";
 
-    public static final String PHOTO_URL = "http://172.18.10.201:8889/api/file/idCard/";
+    public static final String PHOTO_URL = "http://192.168.96.7:8889/res/file/idCard/";
     /**
      *  pdf组件拼接用
      */
-    public static final String PDF_URL = "http://172.18.10.201:8000/pdf?url=/api/file/pdf/";
+    public static final String PDF_URL = "http://192.168.96.7:8000/pdf?url=/res/file/pdf/";
     /**
      *  文件在服务器中 存储位置的跟目录
      */
@@ -37,5 +38,7 @@ public class SystemCommon {
     public static final String OPTICAL_TYPE = "光缆接续";
     public static final String SWITCH_TYPE = "交换机组网";
     public static final String VIDEO_TYPE = "视频搭建";
+
+
 
 }

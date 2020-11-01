@@ -19,9 +19,16 @@ public class TestQuestionStandardVO {
     private Integer id;
     private String text;
     private String point;
+    /**
+     * 最大分值
+     */
     private Double score;
     private String standard;
-    private double step;
+    private Double step;
+    /**
+     * 最小分值
+     */
+    private Double minScore;
 
 
 
@@ -32,7 +39,7 @@ public class TestQuestionStandardVO {
         this.score = testQuestionStandard.getScore();
         this.standard = testQuestionStandard.getStandard();
         this.step = testQuestionStandard.getStep();
-
+        this.minScore = testQuestionStandard.getMinScore();
 
     }
 }

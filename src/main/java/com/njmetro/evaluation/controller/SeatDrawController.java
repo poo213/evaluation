@@ -114,6 +114,7 @@ public class SeatDrawController {
                 seatDraw.setState(6);
                 break;
         }
+        log.info("seatDraw {}",seatDraw);
         // 找到考生对应的裁判，将状态改为就绪
         Integer studentSeatId = seatDraw.getSeatId();
         Integer leftJudgeSeatId = SeatUtil.getLeftJudgeSeatIdByStudentSeatId(studentSeatId);

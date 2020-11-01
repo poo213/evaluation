@@ -34,7 +34,7 @@ import static com.njmetro.evaluation.common.SystemCommon.PDF_URL;
 @RequestMapping("/api/student")
 @RequiredArgsConstructor
 @Slf4j
-public class StudentAPI {
+public class StudentApi {
     private final StudentService studentService;
     private final ConfigService configService;
     private final PadService padService;
@@ -43,7 +43,7 @@ public class StudentAPI {
     private final TestQuestionService testQuestionService;
     private final PauseRecordService pauseRecordService;
     private final CodeStateService codeStateService;
-//获取缺考状态，seatdraw中获取状态5，表示缺考
+
 
     /**
      * @param
@@ -52,7 +52,8 @@ public class StudentAPI {
     @GetMapping("/getConfig")
     public Config getConfig(@RequestAttribute("config") Config config) {
         log.info("getConfig -- 获取到拦截器config {} ", config);
-        return config;//获取当前的场次和轮次
+        //获取当前的场次和轮次
+        return config;
     }
 
     /**
@@ -183,37 +184,42 @@ public class StudentAPI {
                 .eq("game_number", gameNumber)
                 .eq("game_round", gameRound);
         SeatDraw seatDraw = seatDrawService.getOne(seatDrawQueryWrapper);
-        //暂停
-        if (type == 0) {
-            seatDraw.setRemainingTime(remainingTime);
-            //比赛暂停，记录比赛剩余时间
-            seatDraw.setState(3);
-            PauseRecord pauseRecord = new PauseRecord();
-            pauseRecord.setSeatDrawId(seatDraw.getId());
-            pauseRecord.setType(0);
-            pauseRecordService.save(pauseRecord);
-            seatDrawService.updateById(seatDraw);
-            PauseOrStartVO pauseOrStartVO = new PauseOrStartVO();
-            pauseOrStartVO.setRemainingTime(remainingTime);
-            //表示暂停
-            pauseOrStartVO.setState(3);
-            //返回剩余时间
-            return pauseOrStartVO;
-        } else {//开始
-            PauseRecord pauseRecord = new PauseRecord();
-            pauseRecord.setSeatDrawId(seatDraw.getId());
-            pauseRecord.setType(1);
-            pauseRecordService.save(pauseRecord);
-            //恢复比赛，切换为考试中 状态2
-            seatDraw.setState(2);
-            seatDraw.setRemainingTime(remainingTime);
-            seatDrawService.updateById(seatDraw);
-            PauseOrStartVO pauseOrStartVO = new PauseOrStartVO();
-            //返回剩余时间
-            pauseOrStartVO.setRemainingTime(seatDraw.getRemainingTime());
-            pauseOrStartVO.setState(2);
-            return pauseOrStartVO;
+        // 考生状态为 2 或 3 时 才可以修改考生状态
+        if(seatDraw.getState().equals(2) || seatDraw.getState().equals(3)){
+            if (type == 0) {
+                seatDraw.setRemainingTime(remainingTime);
+                //比赛暂停，记录比赛剩余时间
+                seatDraw.setState(3);
+                PauseRecord pauseRecord = new PauseRecord();
+                pauseRecord.setSeatDrawId(seatDraw.getId());
+                pauseRecord.setType(0);
+                pauseRecordService.save(pauseRecord);
+                seatDrawService.updateById(seatDraw);
+                PauseOrStartVO pauseOrStartVO = new PauseOrStartVO();
+                pauseOrStartVO.setRemainingTime(remainingTime);
+                //表示暂停
+                pauseOrStartVO.setState(3);
+                //返回剩余时间
+                return pauseOrStartVO;
+            } else {//开始
+                PauseRecord pauseRecord = new PauseRecord();
+                pauseRecord.setSeatDrawId(seatDraw.getId());
+                pauseRecord.setType(1);
+                pauseRecordService.save(pauseRecord);
+                //恢复比赛，切换为考试中 状态2
+                seatDraw.setState(2);
+                seatDraw.setRemainingTime(remainingTime);
+                seatDrawService.updateById(seatDraw);
+                PauseOrStartVO pauseOrStartVO = new PauseOrStartVO();
+                //返回剩余时间
+                pauseOrStartVO.setRemainingTime(seatDraw.getRemainingTime());
+                pauseOrStartVO.setState(2);
+                return pauseOrStartVO;
+            }
+        }else {
+            throw new StudentException("座位 "+ seatDraw.getSeatId() +  "考生当前状态为 "+ seatDraw.getState() +" 此状态下不能暂停/恢复暂停");
         }
+
     }
 
     /**
@@ -225,16 +231,22 @@ public class StudentAPI {
     public Boolean finishTest(Integer gameNumber, Integer gameRound, Integer pauseTime,Integer remainingTime, @RequestAttribute("pad") Pad pad, @RequestAttribute("config") Config config) {
         log.info("finishTest -- 获取到拦截器pad {} ", pad);
         log.info("finishTest -- 获取到拦截器config {} ", config);
-        UpdateWrapper<SeatDraw> seatDrawUpdateWrapper = new UpdateWrapper<>();
-        seatDrawUpdateWrapper.eq("seat_id", pad.getSeatId())
+        // 考生状态为2（考试中）才可以提交成绩
+        QueryWrapper<SeatDraw> seatDrawQueryWrapper = new QueryWrapper<>();
+        seatDrawQueryWrapper.eq("seat_id", pad.getSeatId())
                 .eq("game_number", gameNumber)
-                .eq("game_round", gameRound)
-                .set("use_time", 1200 - remainingTime)
-                .set("remaining_time", remainingTime)
-                .set("pause_time",pauseTime)
-                .set("state", 4);//选手完成考试
-
-        return seatDrawService.update(seatDrawUpdateWrapper);
+                .eq("game_round", gameRound);
+        SeatDraw seatDraw = seatDrawService.getOne(seatDrawQueryWrapper);
+        if(seatDraw.getState().equals(2)){
+            seatDraw.setUseTime(1200 - remainingTime);
+            seatDraw.setRemainingTime(remainingTime);
+            seatDraw.setPauseTime(pauseTime);
+            seatDraw.setState(4);
+            log.info("座位 {} 考生提交成绩完成",seatDraw.getSeatId());
+            return seatDrawService.updateById(seatDraw);
+        }else {
+            throw new StudentException("座位 "+ seatDraw.getSeatId() +  "考生当前状态为 "+ seatDraw.getState() +" 此状态下不能提交成绩");
+        }
     }
 
     /**
@@ -248,13 +260,19 @@ public class StudentAPI {
     public Boolean beReady(Integer gameNumber, Integer gameRound, @RequestAttribute("pad") Pad pad) {
         Config config = configService.getById(1);
         if (config.getGameNumber().equals(gameNumber) && config.getGameRound().equals(gameRound)) {
-            UpdateWrapper<SeatDraw> seatDrawUpdateWrapper = new UpdateWrapper<>();
-            seatDrawUpdateWrapper.eq("seat_id", pad.getSeatId())
+            // 查找到当前考生状态 0： 考生可以就绪 改为 1； 其他状态不能 提交就绪
+            QueryWrapper<SeatDraw> seatDrawQueryWrapper = new QueryWrapper<>();
+            seatDrawQueryWrapper.eq("seat_id", pad.getSeatId())
                     .eq("game_number", gameNumber)
-                    .eq("game_round", gameRound)
-                    //选手准备就绪
-                    .set("state", 1);
-            return seatDrawService.update(seatDrawUpdateWrapper);
+                    .eq("game_round", gameRound);
+            SeatDraw  seatDraw = seatDrawService.getOne(seatDrawQueryWrapper);
+            if(seatDraw.getState().equals(0)){
+                seatDraw.setState(1);
+                log.info("座位 {} 考生修改就绪成功",seatDraw.getSeatId());
+                return seatDrawService.updateById(seatDraw);
+            }else {
+                throw new StudentException("座位 "+ seatDraw.getSeatId() +  "考生当前状态为 "+ seatDraw.getState() +" 此状态下不能上报就绪");
+            }
         } else {
             throw new StudentException("场次和轮次信息与数据库不匹配，核验后再上报就绪");
         }

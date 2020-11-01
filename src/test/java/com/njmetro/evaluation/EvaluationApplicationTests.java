@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +21,9 @@ import java.util.List;
 class EvaluationApplicationTests {
     @Autowired
     JudgeService judgeService;
+
+    @Autowired
+    StudentService studentService;
 
     @Autowired
     CompanyService companyService;
@@ -120,6 +124,28 @@ class EvaluationApplicationTests {
             codeState.setState(0);
              codeStateService.save(codeState);
         }
+    }
+
+
+
+    @Test
+    void changeIdCard(){
+        List<Judge> judgeList = judgeService.list();
+        for(Judge judge : judgeList){
+            judge.setIdCard("320111111111111111");
+            judgeService.updateById(judge);
+        }
+
+        List<Student> studentList = studentService.list();
+        for(Student student : studentList){
+            student.setIdCard("320111111111111111");
+            studentService.updateById(student);
+        }
+    }
+
+    @Test
+    void timeTest(){
+        LocalDateTime localDateTime = LocalDateTime.now();
     }
 
 

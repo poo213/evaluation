@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.IndexedReadOnlyStringMap;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,7 +51,6 @@ public class JudgeController {
     public static final String NJ_COMPANY_NAME = "南京地铁";
 
 
-
     /**
      * 根据裁判类型获取裁判信息
      *
@@ -67,47 +67,43 @@ public class JudgeController {
      * 获取一个比赛类型的 裁判和考生信息
      *
      * @param gameNumber 场次
-     * @param gameRound 轮次
-     * @param groupId 赛组
-     * @param typeName 比赛类型
+     * @param gameRound  轮次
+     * @param groupId    赛组
+     * @param typeName   比赛类型
      * @return
      */
-    public TypeShowVO getTypeShowOne(Integer gameNumber, Integer gameRound,Integer groupId,String typeName){
+    public TypeShowVO getTypeShowOne(Integer gameNumber, Integer gameRound, Integer groupId, String typeName) {
         TypeShowVO typeShowVO = new TypeShowVO();
         // 设置 考试类别
         typeShowVO.setTypeName(typeName);
         // 设置裁判信息
-        List<JudgeShowVO> judgeShowVOList = seatGroupService.getGroupTypeJudgeVOByGroupId(groupId,typeName);
-        for(JudgeShowVO judgeShowVO : judgeShowVOList){
-            if(judgeShowVO.getState()){
-                judgeShowVO.setStateColor(NumberToColorUtil.readyColor);
-            }else {
-                judgeShowVO.setStateColor(NumberToColorUtil.testColor);
-            }
-
+        List<JudgeShowVO> judgeShowVOList = seatGroupService.getGroupTypeJudgeVOByGroupId(groupId, typeName);
+        for (JudgeShowVO judgeShowVO : judgeShowVOList) {
+            judgeShowVO.setIdCard(SystemCommon.PHOTO_URL + judgeShowVO.getIdCard() + ".jpg");
+            judgeShowVO.setStateColor(NumberToColorUtil.getJudgeBackColor(judgeShowVO.getState()));
         }
         typeShowVO.setJudgeShowVOList(judgeShowVOList);
         // 设置 考生信息
-        Integer studentSeatId = SeatUtil.getStudentSeatIdByGroupIdAndType(groupId,typeName);
-        List<Student> studentList = seatDrawService.getStudentShowBySeatId(gameNumber,gameRound,studentSeatId);
+        Integer studentSeatId = SeatUtil.getStudentSeatIdByGroupIdAndType(groupId, typeName);
+        List<Student> studentList = seatDrawService.getStudentShowBySeatId(gameNumber, gameRound, studentSeatId);
         // 根据 场次、 轮次 、考生seatId 获取考生考试状态
-        QueryWrapper<SeatDraw> seatDrawQueryWrapper =  new QueryWrapper<>();
-        seatDrawQueryWrapper.eq("game_number",gameNumber)
-                .eq("game_round",gameRound)
-                .eq("seat_id",studentSeatId);
-        SeatDraw seatDraw =  seatDrawService.getOne(seatDrawQueryWrapper);
+        QueryWrapper<SeatDraw> seatDrawQueryWrapper = new QueryWrapper<>();
+        seatDrawQueryWrapper.eq("game_number", gameNumber)
+                .eq("game_round", gameRound)
+                .eq("seat_id", studentSeatId);
+        SeatDraw seatDraw = seatDrawService.getOne(seatDrawQueryWrapper);
 
-        if (studentList.size() != 0){
-            typeShowVO.setStudentShowVO(new StudentShowVO(studentList.get(0),seatDraw.getState()));
+        if (studentList.size() != 0) {
+            typeShowVO.setStudentShowVO(new StudentShowVO(studentList.get(0), seatDraw.getState()));
         }
-        log.info("typeShowVO {}",typeShowVO);
+        log.info("typeShowVO {}", typeShowVO);
         return typeShowVO;
     }
 
     /**
      * 获取裁判分组抽签结果
      *
-     * @return  裁判分组抽签结果
+     * @return 裁判分组抽签结果
      */
     @GetMapping("/getJudgeDrawVO")
     public List<List<JudgeDrawVO>> getJudgeDrawVO() {
@@ -122,16 +118,16 @@ public class JudgeController {
     /**
      * 获取一个赛组中三种比赛类型和全部裁判和考生（6个裁判 和 3 个考生的详细信息）
      *
-     * @param groupId 赛组ID
+     * @param groupId    赛组ID
      * @param gameNumber 场次
-     * @param gameRound 轮次
+     * @param gameRound  轮次
      * @return
      */
-    public List<TypeShowVO> getTypeShowVO(Integer groupId,Integer gameNumber, Integer gameRound) {
+    public List<TypeShowVO> getTypeShowVO(Integer groupId, Integer gameNumber, Integer gameRound) {
         List<TypeShowVO> typeShowVOList = new ArrayList<>();
-        typeShowVOList.add(getTypeShowOne(gameNumber,gameRound,groupId,SystemCommon.OPTICAL_TYPE));
-        typeShowVOList.add(getTypeShowOne(gameNumber,gameRound,groupId,SystemCommon.SWITCH_TYPE));
-        typeShowVOList.add(getTypeShowOne(gameNumber,gameRound,groupId,SystemCommon.VIDEO_TYPE));
+        typeShowVOList.add(getTypeShowOne(gameNumber, gameRound, groupId, SystemCommon.OPTICAL_TYPE));
+        typeShowVOList.add(getTypeShowOne(gameNumber, gameRound, groupId, SystemCommon.SWITCH_TYPE));
+        typeShowVOList.add(getTypeShowOne(gameNumber, gameRound, groupId, SystemCommon.VIDEO_TYPE));
         return typeShowVOList;
     }
 
@@ -152,7 +148,7 @@ public class JudgeController {
         for (SeatGroup seatGroup : seatGroupList) {
             GroupShowVO groupJudgeVO = new GroupShowVO();
             groupJudgeVO.setGroupName(seatGroup.getGroupName());
-            List<TypeShowVO> groupJudgeTypeVOList = getTypeShowVO(seatGroup.getId(),1,1);
+            List<TypeShowVO> groupJudgeTypeVOList = getTypeShowVO(seatGroup.getId(), 1, 1);
             groupJudgeVO.setTypeShowVOList(groupJudgeTypeVOList);
             groupJudgeVOList.add(groupJudgeVO);
         }
@@ -172,11 +168,16 @@ public class JudgeController {
         bigShowVO.setGameNumber(config.getGameNumber());
         bigShowVO.setGameRound(config.getGameRound());
 
+        // 获取当前时间
+        bigShowVO.setDateTime(LocalDateTime.now());
+        bigShowVO.setTotalNumber(123);
+        bigShowVO.setLeaveNumber(11);
+        bigShowVO.setWaitNumber(112);
         // 遍历6个赛组
         List<GroupShowVO> groupJudgeVOList = new ArrayList<>();
         List<SeatGroup> seatGroupList = seatGroupService.list();
         for (SeatGroup seatGroup : seatGroupList) {
-            groupJudgeVOList.add(new GroupShowVO(seatGroup.getGroupName(),getTypeShowVO(seatGroup.getId(),config.getGameNumber(),config.getGameRound())));
+            groupJudgeVOList.add(new GroupShowVO(seatGroup.getGroupName(), getTypeShowVO(seatGroup.getId(), config.getGameNumber(), config.getGameRound())));
         }
         bigShowVO.setGroupShowVOList(groupJudgeVOList);
         return bigShowVO;
@@ -197,7 +198,7 @@ public class JudgeController {
             GroupShowVO groupShowVO = new GroupShowVO();
             // 设置赛组名称
             groupShowVO.setGroupName(seatGroup.getGroupName());
-            List<TypeShowVO> typeShowVOList = getTypeShowVO(seatGroup.getId(),config.getGameNumber(),config.getGameRound());
+            List<TypeShowVO> typeShowVOList = getTypeShowVO(seatGroup.getId(), config.getGameNumber(), config.getGameRound());
             groupShowVO.setTypeShowVOList(typeShowVOList);
             GroupShowVOList.add(groupShowVO);
         }
@@ -497,7 +498,7 @@ public class JudgeController {
         // 调用洗牌算法，重新打乱
         opticalJudgeEntityList = KnuthUtil.getRandomJudgeEntityList(opticalJudgeEntityList);
         switchJudgeEntityList = KnuthUtil.getRandomJudgeEntityList(switchJudgeEntityList);
-        videoJudgeEntityList= KnuthUtil.getRandomJudgeEntityList(videoJudgeEntityList);
+        videoJudgeEntityList = KnuthUtil.getRandomJudgeEntityList(videoJudgeEntityList);
         // 调用抽签算法
         opticalSeatGroupList = JudgeDrawAlgorithm.run(opticalSeatGroupList, opticalJudgeEntityList);
         switchSeatGroupList = JudgeDrawAlgorithm.run(switchSeatGroupList, switchJudgeEntityList);
@@ -518,11 +519,11 @@ public class JudgeController {
      * 根据监考类型来获取备用裁判列表
      */
     @GetMapping("/getBackUpJudgeListByType")
-    List<Judge> getBackUpJudgeListByType(String judgeType){
+    List<Judge> getBackUpJudgeListByType(String judgeType) {
         QueryWrapper<Judge> judgeQueryWrapper = new QueryWrapper<>();
-        judgeQueryWrapper.eq("judge_type",judgeType)
-                .eq("master",0)
-                .eq("sign_state",1);
+        judgeQueryWrapper.eq("judge_type", judgeType)
+                .eq("master", 0)
+                .eq("sign_state", 1);
         return judgeService.list(judgeQueryWrapper);
     }
 }

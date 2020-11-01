@@ -29,6 +29,10 @@ public class EndInterceptor implements HandlerInterceptor {
     public final SeatDrawService seatDrawService;
     public final JudgeSubmitStateService judgeSubmitStateService;
 
+    public static Integer STUDENT_END_NUMBER = 4;
+    public static Integer JUDGE_END_NUMBER = 3;
+    public static Integer CONFIG_STATE_END_OK = 4;
+
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
         Config config = configService.getById(1);
@@ -39,7 +43,7 @@ public class EndInterceptor implements HandlerInterceptor {
                 .eq("game_round",config.getGameRound());
         List<SeatDraw> seatDrawList = seatDrawService.list(seatDrawQueryWrapper);
         for(SeatDraw seatDraw : seatDrawList){
-            if(!(seatDraw.getState().equals(4) || seatDraw.getState().equals(5))){
+            if(seatDraw.getState() < STUDENT_END_NUMBER){
                 log.info("考生没有全部提交");
                 flag =false;
                 break;
@@ -52,7 +56,7 @@ public class EndInterceptor implements HandlerInterceptor {
                     .eq("game_round",config.getGameRound());
             List<JudgeSubmitState> judgeSubmitStateList = judgeSubmitStateService.list(judgeSubmitStateQueryWrapper);
             for(JudgeSubmitState judgeSubmitState : judgeSubmitStateList){
-                if(judgeSubmitState.getState().equals(0)){
+                if(!judgeSubmitState.getState().equals(JUDGE_END_NUMBER)){
                     log.info("裁判成绩没有全部提交");
                     flag = false;
                     break;
@@ -61,7 +65,7 @@ public class EndInterceptor implements HandlerInterceptor {
         }
         if(flag){
             log.info("全部提交，改变config中最终状态");
-            config.setState(4);
+            config.setState(CONFIG_STATE_END_OK);
             configService.updateById(config);
         }
 
