@@ -30,7 +30,6 @@ public class EndInterceptor implements HandlerInterceptor {
     public final JudgeSubmitStateService judgeSubmitStateService;
 
     public static Integer STUDENT_END_NUMBER = 4;
-    public static Integer JUDGE_END_NUMBER = 3;
     public static Integer CONFIG_STATE_END_OK = 4;
 
     @Override
@@ -56,7 +55,8 @@ public class EndInterceptor implements HandlerInterceptor {
                     .eq("game_round",config.getGameRound());
             List<JudgeSubmitState> judgeSubmitStateList = judgeSubmitStateService.list(judgeSubmitStateQueryWrapper);
             for(JudgeSubmitState judgeSubmitState : judgeSubmitStateList){
-                if(!judgeSubmitState.getState().equals(JUDGE_END_NUMBER)){
+                // 上报成功是 1  待补录是2，两种状态都算裁判提交成绩完成
+                if(!(judgeSubmitState.getState().equals(1) || judgeSubmitState.getState().equals(2))){
                     log.info("裁判成绩没有全部提交");
                     flag = false;
                     break;

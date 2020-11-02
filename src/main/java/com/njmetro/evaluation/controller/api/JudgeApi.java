@@ -386,4 +386,7 @@ public class JudgeApi {
         }
         return padSeatInfoVO;
     }
+
+
+
 }

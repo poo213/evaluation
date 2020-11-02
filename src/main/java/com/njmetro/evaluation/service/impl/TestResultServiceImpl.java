@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.njmetro.evaluation.vo.FinalResultVO;
 import com.njmetro.evaluation.vo.TestResultDetailVO;
 import com.njmetro.evaluation.vo.TestResultVO;
+import com.njmetro.evaluation.vo.api.TestQuestionStandardVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -54,5 +55,10 @@ public class TestResultServiceImpl extends ServiceImpl<TestResultMapper, TestRes
     @Override
     public List<TestResultDetailVO> getTestResultDetailByJudgeId(Integer gameNumber, Integer gameRound, Integer studentId,Integer judgeId) {
         return testResultMapper.getTestResultDetailByJudgeId(gameNumber, gameRound, studentId,judgeId);
+    }
+
+    @Override
+    public List<TestQuestionStandardVO> getWriteResultStandards(Integer gameNumber, Integer gameRound, Integer judgeId) {
+        return testResultMapper.getWriteResultStandards(gameNumber,gameRound,judgeId);
     }
 }

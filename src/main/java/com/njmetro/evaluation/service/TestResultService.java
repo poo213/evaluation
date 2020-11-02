@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.njmetro.evaluation.vo.FinalResultVO;
 import com.njmetro.evaluation.vo.TestResultDetailVO;
 import com.njmetro.evaluation.vo.TestResultVO;
+import com.njmetro.evaluation.vo.api.TestQuestionStandardVO;
 import org.apache.poi.util.Internal;
 
 import java.util.List;
@@ -42,4 +43,14 @@ public interface TestResultService extends IService<TestResult> {
      * @return
      */
     List<TestResultDetailVO> getTestResultDetailByJudgeId(Integer gameNumber, Integer gameRound, Integer studentId,Integer judgeId);
+
+    /**
+     * 获取手动补录成绩 评分标准
+     *
+     * @param gameNumber 场次
+     * @param gameRound 轮次
+     * @param judgeId 裁判Id
+     * @return
+     */
+    List<TestQuestionStandardVO> getWriteResultStandards(Integer gameNumber, Integer gameRound, Integer judgeId);
 }

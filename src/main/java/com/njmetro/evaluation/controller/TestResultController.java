@@ -12,12 +12,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.njmetro.evaluation.domain.*;
 import com.njmetro.evaluation.dto.ComputerTestResultExcelDTO;
 import com.njmetro.evaluation.exception.StudentException;
+import com.njmetro.evaluation.exception.TestResultException;
 import com.njmetro.evaluation.service.*;
 import com.njmetro.evaluation.util.StatisticUtil;
 import com.njmetro.evaluation.vo.FinalResultVO;
 import com.njmetro.evaluation.vo.TestResultDetailByJudgeIdVO;
 import com.njmetro.evaluation.vo.TestResultDetailVO;
 import com.njmetro.evaluation.vo.TestResultVO;
+import com.njmetro.evaluation.vo.api.TestQuestionStandardVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -58,6 +60,13 @@ public class TestResultController {
     private final SeatDrawService seatDrawService;
     private final ConfigService configService;
     private final EditResultLogService editResultLogService;
+    private final JudgeDrawResultService judgeDrawResultService;
+    private final JudgeSubmitStateService judgeSubmitStateService;
+    /**
+     *  （judge_submit_State）成绩待补录状态 2
+     */
+    public static  Integer READY_WRITE_RESULT_STATE = 2;
+    public static  Integer END_WRITE_RESULT_STATE = 3;
 
     /**
      * 获取校验成绩的结果，两个裁判的打分结果的对比
@@ -530,6 +539,81 @@ public class TestResultController {
             }
         }
         return tip;
+    }
+
+    /**
+     * 获取成绩补录 评分列表
+     *
+     * @param gameNumber 场次
+     * @param gameRound 轮次
+     * @param seatId 裁判编号
+     * @return
+     */
+    @GetMapping("/getWriteResultStandardVO")
+    public List<TestQuestionStandardVO> getWriteResultStandardVO(Integer gameNumber,Integer gameRound,Integer seatId){
+        log.info("gameNumber {}",gameNumber);
+        log.info("gameRound {}",gameRound);
+        log.info("seatId {}",seatId);
+        // 根据 seatId 在judge_draw_result表中找到 judge_id
+        QueryWrapper<JudgeDrawResult> judgeDrawResultQueryWrapper = new QueryWrapper<>();
+        judgeDrawResultQueryWrapper.eq("seat_id",seatId);
+        Integer judgeId = judgeDrawResultService.getOne(judgeDrawResultQueryWrapper).getJudgeId();
+        // 在 judge_submit_state 中找到 是否允许补录状态
+        QueryWrapper<JudgeSubmitState> judgeSubmitStateQueryWrapper = new QueryWrapper<>();
+        judgeSubmitStateQueryWrapper.eq("game_number",gameNumber)
+                .eq("game_round",gameRound)
+                .eq("judge_id",judgeId);
+        JudgeSubmitState judgeSubmitState = judgeSubmitStateService.getOne(judgeSubmitStateQueryWrapper);
+        if(judgeSubmitState == null){
+            throw new TestResultException(gameNumber+" 场"+gameRound+" 轮未开考，不允许录入成绩 ");
+        }else {
+            if(judgeSubmitState.getState().equals(READY_WRITE_RESULT_STATE)){
+                // test_result 表中根据 gameNumber gameRound judgeId 获取评分标准
+                return testResultService.getWriteResultStandards(gameNumber,gameRound,judgeId);
+            }else {
+                throw new TestResultException("[ " +gameNumber+" 场"+gameRound+" 轮 "+ seatId+ " 座位裁判 ]当前状态不允许手动录入成绩，请核验后重试");
+            }
+        }
+    }
+
+    /**
+     * 录入一条记录
+     * @param id 录入成绩id
+     * @param cent 录入成绩
+     * @return
+     */
+    @GetMapping("/writeOneTestResult")
+    Boolean writeOneTestResult(Integer id, double cent){
+        log.info("id {}",id);
+        log.info("cent {}",cent);
+        TestResult testResult = testResultService.getById(id);
+        testResult.setCent(cent);
+        return testResultService.updateById(testResult);
+    }
+
+    /**
+     * 成绩补录完成
+     * @param gameNumber 场次
+     * @param gameRound 轮次
+     * @param seatId 裁判编号
+     * @return
+     */
+    @GetMapping("/writeTestResultEnd")
+    Boolean writeTestResultEnd(Integer gameNumber,Integer gameRound,Integer seatId){
+        log.info("gameNumber {}",gameNumber);
+        log.info("gameRound {}",gameRound);
+        log.info("seatId {}",seatId);
+        // 根据 seatId 在judge_draw_result表中找到 judge_id
+        QueryWrapper<JudgeDrawResult> judgeDrawResultQueryWrapper = new QueryWrapper<>();
+        judgeDrawResultQueryWrapper.eq("seat_id",seatId);
+        Integer judgeId = judgeDrawResultService.getOne(judgeDrawResultQueryWrapper).getJudgeId();
+        QueryWrapper<JudgeSubmitState> judgeSubmitStateQueryWrapper = new QueryWrapper<>();
+        judgeSubmitStateQueryWrapper.eq("game_number",gameNumber)
+                .eq("game_round",gameRound)
+                .eq("judge_id",judgeId);
+        JudgeSubmitState judgeSubmitState = judgeSubmitStateService.getOne(judgeSubmitStateQueryWrapper);
+        judgeSubmitState.setState(END_WRITE_RESULT_STATE);
+        return judgeSubmitStateService.updateById(judgeSubmitState);
     }
 
 }
