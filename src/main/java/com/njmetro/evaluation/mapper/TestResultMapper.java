@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.njmetro.evaluation.vo.FinalResultVO;
 import com.njmetro.evaluation.vo.TestResultDetailVO;
 import com.njmetro.evaluation.vo.TestResultVO;
+import com.njmetro.evaluation.vo.api.TestQuestionStandardVO;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
@@ -37,4 +38,18 @@ public interface TestResultMapper extends BaseMapper<TestResult> {
     List<Integer> getJudgeId(@Param("gameNumber") Integer gameNumber, @Param("gameRound") Integer gameRound, @Param("studentId") Integer studentId);
     @Select("SELECT test_result.id as id,student_id,student.code as student_code,student.name as student_name, judge.id as judge_id,judge.name as judge_name,test_question.id as question_id, test_question.name as question_name, test_question_standard.id as question_standard_id,test_question_standard.point as question_standard_name,cent  FROM test_result,student,test_question, test_question_standard,judge where test_result.game_number = #{gameNumber} and test_result.game_round = #{gameRound} and test_result.judge_id = #{judgeId} and test_result.student_id = #{studentId} and student.id = test_result.student_id and judge.id = test_result.judge_id and test_result.question_id = test_question.id and test_result.question_standard_id= test_question_standard.id order by question_standard_id")
     List<TestResultDetailVO> getTestResultDetailByJudgeId(@Param("gameNumber") Integer gameNumber, @Param("gameRound") Integer gameRound, @Param("studentId") Integer studentId, @Param("judgeId")Integer judgeId);
+
+
+    /**
+     * 获取手动补录成绩 评分标准
+     * @param gameNumber 场次
+     * @param gameRound 轮次
+     * @param judgeId 裁判Id
+     * @return
+     */
+    @Select("SELECT test_result.id,text,point,score,standard,step,min_score,cent\n" +
+            "FROM test_result,test_question_standard\n" +
+            "WHERE test_result.question_standard_id = test_question_standard.id and game_number = #{gameNumber} and game_round = #{gameRound} and judge_id =#{judgeId};")
+    List<TestQuestionStandardVO> getWriteResultStandards(Integer gameNumber,Integer gameRound,Integer judgeId);
+
 }

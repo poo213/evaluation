@@ -29,9 +29,19 @@ public class TestQuestionStandardVO {
      * 最小分值
      */
     private Double minScore;
+    /**
+     * 得分
+     */
+    private Double cent;
 
+    /**
+     * 默认构造函数
+     */
+    public TestQuestionStandardVO(){}
 
-
+    /**
+     * @param testQuestionStandard
+     */
     public TestQuestionStandardVO(TestQuestionStandard testQuestionStandard) {
         this.id = testQuestionStandard.getId();
         this.text = testQuestionStandard.getText();
@@ -40,6 +50,5 @@ public class TestQuestionStandardVO {
         this.standard = testQuestionStandard.getStandard();
         this.step = testQuestionStandard.getStep();
         this.minScore = testQuestionStandard.getMinScore();
-
     }
 }

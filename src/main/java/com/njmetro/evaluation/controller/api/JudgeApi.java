@@ -81,7 +81,13 @@ public class JudgeApi {
 
     @GetMapping("/pauseOrStart")
     public StudentStateVO pauseOrStart(@RequestAttribute("pad") Pad pad,@RequestAttribute("config")Config config) {
-        Integer studentSeatId = SeatUtil.getStudentSeatIdByJudgeSeatId(pad.getSeatId());
+        Integer studentSeatId =0;
+        if(pad.getId() > 18){
+            // 说明是裁判
+            studentSeatId = SeatUtil.getStudentSeatIdByJudgeSeatId(pad.getSeatId());
+        }else {
+            studentSeatId = pad.getSeatId();
+        }
         // 根据 studentSeatId 场次 和 轮次 在 seat_draw 中查找 studentId
         QueryWrapper<SeatDraw> seatDrawQueryWrapper = new QueryWrapper<>();
         seatDrawQueryWrapper.eq("game_number",config.getGameNumber())
@@ -386,4 +392,7 @@ public class JudgeApi {
         }
         return padSeatInfoVO;
     }
+
+
+
 }

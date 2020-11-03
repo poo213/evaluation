@@ -34,7 +34,6 @@ public class SeatUtil {
             case SystemCommon.VIDEO_TYPE:
                 leftJudgeSeatId = (groupId - 1) * 6 + 5;
                 break;
-
         }
         return leftJudgeSeatId;
     }
@@ -95,6 +94,16 @@ public class SeatUtil {
 
         }
         return studentSeatId;
+    }
+
+    /**
+     * 根据裁判赛位获取考试类型
+     * @param judgeSeatId 裁判座位Id
+     * @return
+     */
+    public static  String getTypeNameByJudgeSeatId(Integer judgeSeatId){
+        Integer studentSeatId = getStudentSeatIdByJudgeSeatId(judgeSeatId);
+        return getTypeNameByStudentSeatId(studentSeatId);
     }
 
     /**
@@ -182,6 +191,27 @@ public class SeatUtil {
     }
 
     /**
+     * 根据学生赛位ID获取考试类型
+     * @param studentSeatId
+     * @return
+     */
+    public static String getTypeNameByStudentSeatId(Integer studentSeatId){
+        String type = "";
+        switch (studentSeatId % 3){
+            case 0:
+                type = SystemCommon.VIDEO_TYPE;
+                break;
+            case 1:
+                type = SystemCommon.OPTICAL_TYPE;
+                break;
+            case 2:
+                type = SystemCommon.SWITCH_TYPE;
+                break;
+        }
+        return type;
+    }
+
+    /**
      * 根据学生座位ID转换成字母
      *
      * @param num 学生座位id
@@ -212,6 +242,11 @@ public class SeatUtil {
         return groupName;
     }
 
+    /**
+     * 根据座Id 获取座位名称
+     * @param id 座位Id
+     * @return
+     */
     public static String getSeatNameById(Integer id){
         String seatName = "";
         switch (id){
@@ -272,5 +307,73 @@ public class SeatUtil {
         }
         return seatName;
     }
+
+    /**
+     * 根据赛位 名称获取赛位Id
+     * @param seatName 座位Id
+     * @return
+     */
+    public static Integer getSeatIdBySeatName(String seatName){
+        Integer seatId = 0;
+        switch (seatName){
+            case "A-1":
+                seatId = 1;
+                break;
+            case "A-2":
+                seatId = 2;
+                break;
+            case "A-3":
+                seatId = 3;
+                break;
+            case "B-1":
+                seatId = 4;
+                break;
+            case "B-2":
+                seatId = 5;
+                break;
+            case "B-3":
+                seatId = 6;
+                break;
+            case "C-1":
+                seatId = 7;
+                break;
+            case "C-2":
+                seatId = 8;
+                break;
+            case "C-3":
+                seatId = 9;
+                break;
+            case "D-1":
+                seatId = 10;
+                break;
+            case "D-2":
+                seatId = 11;
+                break;
+            case "D-3":
+                seatId = 12;
+                break;
+            case "E-1":
+                seatId = 13;
+                break;
+            case "E-2":
+                seatId = 14;
+                break;
+            case "E-3":
+                seatId = 15;
+                break;
+            case "F-1":
+                seatId = 16;
+                break;
+            case "F-2":
+                seatId = 17;
+                break;
+            case "F-3":
+                seatId = 18;
+                break;
+        }
+        return seatId;
+    }
+
+
 
 }

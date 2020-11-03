@@ -2,14 +2,8 @@ package com.njmetro.evaluation.controller;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.njmetro.evaluation.domain.Config;
-import com.njmetro.evaluation.domain.Judge;
-import com.njmetro.evaluation.domain.JudgeDrawResult;
-import com.njmetro.evaluation.domain.SeatDraw;
-import com.njmetro.evaluation.service.ConfigService;
-import com.njmetro.evaluation.service.JudgeDrawResultService;
-import com.njmetro.evaluation.service.JudgeService;
-import com.njmetro.evaluation.service.SeatDrawService;
+import com.njmetro.evaluation.domain.*;
+import com.njmetro.evaluation.service.*;
 import com.njmetro.evaluation.util.SeatUtil;
 import com.njmetro.evaluation.vo.JudgeDrawResultShowVO;
 import com.njmetro.evaluation.vo.JudgeReadyShowVO;
@@ -37,6 +31,10 @@ import java.util.List;
 @RequestMapping("/judgeDrawResult")
 public class JudgeDrawResultController {
     public final JudgeDrawResultService judgeDrawResultService;
+    public final JudgeSubmitStateService judgeSubmitStateService;
+    public final TestResultService testResultService;
+    public final TestQuestionStandardService testQuestionStandardService;
+    public final QuestionDrawService questionDrawService;
     public final SeatDrawService seatDrawService;
     public final ConfigService configService;
     public final JudgeService judgeService;
@@ -146,5 +144,61 @@ public class JudgeDrawResultController {
         judgeService.updateById(judgeBackUp);
         return true;
     }
+
+    /**
+     * 根据裁判座位Id 修改裁判为手动补录状态
+     *
+     * @param judgeSeatId 裁判座位id
+     * @return
+     */
+    @GetMapping("/judgeWriteResult/submit")
+    Boolean changeWriteResultOK(Integer judgeSeatId){
+        Config config = configService.getById(1);
+        // 获取裁判id
+        Integer judgeId = judgeDrawResultService.getById(judgeSeatId).getJudgeId();
+        // 获取考生id
+        QueryWrapper<SeatDraw> seatDrawQueryWrapper = new QueryWrapper<>();
+        seatDrawQueryWrapper.eq("game_number",config.getGameNumber())
+                .eq("game_round",config.getGameRound())
+                .eq("seat_id",SeatUtil.getStudentSeatIdByJudgeSeatId(judgeSeatId));
+        Integer studentId = seatDrawService.getOne(seatDrawQueryWrapper).getStudentId();
+        // 获取试题
+        String gameType = SeatUtil.getTypeNameByJudgeSeatId(judgeSeatId);
+
+        QueryWrapper<QuestionDraw> questionDrawQueryWrapper = new QueryWrapper<>();
+        questionDrawQueryWrapper.eq("game_type",gameType)
+                .eq("game_number",config.getGameNumber());
+        QuestionDraw questionDraw = questionDrawService.getOne(questionDrawQueryWrapper);
+        // 获取试题评分标准
+        QueryWrapper<TestQuestionStandard> testQuestionStandardQueryWrapper = new QueryWrapper<>();
+        testQuestionStandardQueryWrapper.eq("test_question_id",questionDraw.getQuestionId());
+        List<TestQuestionStandard> testQuestionStandardList = testQuestionStandardService.list(testQuestionStandardQueryWrapper);
+        // 模拟裁判写入成绩
+        for(TestQuestionStandard testQuestionStandard :testQuestionStandardList){
+            TestResult testResult = new TestResult();
+            testResult.setGameNumber(config.getGameRound());
+            testResult.setGameRound(config.getGameRound());
+            // 默认得分为 0 分
+            testResult.setCent(0);
+            testResult.setQuestionStandardId(testQuestionStandard.getId());
+            testResult.setState(1);
+            testResult.setJudgeId(judgeId);
+            testResult.setQuestionId(questionDraw.getQuestionId());
+            testResult.setStudentId(studentId);
+            testResultService.save(testResult);
+        }
+        JudgeDrawResult judgeDrawResult = judgeDrawResultService.getById(judgeSeatId);
+        judgeDrawResult.setState(3);
+        judgeDrawResultService.updateById(judgeDrawResult);
+        // 修改 judge_submit_state state 为 2
+        QueryWrapper<JudgeSubmitState> judgeSubmitStateQueryWrapper = new QueryWrapper<>();
+        judgeSubmitStateQueryWrapper.eq("game_number",config.getGameNumber())
+                .eq("game_round",config.getGameRound())
+                .eq("judge_id",judgeDrawResult.getJudgeId());
+        JudgeSubmitState judgeSubmitState = judgeSubmitStateService.getOne(judgeSubmitStateQueryWrapper);
+        judgeSubmitState.setState(2);
+        return judgeSubmitStateService.updateById(judgeSubmitState);
+    }
+
 }
 

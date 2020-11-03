@@ -55,3 +55,12 @@ LIMIT 22 OFFSET 22;
 SELECT judge_draw_result.id,code,seat_id,group_id,type_name
 FROM judge_draw_result,judge
 WHERE judge_draw_result.judge_id = judge.id order by seat_id;
+
+
+### 查询补录成绩评分标准
+
+SELECT test_result.id,text,point,score,standard,step,min_score
+FROM test_result,test_question_standard
+WHERE test_result.question_standard_id = test_question_standard.id and game_number = 1 and game_round = 1 and judge_id =51;
+
+

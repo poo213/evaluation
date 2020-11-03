@@ -1,0 +1,12 @@
+###  1. 获取手动录入成绩评分标准
+
+GET http://localhost:8889/test-result/getWriteResultStandardVO?gameNumber=1&gameRound=1&seatId=28
+Accept: application/json
+
+### 2. 上传单条成绩
+GET http://localhost:8889/test-result/writeOneTestResult?id=587&cent=2.3
+Accept: application/json
+
+### 3. 最终上传提交成绩成功
+GET http://localhost:8889/test-result/writeTestResultEnd?gameNumber=1&gameRound=1&seatId=28
+Accept: application/json
