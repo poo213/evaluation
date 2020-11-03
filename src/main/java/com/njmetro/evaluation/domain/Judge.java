@@ -100,18 +100,21 @@ public class Judge implements Serializable {
      * 签到1 未签到0
      */
     @TableField("sign_state")
+    @Excel(name="签到状态")
     private String signState;
 
     /**
      * 监考类型（抽签决定）
      */
     @TableField("judge_type")
+    @Excel(name="裁判类型")
     private String judgeType;
 
     /**
      * 一般裁判1，备用裁判0
      */
     @TableField("master")
+    @Excel(name="是否正式")
     private Integer master;
 
     /**
