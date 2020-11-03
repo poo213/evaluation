@@ -34,7 +34,6 @@ public class SeatUtil {
             case SystemCommon.VIDEO_TYPE:
                 leftJudgeSeatId = (groupId - 1) * 6 + 5;
                 break;
-
         }
         return leftJudgeSeatId;
     }
@@ -95,6 +94,16 @@ public class SeatUtil {
 
         }
         return studentSeatId;
+    }
+
+    /**
+     * 根据裁判赛位获取考试类型
+     * @param judgeSeatId 裁判座位Id
+     * @return
+     */
+    public static  String getTypeNameByJudgeSeatId(Integer judgeSeatId){
+        Integer studentSeatId = getStudentSeatIdByJudgeSeatId(judgeSeatId);
+        return getTypeNameByStudentSeatId(studentSeatId);
     }
 
     /**
@@ -176,6 +185,27 @@ public class SeatUtil {
                 break;
             case 2:
                 type = 2;
+                break;
+        }
+        return type;
+    }
+
+    /**
+     * 根据学生赛位ID获取考试类型
+     * @param studentSeatId
+     * @return
+     */
+    public static String getTypeNameByStudentSeatId(Integer studentSeatId){
+        String type = "";
+        switch (studentSeatId % 3){
+            case 0:
+                type = SystemCommon.VIDEO_TYPE;
+                break;
+            case 1:
+                type = SystemCommon.OPTICAL_TYPE;
+                break;
+            case 2:
+                type = SystemCommon.SWITCH_TYPE;
                 break;
         }
         return type;

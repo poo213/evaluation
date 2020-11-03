@@ -32,6 +32,9 @@ import java.util.List;
 public class JudgeDrawResultController {
     public final JudgeDrawResultService judgeDrawResultService;
     public final JudgeSubmitStateService judgeSubmitStateService;
+    public final TestResultService testResultService;
+    public final TestQuestionStandardService testQuestionStandardService;
+    public final QuestionDrawService questionDrawService;
     public final SeatDrawService seatDrawService;
     public final ConfigService configService;
     public final JudgeService judgeService;
@@ -150,11 +153,44 @@ public class JudgeDrawResultController {
      */
     @GetMapping("/judgeWriteResult/submit")
     Boolean changeWriteResultOK(Integer judgeSeatId){
+        Config config = configService.getById(1);
+        // 获取裁判id
+        Integer judgeId = judgeDrawResultService.getById(judgeSeatId).getJudgeId();
+        // 获取考生id
+        QueryWrapper<SeatDraw> seatDrawQueryWrapper = new QueryWrapper<>();
+        seatDrawQueryWrapper.eq("game_number",config.getGameNumber())
+                .eq("game_round",config.getGameRound())
+                .eq("seat_id",SeatUtil.getStudentSeatIdByJudgeSeatId(judgeSeatId));
+        Integer studentId = seatDrawService.getOne(seatDrawQueryWrapper).getStudentId();
+        // 获取试题
+        String gameType = SeatUtil.getTypeNameByJudgeSeatId(judgeSeatId);
+
+        QueryWrapper<QuestionDraw> questionDrawQueryWrapper = new QueryWrapper<>();
+        questionDrawQueryWrapper.eq("game_type",gameType)
+                .eq("game_number",config.getGameNumber());
+        QuestionDraw questionDraw = questionDrawService.getOne(questionDrawQueryWrapper);
+        // 获取试题评分标准
+        QueryWrapper<TestQuestionStandard> testQuestionStandardQueryWrapper = new QueryWrapper<>();
+        testQuestionStandardQueryWrapper.eq("test_question_id",questionDraw.getQuestionId());
+        List<TestQuestionStandard> testQuestionStandardList = testQuestionStandardService.list(testQuestionStandardQueryWrapper);
+        // 模拟裁判写入成绩
+        for(TestQuestionStandard testQuestionStandard :testQuestionStandardList){
+            TestResult testResult = new TestResult();
+            testResult.setGameNumber(config.getGameRound());
+            testResult.setGameRound(config.getGameRound());
+            // 默认得分为 0 分
+            testResult.setCent(0);
+            testResult.setQuestionStandardId(testQuestionStandard.getId());
+            testResult.setState(1);
+            testResult.setJudgeId(judgeId);
+            testResult.setQuestionId(questionDraw.getQuestionId());
+            testResult.setStudentId(studentId);
+            testResultService.save(testResult);
+        }
         JudgeDrawResult judgeDrawResult = judgeDrawResultService.getById(judgeSeatId);
         judgeDrawResult.setState(3);
         judgeDrawResultService.updateById(judgeDrawResult);
         // 修改 judge_submit_state state 为 2
-        Config config = configService.getById(1);
         QueryWrapper<JudgeSubmitState> judgeSubmitStateQueryWrapper = new QueryWrapper<>();
         judgeSubmitStateQueryWrapper.eq("game_number",config.getGameNumber())
                 .eq("game_round",config.getGameRound())

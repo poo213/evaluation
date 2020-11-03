@@ -2,6 +2,7 @@ package com.njmetro.evaluation;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.njmetro.evaluation.domain.*;
+import com.njmetro.evaluation.exception.JudgeApiException;
 import com.njmetro.evaluation.mapper.CodeStateMapper;
 import com.njmetro.evaluation.mapper.JudgeMapper;
 import com.njmetro.evaluation.mapper.SeatGroupMapper;
@@ -9,6 +10,7 @@ import com.njmetro.evaluation.service.*;
 import com.njmetro.evaluation.util.KnuthUtil;
 import com.njmetro.evaluation.util.SeatUtil;
 import com.njmetro.evaluation.vo.JudgeShowVO;
+import com.njmetro.evaluation.vo.StudentStateVO;
 import org.apache.commons.collections4.CollectionUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,10 @@ import java.util.List;
 class EvaluationApplicationTests {
     @Autowired
     JudgeService judgeService;
+    @Autowired
+    PadService padService;
+    @Autowired
+    ConfigService configService;
 
     @Autowired
     StudentService studentService;
@@ -129,7 +135,7 @@ class EvaluationApplicationTests {
 
 
 
-<<<<<<< HEAD
+
     @Test
     void changeIdCard(){
         List<Judge> judgeList = judgeService.list();
@@ -140,7 +146,7 @@ class EvaluationApplicationTests {
 
         List<Student> studentList = studentService.list();
         for(Student student : studentList){
-            student.setIdCard("320111111111111111");
+            student.setIdCard("20111111111111111");
             studentService.updateById(student);
         }
     }
@@ -151,6 +157,24 @@ class EvaluationApplicationTests {
     }
 
 
-=======
->>>>>>> 475108f488e97c6968453e18302024816cbb4234
+    @Test
+    void seat(){
+        Pad pad = padService.getById(2);
+        Config config = configService.getById(1);
+        Integer studentSeatId = SeatUtil.getStudentSeatIdByJudgeSeatId(pad.getSeatId());
+        // 根据 studentSeatId 场次 和 轮次 在 seat_draw 中查找 studentId
+        QueryWrapper<SeatDraw> seatDrawQueryWrapper = new QueryWrapper<>();
+        seatDrawQueryWrapper.eq("game_number",config.getGameNumber())
+                .eq("game_round",config.getGameRound())
+                .eq("seat_id",studentSeatId);
+        SeatDraw seatDraw = seatDrawService.getOne(seatDrawQueryWrapper);
+        if(seatDraw == null){
+            throw new JudgeApiException("没有找到考生状态信息");
+        }else {
+            StudentStateVO studentStateVO = new StudentStateVO(seatDraw.getState(),seatDraw.getRemainingTime());
+        }
+    }
+
+
+
 }

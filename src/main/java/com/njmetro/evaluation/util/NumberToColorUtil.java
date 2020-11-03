@@ -69,16 +69,16 @@ public class NumberToColorUtil {
     public static String getJudgeBackColor(Integer number){
         String result = "";
         switch (number){
-            case 1 :
+            case 0 :
                 result = judgeNoReadyColor;
                 break;
-            case 2 :
+            case 1 :
                 result = judgeReadyColor;
                 break;
-            case 3 :
+            case 2 :
                 result = judgeTestColor;
                 break;
-            case 4 :
+            case 3 :
                 result = judgeOkColor;
                 break;
         }
