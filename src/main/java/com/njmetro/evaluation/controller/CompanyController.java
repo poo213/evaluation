@@ -1,9 +1,12 @@
 package com.njmetro.evaluation.controller;
 
+import cn.afterturn.easypoi.excel.ExcelImportUtil;
+import cn.afterturn.easypoi.excel.entity.ImportParams;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.njmetro.evaluation.domain.Company;
 import com.njmetro.evaluation.domain.DrawState;
+import com.njmetro.evaluation.domain.Judge;
 import com.njmetro.evaluation.param.company.SaveCompanyParam;
 import com.njmetro.evaluation.param.company.UpdateCompanyParam;
 import com.njmetro.evaluation.service.CompanyService;
@@ -14,7 +17,10 @@ import com.njmetro.evaluation.vo.CompanyVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
 import javax.validation.Valid;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -190,6 +196,23 @@ public class CompanyController {
         return companyVOList;
     }
 
-
+    /**
+     * 上传参赛队数据
+     */
+    @PostMapping("/uploadCompany")
+    public void uploadCompany(@RequestParam("file") MultipartFile uploadFile) {
+        log.info("上传参赛队数据！");
+        try {
+            //存储并解析Excel
+            File file = new File("C:/UploadFile/参赛队信息表.xlsx");
+            uploadFile.transferTo(file);
+            ImportParams importParams = new ImportParams();
+            importParams.setHeadRows(1);
+            List<Company> companyList = ExcelImportUtil.importExcel(file, Company.class, importParams);
+            companyService.saveBatch(companyList);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
 
