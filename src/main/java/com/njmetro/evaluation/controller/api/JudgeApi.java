@@ -7,6 +7,7 @@ import com.njmetro.evaluation.dto.StudentResultDTO;
 import com.njmetro.evaluation.exception.JudgeApiException;
 import com.njmetro.evaluation.exception.PadException;
 import com.njmetro.evaluation.exception.TestQuestionException;
+import com.njmetro.evaluation.exception.TestResultException;
 import com.njmetro.evaluation.service.*;
 import com.njmetro.evaluation.util.IpUtil;
 import com.njmetro.evaluation.util.SeatUtil;
@@ -109,17 +110,23 @@ public class JudgeApi {
      * @return
      */
     @GetMapping("/beReady")
-    public Boolean getBeReady(@RequestAttribute("pad") Pad pad,Integer gameNumber,Integer gameRound) {
-        log.info("pad: {}",pad);
+    public Boolean getBeReady(@RequestAttribute("pad") Pad pad, Integer gameNumber, Integer gameRound) {
+        log.info("pad: {}", pad);
         Config config = configService.getById(1);
         if (config.getGameNumber().equals(gameNumber) && config.getGameRound().equals(gameRound)) {
-        // 通过padId 在 JudgeDrawResult 中找到对应的记录
-        QueryWrapper<JudgeDrawResult> judgeDrawResultQueryWrapper = new QueryWrapper<>();
-        judgeDrawResultQueryWrapper.eq("pad_id", pad.getId());
-        JudgeDrawResult judgeDrawResult = judgeDrawResultService.getOne(judgeDrawResultQueryWrapper);
-        // 修改就绪状态为 1
-        judgeDrawResult.setState(1);
-        return judgeDrawResultService.updateById(judgeDrawResult);}else {
+            // 通过padId 在 JudgeDrawResult 中找到对应的记录
+            QueryWrapper<JudgeDrawResult> judgeDrawResultQueryWrapper = new QueryWrapper<>();
+            judgeDrawResultQueryWrapper.eq("pad_id", pad.getId());
+            JudgeDrawResult judgeDrawResult = judgeDrawResultService.getOne(judgeDrawResultQueryWrapper);
+            if(judgeDrawResult.getState().equals(0)){
+                // 修改就绪状态为 1
+                judgeDrawResult.setState(1);
+                return judgeDrawResultService.updateById(judgeDrawResult);
+            }else {
+                throw new TestQuestionException(judgeDrawResult.getState() +" 状态下裁判不能提交准备就绪");
+            }
+
+        } else {
             throw new TestQuestionException("场次和轮次信息与数据库不匹配，核验后再上报就绪");
         }
     }
@@ -129,8 +136,8 @@ public class JudgeApi {
      *
      * @return
      */
-    @GetMapping("/getScoringCriteria")
-    public TestQuestionStandardResultVO getScoringCriteria(@RequestAttribute("pad") Pad pad,@RequestAttribute("config") Config config) {
+    @GetMapping("/getScoringCriteria1")
+    public TestQuestionStandardResultVO getScoringCriteria1(@RequestAttribute("pad") Pad pad,@RequestAttribute("config") Config config) {
         if(config.getState().equals(3)){
             // 如果下发试题成功，裁判可以访问到试题评分标准
             Integer studentSeatId = SeatUtil.getStudentSeatIdByJudgeSeatId(pad.getSeatId());
@@ -183,6 +190,47 @@ public class JudgeApi {
         }
     }
 
+    /**
+     * 获取评分标准
+     *
+     * @return
+     */
+    @GetMapping("/getScoringCriteria")
+    public TestQuestionStandardResultVO getScoringCriteria(@RequestAttribute("pad") Pad pad,@RequestAttribute("config") Config config) {
+        // config.state = 3 时才可以获取评分标准
+        if(config.getState().equals(3)) {
+            // 根据 seatId 在judge_draw_result表中找到 judge_id
+            QueryWrapper<JudgeDrawResult> judgeDrawResultQueryWrapper = new QueryWrapper<>();
+            judgeDrawResultQueryWrapper.eq("seat_id", pad.getSeatId());
+            Integer judgeId = judgeDrawResultService.getOne(judgeDrawResultQueryWrapper).getJudgeId();
+            // 根据 studentSeatId 场次 和 轮次 在 seat_draw 中查找 studentId
+            Integer studentSeatId = SeatUtil.getStudentSeatIdByJudgeSeatId(pad.getSeatId());
+            QueryWrapper<SeatDraw> seatDrawQueryWrapper = new QueryWrapper<>();
+            seatDrawQueryWrapper.eq("game_number", config.getGameNumber())
+                    .eq("game_round", config.getGameRound())
+                    .eq("seat_id", studentSeatId);
+            SeatDraw seatDraw = seatDrawService.getOne(seatDrawQueryWrapper);
+            Integer studentId = 0;
+            if (seatDraw != null) {
+                studentId = seatDraw.getStudentId();
+            } else {
+                log.info("没有找到studentId");
+                throw new JudgeApiException("根据padIP没有找到studentId");
+            }
+            // 在 judge_submit_state 中找到 是否允许补录状态
+            List<TestQuestionStandardVO> testQuestionStandardVOList = testResultService.getWriteResultStandards(config.getGameNumber(), config.getGameRound(), judgeId);
+            Integer testQuestionId = testQuestionStandardVOList.get(0).getTestQuestionId();
+            // 根据试题id 获取 试题名称
+            TestQuestion testQuestion = testQuestionService.getById(testQuestionId);
+            String testName = testQuestion.getName();
+            Integer readTime = testQuestion.getReadTime();
+            Integer testTime = testQuestion.getTestTime();
+            return new TestQuestionStandardResultVO(testQuestionStandardVOList, testName, testQuestionId, judgeId, studentId, readTime, testTime);
+        }
+       else {
+            throw new TestQuestionException("裁判还未发题，获取评分评分标准");
+        }
+    }
 
     /**
      * 成绩上报成功
@@ -266,8 +314,8 @@ public class JudgeApi {
      *
      * @return
      */
-    @PostMapping("/submit")
-    public Boolean submitResults(@RequestBody List<StudentResultDTO> list, Integer gameNumber, Integer gameRound, Integer state, Integer studentId, Integer questionId, Integer judgeId,@RequestAttribute("pad") Pad pad) {
+    @PostMapping("/submit2")
+    public Boolean submitResults2(@RequestBody List<StudentResultDTO> list, Integer gameNumber, Integer gameRound, Integer state, Integer studentId, Integer questionId, Integer judgeId,@RequestAttribute("pad") Pad pad) {
         log.info("gameNumber {}", gameNumber);
         log.info("gameRound {}", gameRound);
         log.info("state {}", state);
@@ -363,6 +411,59 @@ public class JudgeApi {
                     log.info("成绩上传截至！请核对后再上传");
                     throw new JudgeApiException("成绩上传截至！请核对后再上传");
                 }
+            }
+            return true;
+        } else {
+            throw new JudgeApiException("场次或轮次与数据库不匹配，请核对后提交！");
+        }
+    }
+
+    @PostMapping("/submit")
+    public Boolean submitResults(@RequestBody List<StudentResultDTO> list, Integer gameNumber, Integer gameRound, Integer state, Integer studentId, Integer questionId, Integer judgeId,@RequestAttribute("pad") Pad pad) {
+        log.info("gameNumber {}", gameNumber);
+        log.info("gameRound {}", gameRound);
+        log.info("state {}", state);
+        log.info("studentId {}", studentId);
+        log.info("questionId {}", questionId);
+        log.info("judgeId {}", judgeId);
+        log.info("list {}", list);
+        // 判断 传入场次和轮次 和 数据库中是否一致
+        Config config = configService.getById(1);
+        if (config.getGameNumber().equals(gameNumber) && config.getGameRound().equals(gameRound)) {
+            // 根据 judge_submit_state 判断考生是否可以上报成绩
+            //修改 judge_submit_state
+            QueryWrapper<JudgeSubmitState> judgeSubmitStateQueryWrapper = new QueryWrapper<>();
+            judgeSubmitStateQueryWrapper.eq("game_number",gameNumber)
+                    .eq("game_round",gameRound)
+                    .eq("student_id",studentId)
+                    .eq("judge_id",judgeId);
+            JudgeSubmitState judgeSubmitState = judgeSubmitStateService.getOne(judgeSubmitStateQueryWrapper);
+            if(judgeSubmitState.getState().equals(0)){
+                // 写入成绩
+                for(StudentResultDTO studentResultDTO : list){
+                    TestResult testResult = testResultService.getById(studentResultDTO.getId());
+                    testResult.setCent(studentResultDTO.getResult());
+                    testResult.setState(state);
+                    testResultService.updateById(testResult);
+                    log.info("提交成绩完成 {}",testResult);
+                }
+                // 判断是否时最后一次提交，修改 judge_submit_state = 1, judge_draw_result = 3
+                if( state.equals(1) ){
+                    // judge_submit_state 状态修改为 1， 表示成绩提交成功
+                    judgeSubmitState.setState(1);
+                    judgeSubmitStateService.updateById(judgeSubmitState);
+                    // judgeDrawResult 状态修改为 3， 表示成绩提交成功
+                    QueryWrapper<JudgeDrawResult> judgeDrawResultQueryWrapper = new QueryWrapper<>();
+                    judgeDrawResultQueryWrapper.eq("pad_id",pad.getId());
+                    JudgeDrawResult judgeDrawResult = judgeDrawResultService.getOne(judgeDrawResultQueryWrapper);
+                    judgeDrawResult.setState(3);
+                    judgeDrawResultService.updateById(judgeDrawResult);
+                    log.info("最终提交，写入数据库成功");
+                }else {
+                    log.info("成绩没有最终提交，可以继续提交成绩");
+                }
+            }else {
+                throw new JudgeApiException("成绩已最终提交，不允许再次提交成绩");
             }
             return true;
         } else {

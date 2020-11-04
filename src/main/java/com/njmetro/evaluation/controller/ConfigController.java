@@ -2,15 +2,9 @@ package com.njmetro.evaluation.controller;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.njmetro.evaluation.domain.Config;
-import com.njmetro.evaluation.domain.JudgeDrawResult;
-import com.njmetro.evaluation.domain.JudgeSubmitState;
-import com.njmetro.evaluation.domain.SeatDraw;
+import com.njmetro.evaluation.domain.*;
 import com.njmetro.evaluation.exception.ConfigException;
-import com.njmetro.evaluation.service.ConfigService;
-import com.njmetro.evaluation.service.JudgeDrawResultService;
-import com.njmetro.evaluation.service.JudgeSubmitStateService;
-import com.njmetro.evaluation.service.SeatDrawService;
+import com.njmetro.evaluation.service.*;
 import com.njmetro.evaluation.util.SeatUtil;
 import com.njmetro.evaluation.vo.ConfigVO;
 import lombok.RequiredArgsConstructor;
@@ -39,12 +33,16 @@ public class ConfigController {
     private final JudgeDrawResultService judgeDrawResultService;
     private final SeatDrawService seatDrawService;
     private final JudgeSubmitStateService judgeSubmitStateService;
+    private final QuestionDrawService questionDrawService;
+
+
 
     public Integer getJudgeId(Integer judgeSeatId){
         QueryWrapper<JudgeDrawResult> judgeDrawResultQueryWrapper = new QueryWrapper<>();
         judgeDrawResultQueryWrapper.eq("seat_id",judgeSeatId);
         return judgeDrawResultService.getOne(judgeDrawResultQueryWrapper).getJudgeId();
     }
+
 
     public void writeJudgeSubmitState(){
         Config config = configService.getById(1);
@@ -77,6 +75,8 @@ public class ConfigController {
         return configService.getById(1).getState();
 
     }
+
+
 
     /**
      * 切换下一场

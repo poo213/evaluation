@@ -32,6 +32,8 @@ public class QuestionDrawController {
     public final ConfigService configService;
     public final JudgeDrawResultService judgeDrawResultService;
     public final SeatDrawService seatDrawService;
+    private final TestResultService testResultService;
+    private final TestQuestionStandardService testQuestionStandardService;
 
 
     /**
@@ -79,6 +81,58 @@ public class QuestionDrawController {
     }
 
     /**
+     * 将成绩写入 test_result 表中
+     * @return
+     */
+    public Boolean writeTestResult(){
+        // 获取当前场次轮次信息
+        Config config = configService.getById(1);
+        // 最外层循环 36个执行裁判
+        List<JudgeDrawResult> judgeDrawResultList = judgeDrawResultService.list();
+        for(JudgeDrawResult judgeDrawResult : judgeDrawResultList){
+            // 获取该裁判对应的试题 及 评分标准，最后写入 test_result 表中
+            Integer judgeSeatId = judgeDrawResult.getSeatId();
+            // 获取裁判id
+            Integer judgeId = judgeDrawResultService.getById(judgeSeatId).getJudgeId();
+            log.info("写入数据库：judgeId {}",judgeId);
+            // 获取考生id
+            QueryWrapper<SeatDraw> seatDrawQueryWrapper = new QueryWrapper<>();
+            seatDrawQueryWrapper.eq("game_number",config.getGameNumber())
+                    .eq("game_round",config.getGameRound())
+                    .eq("seat_id",SeatUtil.getStudentSeatIdByJudgeSeatId(judgeSeatId));
+            Integer studentId = seatDrawService.getOne(seatDrawQueryWrapper).getStudentId();
+            // 获取试题
+            String gameType = SeatUtil.getTypeNameByJudgeSeatId(judgeSeatId);
+            QueryWrapper<QuestionDraw> questionDrawQueryWrapper = new QueryWrapper<>();
+            questionDrawQueryWrapper.eq("game_type",gameType)
+                    .eq("game_number",config.getGameNumber());
+            QuestionDraw questionDraw = questionDrawService.getOne(questionDrawQueryWrapper);
+            log.info("写入数据库：questionDraw {}",questionDraw);
+            // 获取试题评分标准
+            QueryWrapper<TestQuestionStandard> testQuestionStandardQueryWrapper = new QueryWrapper<>();
+            testQuestionStandardQueryWrapper.eq("test_question_id",questionDraw.getQuestionId());
+            List<TestQuestionStandard> testQuestionStandardList = testQuestionStandardService.list(testQuestionStandardQueryWrapper);
+            // 模拟裁判写入成绩
+            for(TestQuestionStandard testQuestionStandard :testQuestionStandardList){
+                TestResult testResult = new TestResult();
+                testResult.setGameNumber(config.getGameNumber());
+                testResult.setGameRound(config.getGameRound());
+                // 默认得分为 0 分
+                testResult.setCent(0);
+                testResult.setQuestionStandardId(testQuestionStandard.getId());
+                testResult.setState(0);
+                testResult.setJudgeId(judgeId);
+                testResult.setQuestionId(questionDraw.getQuestionId());
+                testResult.setStudentId(studentId);
+                log.info("{} ,testResult",testResult);
+                testResultService.save(testResult);
+                log.info("{} ,写入结果表成功",testResult);
+            }
+        }
+        return true;
+    }
+
+    /**
      * 裁判抽签
      * @return
      */
@@ -97,6 +151,9 @@ public class QuestionDrawController {
         }else {
             log.info("已抽题，无需再抽");
         }
+        // 将结果写入数据库
+        // 将打分结果一次性写入 test_result 表中
+        writeTestResult();
         // 抽题结束，改变抽题状态，不允许再次抽题
         config.setState(2);
         configService.updateById(config);

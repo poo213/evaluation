@@ -47,7 +47,7 @@ public interface TestResultMapper extends BaseMapper<TestResult> {
      * @param judgeId 裁判Id
      * @return
      */
-    @Select("SELECT test_result.id,text,point,score,standard,step,min_score,cent\n" +
+    @Select("SELECT test_result.id,text,point,score,standard,step,min_score,cent,test_question_id\n" +
             "FROM test_result,test_question_standard\n" +
             "WHERE test_result.question_standard_id = test_question_standard.id and game_number = #{gameNumber} and game_round = #{gameRound} and judge_id =#{judgeId};")
     List<TestQuestionStandardVO> getWriteResultStandards(Integer gameNumber,Integer gameRound,Integer judgeId);
