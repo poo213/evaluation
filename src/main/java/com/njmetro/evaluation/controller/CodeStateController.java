@@ -111,7 +111,7 @@ public class CodeStateController {
                     throw new StudentException("没有此考生信息");
                 }
                 if (student.getTestDayState() != 1) {
-                    throw new StudentException("必须先签到进会场，才能在此设备上扫码进入候考区！");
+                    throw new StudentException("必须先签到进会场，才能在此设备上扫码进入备考区！");
                 }
                 QueryWrapper<SeatDraw> seatDrawQueryWrapper = new QueryWrapper<>();
                 //查询下一场，应该 出席的人员
