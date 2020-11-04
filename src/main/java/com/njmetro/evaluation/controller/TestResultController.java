@@ -616,5 +616,44 @@ public class TestResultController {
         return judgeSubmitStateService.updateById(judgeSubmitState);
     }
 
+    /**
+     * @Description 获取机考成绩中不合理的结果
+     * @return java.lang.Integer
+     * @date 2020-11-4 10:33
+     * @auther zc
+     */
+    @GetMapping("/getComputerTestResultZero")
+    public List<String> getComputerTestResultZero() {
+        List<String> resList=new ArrayList<>();
+        QueryWrapper<Student> studentQueryWrapper = new QueryWrapper<>();
+        studentQueryWrapper.eq("computer_test_result",0);
+        List<Student> studentList =  studentService.list(studentQueryWrapper);
+        for(Student item :studentList)
+        {
+            resList.add(item.getCompanyName()+"的"+item.getName()+"的成绩为0分");
+        }
+        return resList;
+    }
+
+    /***
+     * @Description 获取考试用时为null的考生
+     * @return java.util.List<java.lang.String>
+     * @date 2020-11-4 10:53
+     * @auther zc
+     */
+
+    @GetMapping("/getUseTimeNull")
+    public List<String> getUseTimeNull() {
+        List<String> resList=new ArrayList<>();
+        QueryWrapper<SeatDraw> studentQueryWrapper = new QueryWrapper<>();
+        studentQueryWrapper.isNull("use_time");
+        List<SeatDraw> seatDrawList =  seatDrawService.list(studentQueryWrapper);
+        for(SeatDraw item :seatDrawList)
+        {
+            resList.add("第"+item.getGameNumber()+"场"+item.getGameRound()+"的"+item.getStudentId()+"号考生用时为空");
+        }
+        return resList;
+    }
+
 }
 
