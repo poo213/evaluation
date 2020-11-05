@@ -33,6 +33,10 @@ public class TestQuestionStandardVO {
      * 得分
      */
     private Double cent;
+    /**
+     * 试题Id
+     */
+    private Integer testQuestionId;
 
     /**
      * 默认构造函数

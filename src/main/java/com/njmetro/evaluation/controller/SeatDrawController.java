@@ -80,7 +80,7 @@ public class SeatDrawController {
 
 
     /**
-     * 根据裁判座位Id将 裁判状态改为 就绪状态 1; 并获取裁判id
+     * 根据裁判座位Id将 裁判状态改为 就绪状态 3（已提交）; 并获取裁判id
      *
      * @param judgeSeatId
      */
@@ -88,11 +88,18 @@ public class SeatDrawController {
         QueryWrapper<JudgeDrawResult> judgeDrawResultQueryWrapper = new QueryWrapper<>();
         judgeDrawResultQueryWrapper.eq("seat_id", judgeSeatId);
         JudgeDrawResult judgeDrawResult = judgeDrawResultService.getOne(judgeDrawResultQueryWrapper);
-        judgeDrawResult.setState(1);
+        judgeDrawResult.setState(3);
         judgeDrawResultService.updateById(judgeDrawResult);
         return judgeDrawResult.getJudgeId();
     }
 
+    /**
+     * 裁判提交状态  设为 1
+     * @param gameNumber
+     * @param gameRound
+     * @param studentId
+     * @param judgeId
+     */
     void changeJudgeSubmitState(Integer gameNumber, Integer gameRound, Integer studentId, Integer judgeId) {
         QueryWrapper<JudgeSubmitState> judgeSubmitStateQueryWrapper = new QueryWrapper<>();
         judgeSubmitStateQueryWrapper.eq("game_number", gameNumber)

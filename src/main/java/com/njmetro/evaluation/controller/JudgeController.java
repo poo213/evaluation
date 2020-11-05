@@ -52,7 +52,7 @@ public class JudgeController {
      */
     public static final Integer JUDGE_TYPE_NUMBER = 3;
     public static final Integer JUDGE_NUMBER_PER_TYPE = 12;
-    public static final String NJ_COMPANY_NAME = "南京地铁";
+    public static final String NJ_COMPANY_NAME = "南京地铁集团有限公司";
 
 
     /**

@@ -32,6 +32,8 @@ public class QuestionDrawController {
     public final ConfigService configService;
     public final JudgeDrawResultService judgeDrawResultService;
     public final SeatDrawService seatDrawService;
+    private final TestResultService testResultService;
+    private final TestQuestionStandardService testQuestionStandardService;
 
 
     /**
@@ -75,6 +77,56 @@ public class QuestionDrawController {
                 log.info("{} 场次 {} 类型，更改成功",gameNumber,type);
             }
         }
+        log.info("type {} 类型抽题成功",type);
+        return true;
+    }
+
+    /**
+     * 将成绩写入 test_result 表中
+     * @return
+     */
+    public Boolean writeTestResult(){
+        // 获取当前场次轮次信息
+        Config config = configService.getById(1);
+        // 最外层循环 36个执行裁判
+        List<JudgeDrawResult> judgeDrawResultList = judgeDrawResultService.list();
+        for(JudgeDrawResult judgeDrawResult : judgeDrawResultList){
+            // 获取该裁判对应的试题 及 评分标准，最后写入 test_result 表中
+            Integer judgeSeatId = judgeDrawResult.getSeatId();
+            // 获取裁判id
+            Integer judgeId = judgeDrawResultService.getById(judgeSeatId).getJudgeId();
+            // 获取考生id
+            QueryWrapper<SeatDraw> seatDrawQueryWrapper = new QueryWrapper<>();
+            seatDrawQueryWrapper.eq("game_number",config.getGameNumber())
+                    .eq("game_round",config.getGameRound())
+                    .eq("seat_id",SeatUtil.getStudentSeatIdByJudgeSeatId(judgeSeatId));
+            Integer studentId = seatDrawService.getOne(seatDrawQueryWrapper).getStudentId();
+            // 获取试题
+            String gameType = SeatUtil.getTypeNameByJudgeSeatId(judgeSeatId);
+            QueryWrapper<QuestionDraw> questionDrawQueryWrapper = new QueryWrapper<>();
+            questionDrawQueryWrapper.eq("game_type",gameType)
+                    .eq("game_number",config.getGameNumber());
+            QuestionDraw questionDraw = questionDrawService.getOne(questionDrawQueryWrapper);
+            // 获取试题评分标准
+            QueryWrapper<TestQuestionStandard> testQuestionStandardQueryWrapper = new QueryWrapper<>();
+            testQuestionStandardQueryWrapper.eq("test_question_id",questionDraw.getQuestionId());
+            List<TestQuestionStandard> testQuestionStandardList = testQuestionStandardService.list(testQuestionStandardQueryWrapper);
+            // 模拟裁判写入成绩
+            for(TestQuestionStandard testQuestionStandard :testQuestionStandardList){
+                TestResult testResult = new TestResult();
+                testResult.setGameNumber(config.getGameNumber());
+                testResult.setGameRound(config.getGameRound());
+                // 默认得分为 0 分
+                testResult.setCent(0);
+                testResult.setQuestionStandardId(testQuestionStandard.getId());
+                testResult.setState(0);
+                testResult.setJudgeId(judgeId);
+                testResult.setQuestionId(questionDraw.getQuestionId());
+                testResult.setStudentId(studentId);
+                log.info("{} ,testResult",testResult);
+                testResultService.save(testResult);
+            }
+        }
         return true;
     }
 
@@ -82,25 +134,27 @@ public class QuestionDrawController {
      * 裁判抽签
      * @return
      */
-    @GetMapping("/doDraw")
+    @GetMapping("doDraw")
     public Boolean doDraw() {
         // 根据比赛场次判断是否已经抽题
         Config config = configService.getById(1);
         Integer gameNumber = config.getGameNumber();
         List<QuestionDrawVO> questionDrawList = questionDrawService.selectQuestionDrawList(config.getGameNumber());
         if(questionDrawList.isEmpty()){
-            log.info("进去抽题~~~~");
+            log.info("进去抽题");
             // 列表为空，说明是第一轮，需要重新抽题
             doDrawOneType(gameNumber,"光缆接续");
             doDrawOneType(gameNumber,"交换机组网");
             doDrawOneType(gameNumber,"视频搭建");
+            log.info("抽题结束");
         }else {
             log.info("已抽题，无需再抽");
         }
+        writeTestResult();
         // 抽题结束，改变抽题状态，不允许再次抽题
         config.setState(2);
-        configService.updateById(config);
-        return true;
+        log.info("抽题： {}",config);
+        return  configService.updateById(config);
     }
 
     /**

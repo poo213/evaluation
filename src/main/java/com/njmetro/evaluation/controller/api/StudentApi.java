@@ -248,7 +248,7 @@ public class StudentApi {
                 .eq("game_number", gameNumber)
                 .eq("game_round", gameRound);
         SeatDraw seatDraw = seatDrawService.getOne(seatDrawQueryWrapper);
-        if(seatDraw.getState().equals(2)){
+        if(seatDraw.getState().equals(2) || seatDraw.getState().equals(3)){
             seatDraw.setUseTime(1200 - remainingTime);
             seatDraw.setRemainingTime(remainingTime);
             seatDraw.setPauseTime(pauseTime);
