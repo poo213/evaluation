@@ -45,6 +45,23 @@ public class PauseRecord implements Serializable {
     private Integer type;
 
     /**
+     * 类型 0 :暂停  1：开始
+     */
+    @TableField("game_number")
+    private Integer gameNumber;
+
+    @TableField("game_round")
+    private Integer gameRound;
+
+    @TableField("student_id")
+    private Integer studentId;
+
+    @TableField("pause_time")
+    private Integer pauseTime;
+
+    @TableField("flag")
+    private Boolean flag;
+    /**
      * 创建时间
      */
     @TableField("create_time")

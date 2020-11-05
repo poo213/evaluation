@@ -176,7 +176,7 @@ public class StudentApi {
      * @return
      */
     @GetMapping("/pauseOrStart")
-    public PauseOrStartVO pauseOrStart(@RequestParam("type") Integer type, @RequestParam("remainingTime") Integer remainingTime, Integer gameNumber, Integer gameRound, @RequestAttribute("config") Config config, @RequestAttribute("pad") Pad pad) {
+    public PauseOrStartVO pauseOrStart(@RequestParam("type") Integer type, @RequestParam("remainingTime") Integer remainingTime, Integer gameNumber, Integer gameRound, Integer pauseTime,Boolean flag, @RequestAttribute("config") Config config, @RequestAttribute("pad") Pad pad) {
         log.info("pauseOrStart -- 获取到拦截器pad {} ", pad);
         log.info("pauseOrStart -- 获取到拦截器config {} ", config);
         QueryWrapper<SeatDraw> seatDrawQueryWrapper = new QueryWrapper<>();
@@ -192,6 +192,9 @@ public class StudentApi {
                 seatDraw.setState(3);
                 PauseRecord pauseRecord = new PauseRecord();
                 pauseRecord.setSeatDrawId(seatDraw.getId());
+                pauseRecord.setGameNumber(gameNumber);
+                pauseRecord.setGameRound(gameRound);
+                pauseRecord.setStudentId(seatDraw.getStudentId());
                 pauseRecord.setType(0);
                 pauseRecordService.save(pauseRecord);
                 seatDrawService.updateById(seatDraw);
@@ -202,9 +205,17 @@ public class StudentApi {
                 //返回剩余时间
                 return pauseOrStartVO;
             } else {//开始
+                //此处新增记录暂停时间
+
+
                 PauseRecord pauseRecord = new PauseRecord();
                 pauseRecord.setSeatDrawId(seatDraw.getId());
                 pauseRecord.setType(1);
+                pauseRecord.setGameNumber(gameNumber);
+                pauseRecord.setGameRound(gameRound);
+                pauseRecord.setPauseTime(pauseTime);
+                pauseRecord.setFlag(flag);
+                pauseRecord.setStudentId(seatDraw.getStudentId());
                 pauseRecordService.save(pauseRecord);
                 //恢复比赛，切换为考试中 状态2
                 seatDraw.setState(2);
@@ -217,7 +228,7 @@ public class StudentApi {
                 return pauseOrStartVO;
             }
         }else {
-            throw new StudentException("座位 "+ seatDraw.getSeatId() +  "考生当前状态为 "+ seatDraw.getState() +" 此状态下不能暂停/恢复暂停");
+            throw new StudentException("座位" + seatDraw.getSeatId() +  "考生"+ seatDraw.getStudentId()+"当前状态为"+ seatDraw.getState() +"此状态下不能暂停/恢复暂停");
         }
 
     }
