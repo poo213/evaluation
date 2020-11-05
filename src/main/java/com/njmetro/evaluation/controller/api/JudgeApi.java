@@ -419,7 +419,7 @@ public class JudgeApi {
     }
 
     @PostMapping("/submit")
-    public Boolean submitResults(@RequestBody List<StudentResultDTO> list, Integer gameNumber, Integer gameRound, Integer state, Integer studentId, Integer questionId, Integer judgeId,@RequestAttribute("pad") Pad pad) {
+    public Integer submitResults(@RequestBody List<StudentResultDTO> list, Integer gameNumber, Integer gameRound, Integer state, Integer studentId, Integer questionId, Integer judgeId,@RequestAttribute("pad") Pad pad) {
         log.info("gameNumber {}", gameNumber);
         log.info("gameRound {}", gameRound);
         log.info("state {}", state);
@@ -458,16 +458,21 @@ public class JudgeApi {
                     JudgeDrawResult judgeDrawResult = judgeDrawResultService.getOne(judgeDrawResultQueryWrapper);
                     judgeDrawResult.setState(3);
                     judgeDrawResultService.updateById(judgeDrawResult);
-                    log.info("最终提交，写入数据库成功");
+                    log.info("最终提交，写入数据库成功,不允许再次提交成绩");
+                    return 1;
                 }else {
                     log.info("成绩没有最终提交，可以继续提交成绩");
+                    return 0;
                 }
             }else {
-                throw new JudgeApiException("成绩已最终提交，不允许再次提交成绩");
+               // throw new JudgeApiException("成绩已最终提交，不允许再次提交成绩");
+                log.info("成绩已最终提交，不允许再次提交成绩");
+                return 1;
             }
-            return true;
         } else {
-            throw new JudgeApiException("场次或轮次与数据库不匹配，请核对后提交！");
+            //throw new JudgeApiException("场次或轮次与数据库不匹配，请核对后提交！");
+            log.info("场次或轮次与数据库不匹配，请核对后提交");
+            return 2;
         }
     }
 

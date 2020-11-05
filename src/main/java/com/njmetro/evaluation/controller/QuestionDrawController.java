@@ -77,6 +77,7 @@ public class QuestionDrawController {
                 log.info("{} 场次 {} 类型，更改成功",gameNumber,type);
             }
         }
+        log.info("type {} 类型抽题成功",type);
         return true;
     }
 
@@ -94,7 +95,6 @@ public class QuestionDrawController {
             Integer judgeSeatId = judgeDrawResult.getSeatId();
             // 获取裁判id
             Integer judgeId = judgeDrawResultService.getById(judgeSeatId).getJudgeId();
-            log.info("写入数据库：judgeId {}",judgeId);
             // 获取考生id
             QueryWrapper<SeatDraw> seatDrawQueryWrapper = new QueryWrapper<>();
             seatDrawQueryWrapper.eq("game_number",config.getGameNumber())
@@ -107,7 +107,6 @@ public class QuestionDrawController {
             questionDrawQueryWrapper.eq("game_type",gameType)
                     .eq("game_number",config.getGameNumber());
             QuestionDraw questionDraw = questionDrawService.getOne(questionDrawQueryWrapper);
-            log.info("写入数据库：questionDraw {}",questionDraw);
             // 获取试题评分标准
             QueryWrapper<TestQuestionStandard> testQuestionStandardQueryWrapper = new QueryWrapper<>();
             testQuestionStandardQueryWrapper.eq("test_question_id",questionDraw.getQuestionId());
@@ -126,7 +125,6 @@ public class QuestionDrawController {
                 testResult.setStudentId(studentId);
                 log.info("{} ,testResult",testResult);
                 testResultService.save(testResult);
-                log.info("{} ,写入结果表成功",testResult);
             }
         }
         return true;
@@ -136,28 +134,27 @@ public class QuestionDrawController {
      * 裁判抽签
      * @return
      */
-    @GetMapping("/doDraw")
+    @GetMapping("doDraw")
     public Boolean doDraw() {
         // 根据比赛场次判断是否已经抽题
         Config config = configService.getById(1);
         Integer gameNumber = config.getGameNumber();
         List<QuestionDrawVO> questionDrawList = questionDrawService.selectQuestionDrawList(config.getGameNumber());
         if(questionDrawList.isEmpty()){
-            log.info("进去抽题~~~~");
+            log.info("进去抽题");
             // 列表为空，说明是第一轮，需要重新抽题
             doDrawOneType(gameNumber,"光缆接续");
             doDrawOneType(gameNumber,"交换机组网");
             doDrawOneType(gameNumber,"视频搭建");
+            log.info("抽题结束");
         }else {
             log.info("已抽题，无需再抽");
         }
-        // 将结果写入数据库
-        // 将打分结果一次性写入 test_result 表中
         writeTestResult();
         // 抽题结束，改变抽题状态，不允许再次抽题
         config.setState(2);
-        configService.updateById(config);
-        return true;
+        log.info("抽题： {}",config);
+        return  configService.updateById(config);
     }
 
     /**
