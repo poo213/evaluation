@@ -73,6 +73,7 @@ public class CodeStateController {
                 }
                 //必须是状态为0的考生，才能签到进入候考区
                 if (student.getTestDayState() != 0) {
+                    codeStateService.removeById(codeStateList.get(0).getId());
                     throw new StudentException("此考生必须为第一次进场的考生，才可以扫码！");
                 }
                 SignVO signVO = new SignVO();
@@ -111,6 +112,7 @@ public class CodeStateController {
                     throw new StudentException("没有此考生信息");
                 }
                 if (student.getTestDayState() != 1) {
+                    codeStateService.removeById(codeStateList.get(0).getId());
                     throw new StudentException("必须先签到进会场，才能在此设备上扫码进入备考区！");
                 }
                 QueryWrapper<SeatDraw> seatDrawQueryWrapper = new QueryWrapper<>();
@@ -160,6 +162,7 @@ public class CodeStateController {
                     throw new StudentException("没有此考生信息");
                 }
                 if (student.getTestDayState() != 3) {
+                    codeStateService.removeById(codeStateList.get(0).getId());
                     throw new StudentException("必须是考试中的考生，才能在此设备上扫码进入候考区！");
                 }
                 SignVO signVO = new SignVO();
