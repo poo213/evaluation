@@ -4,6 +4,7 @@ import com.njmetro.evaluation.common.SystemCommon;
 import com.njmetro.evaluation.interceptor.EndInterceptor;
 import com.njmetro.evaluation.interceptor.IpInterceptor;
 import com.njmetro.evaluation.interceptor.ReadyInterceptor;
+import com.njmetro.evaluation.interceptor.TokenInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -24,6 +25,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     private final IpInterceptor ipInterceptor;
     private final ReadyInterceptor readyInterceptor;
     private final EndInterceptor endInterceptor;
+    private final TokenInterceptor tokenInterceptor;
 
     /**
      * 配置静态文件映射(将本地pdf文件映射成浏览器可以访问的 pdf 网址)
@@ -40,6 +42,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
      */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+        // 配置登录拦截器，根据用户权限获取管理目录
+        registry.addInterceptor(tokenInterceptor).addPathPatterns("/admin/getMenuByRole");
         // studentApi judgeApi ip 拦截器
         registry.addInterceptor(ipInterceptor).addPathPatterns("/api/**");
         registry.addInterceptor(readyInterceptor).addPathPatterns("/**/beReady");

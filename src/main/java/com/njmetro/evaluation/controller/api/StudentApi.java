@@ -97,7 +97,7 @@ public class StudentApi {
         studentInfo.setGameRound(config.getGameRound());
         studentInfo.setCompanyName(student.getCompanyName());
         studentInfo.setIdCard(student.getIdCard());
-        studentInfo.setUrl(DOWNLOAD_BASE_URL + "idcard/" + student.getIdCard() + ".jpg");
+        studentInfo.setUrl(DOWNLOAD_BASE_URL + "idCard/" + student.getIdCard() + ".png");
         log.info("考生扫码登录，获取的考试信息：{}", studentInfo);
         return studentInfo;
     }

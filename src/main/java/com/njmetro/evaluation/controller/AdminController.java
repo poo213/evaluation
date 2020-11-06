@@ -33,13 +33,14 @@ import java.util.List;
 public class AdminController {
     public final AdminService adminService;
     public final MenuService menuService;
-    @PostMapping("/login")
+
 
     /**
      * 用户登录
      * @param loginParam
      * @return
      */
+    @PostMapping("/login")
     String login(@Valid @RequestBody LoginParam loginParam){
         log.info("loginParam {}",loginParam);
         QueryWrapper<Admin> queryWrapper = new QueryWrapper<>();
@@ -49,23 +50,19 @@ public class AdminController {
         if(admin == null){
             throw new AdminException("用户名或密码错误");
         }else {
-            return admin.getMenuList();
+            // 返回 用户adminId
+            return admin.getId().toString();
         }
     }
-
-
-
-
-
 
     /**
      * 根据用户权限获取 menu列表
      * @return
      */
     @GetMapping("/getMenuByRole")
-    List<MenuVO> getMenuByRole(){
+    List<MenuVO> getMenuByRole(@RequestAttribute("adminId") Integer adminId){
         // 获取menuList
-        Admin admin = adminService.getById(2);
+        Admin admin = adminService.getById(adminId);
         String menuIdList = admin.getMenuList();
         String[] menuStrArray = menuIdList.split(",");
         List<Menu> menuList = new ArrayList<>();
@@ -85,8 +82,5 @@ public class AdminController {
         }
         return menuVOList;
     }
-
-
-
 }
 

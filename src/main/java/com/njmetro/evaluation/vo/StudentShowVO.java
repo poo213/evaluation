@@ -42,7 +42,7 @@ public class StudentShowVO {
         /**
          *  读取考生照片地址
          */
-        this.setIdCard(SystemCommon.PHOTO_URL+student.getIdCard()+".jpg");
+        this.setIdCard(SystemCommon.PHOTO_URL+student.getIdCard()+".png");
         this.studentName = student.getName();
         this.studentCode = student.getCode();
         this.setStateColor(NumberToColorUtil.getStudentBackColor(state));

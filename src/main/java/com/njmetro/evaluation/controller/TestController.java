@@ -7,10 +7,7 @@ import com.njmetro.evaluation.service.*;
 import com.njmetro.evaluation.util.IpUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -86,5 +83,22 @@ public class TestController {
         return true;
     }
 
+    /**
+     * Put 更新数据
+     * @return
+     */
+    @PutMapping("/update")
+    public Boolean a() {
+        return true;
+    }
+
+
+    /**
+     *  常用的四种 请求方式
+     *  1. GET 从服务器获取资源
+     *  2. POST 从服务器新建资源
+     *  3. PUT 在服务器更新资源
+     *  4. DELETE 从服务器删除资源
+     */
 
 }
