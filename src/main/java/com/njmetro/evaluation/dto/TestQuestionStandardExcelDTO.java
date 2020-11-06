@@ -34,7 +34,13 @@ public class TestQuestionStandardExcelDTO {
     /**
      * 分值
      */
-    @Excel(name = "分值")
+    @Excel(name = "最小分值")
+    private Double minScore;
+
+    /**
+     * 分值
+     */
+    @Excel(name = "最大分值")
     private Double score;
 
     /**

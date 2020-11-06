@@ -21,6 +21,7 @@ public class TokenInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String token = request.getHeader("Access-Token");
+        request.setAttribute("adminId",token);
         log.info("token {}",token);
         return true;
     }

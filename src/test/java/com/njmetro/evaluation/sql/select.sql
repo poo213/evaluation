@@ -64,3 +64,7 @@ FROM test_result,test_question_standard
 WHERE test_result.question_standard_id = test_question_standard.id and game_number = 1 and game_round = 1 and judge_id =51;
 
 
+INSERT INTO pause_record(game_number, game_round, type, seat_draw_id, student_id, pause_time, flag)
+value (1,1,1,1,1,1,true)
+
+

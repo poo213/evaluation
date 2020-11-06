@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS judge
 (
     id                   INT UNSIGNED AUTO_INCREMENT COMMENT '评委 自增ID',
     code                 VARCHAR(20)  NOT NULL COMMENT '评委编号',
-    name                 VARCHAR(20)  NOT NULL COMMENT '评委姓名',
+    name                 VARCHAR(20)  NOT NULL COMMENT '评委姓名' COLLATE utf8mb4_zh_0900_as_cs,
     id_card              VARCHAR(18)  NOT NULL COMMENT '评委身份证号',
     sex                  INT UNSIGNED NOT NULL COMMENT '性别 0：男 1：女',
     age                  INT UNSIGNED NOT NULL COMMENT '年龄',
@@ -293,10 +293,10 @@ CREATE TABLE IF NOT EXISTS admin
   DEFAULT CHARSET = UTF8MB4;
 
 ### 插入系统管理员数据
-INSERT INTO admin(user_name, password,role_name,menu_list)
-VALUES ('mh', '123','ROLE_SUPER_ADMIN','1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26'),
-       ('zc', '123','ROLE_ADMIN','3,7,8,9,10,11,4,12,13,14,15,16,17'),
-       ('tcl', '123','ROLE_MASTER','6,23,24,25,26');
+INSERT INTO admin(user_name, password, role_name, menu_list)
+VALUES ('mh', '123', 'ROLE_SUPER_ADMIN', '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26'),
+       ('zc', '123', 'ROLE_ADMIN', '3,7,8,9,10,11,4,12,13,14,15,16,17'),
+       ('tcl', '123', 'ROLE_MASTER', '6,23,24,25,26');
 
 ###  不同权限对应的menu  menu_role
 CREATE TABLE IF NOT EXISTS menu_role
@@ -312,29 +312,29 @@ CREATE TABLE IF NOT EXISTS menu_role
 ###  修改分数的记录
 CREATE TABLE IF NOT EXISTS edit_result_log
 (
-    id            INT UNSIGNED AUTO_INCREMENT COMMENT '用户自增Id',
+    id             INT UNSIGNED AUTO_INCREMENT COMMENT '用户自增Id',
     edit_user      VARCHAR(100) NOT NULL COMMENT '修改人',
     test_result_id INT UNSIGNED NOT NULL COMMENT '该条记录在最终结果表中的id',
     cent_before    DOUBLE       NOT NULL COMMENT '修改前得分',
     cent_after     DOUBLE       NOT NULL COMMENT '修改后得分',
-    `create_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    `update_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+    `create_time`  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time`  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
     PRIMARY KEY (id)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = UTF8MB4;
 ###  保存最终统计结果
 CREATE TABLE IF NOT EXISTS test_final_result
 (
-    id             INT UNSIGNED AUTO_INCREMENT COMMENT '用户自增Id',
-    student_id     INT UNSIGNED NOT NULL COMMENT '学生id',
-    student_name   varchar(20) NOT NULL COMMENT '学生姓名',
-    student_code   varchar(20) NOT NULL COMMENT '学生编码',
-    company_name   varchar(20) NOT NULL COMMENT '公司名',
-    result         Decimal(5,2) NOT NULL COMMENT '实操得分',
-    computer_test_result         Decimal(5,2) NOT NULL COMMENT '机考得分',
-    comprehensive_result         Decimal(5,2) NOT NULL COMMENT '综合得分',
-    `create_time`  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    `update_time`  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+    id                   INT UNSIGNED AUTO_INCREMENT COMMENT '用户自增Id',
+    student_id           INT UNSIGNED  NOT NULL COMMENT '学生id',
+    student_name         varchar(20)   NOT NULL COMMENT '学生姓名',
+    student_code         varchar(20)   NOT NULL COMMENT '学生编码',
+    company_name         varchar(20)   NOT NULL COMMENT '公司名',
+    result               Decimal(5, 2) NOT NULL COMMENT '实操得分',
+    computer_test_result Decimal(5, 2) NOT NULL COMMENT '机考得分',
+    comprehensive_result Decimal(5, 2) NOT NULL COMMENT '综合得分',
+    `create_time`        DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time`        DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
     PRIMARY KEY (id)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = UTF8MB4;

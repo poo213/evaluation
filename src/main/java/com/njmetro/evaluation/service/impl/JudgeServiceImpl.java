@@ -40,7 +40,8 @@ public class JudgeServiceImpl extends ServiceImpl<JudgeMapper, Judge> implements
     public List<JudgeDrawVO> getJudgeDrawVOByType(String type) {
         QueryWrapper<Judge> judgeQueryWrapper = new QueryWrapper<>();
         judgeQueryWrapper.eq("judge_type",type)
-                .orderByDesc("master");
+                .orderByDesc("master")
+                .orderByAsc("name");
         List<Judge> judgeList = judgeMapper.selectList(judgeQueryWrapper);
         List<JudgeDrawVO> judgeDrawVOList = new ArrayList<>();
         for(Judge judge : judgeList){

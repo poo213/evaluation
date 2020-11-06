@@ -83,7 +83,7 @@ public class JudgeController {
         // 设置裁判信息
         List<JudgeShowVO> judgeShowVOList = seatGroupService.getGroupTypeJudgeVOByGroupId(groupId, typeName);
         for (JudgeShowVO judgeShowVO : judgeShowVOList) {
-            judgeShowVO.setIdCard(SystemCommon.PHOTO_URL + judgeShowVO.getIdCard() + ".jpg");
+            judgeShowVO.setIdCard(SystemCommon.PHOTO_URL + judgeShowVO.getIdCard() + ".png");
             judgeShowVO.setStateColor(NumberToColorUtil.getJudgeBackColor(judgeShowVO.getState()));
         }
         typeShowVO.setJudgeShowVOList(judgeShowVOList);
