@@ -15,10 +15,7 @@ import com.njmetro.evaluation.exception.StudentException;
 import com.njmetro.evaluation.exception.TestResultException;
 import com.njmetro.evaluation.service.*;
 import com.njmetro.evaluation.util.StatisticUtil;
-import com.njmetro.evaluation.vo.FinalResultVO;
-import com.njmetro.evaluation.vo.TestResultDetailByJudgeIdVO;
-import com.njmetro.evaluation.vo.TestResultDetailVO;
-import com.njmetro.evaluation.vo.TestResultVO;
+import com.njmetro.evaluation.vo.*;
 import com.njmetro.evaluation.vo.api.TestQuestionStandardVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -62,11 +59,12 @@ public class TestResultController {
     private final EditResultLogService editResultLogService;
     private final JudgeDrawResultService judgeDrawResultService;
     private final JudgeSubmitStateService judgeSubmitStateService;
+    private final PauseRecordService pauseRecordService;
     /**
-     *  （judge_submit_State）成绩待补录状态 2
+     * （judge_submit_State）成绩待补录状态 2
      */
-    public static  Integer READY_WRITE_RESULT_STATE = 2;
-    public static  Integer END_WRITE_RESULT_STATE = 3;
+    public static Integer READY_WRITE_RESULT_STATE = 2;
+    public static Integer END_WRITE_RESULT_STATE = 3;
 
     /**
      * 获取校验成绩的结果，两个裁判的打分结果的对比
@@ -89,16 +87,16 @@ public class TestResultController {
                     testResultVOArrayList.add(testResultVO);//将两个裁判的打分存入该list
                 }
             }
-            if(testResultVOArrayList.size()==2)
-            {
-            if (testResultVOArrayList.get(0).getResult().subtract(testResultVOArrayList.get(1).getResult()).abs().compareTo(new BigDecimal("10")) > -1) {
-                log.info("考生{}得分差的绝对值>=10", testResultVOArrayList.get(0).getStudentName());
-                for (TestResultVO testResultVO : testResultVOList) {
-                    if (testResultVO.getStudentId() == testResultVOArrayList.get(0).getStudentId()) {
-                        testResultVO.setFlag(1);//标记分差大的项
+            if (testResultVOArrayList.size() == 2) {
+                if (testResultVOArrayList.get(0).getResult().subtract(testResultVOArrayList.get(1).getResult()).abs().compareTo(new BigDecimal("10")) > -1) {
+                    log.info("考生{}得分差的绝对值>=10", testResultVOArrayList.get(0).getStudentName());
+                    for (TestResultVO testResultVO : testResultVOList) {
+                        if (testResultVO.getStudentId() == testResultVOArrayList.get(0).getStudentId()) {
+                            testResultVO.setFlag(1);//标记分差大的项
+                        }
                     }
                 }
-            }}
+            }
         }
         int i = 1;
         for (TestResultVO testResultVO : testResultVOList) {
@@ -122,12 +120,10 @@ public class TestResultController {
 
         List<TestResultDetailVO> testResultDetailVOListOne = testResultService.getTestResultDetailByJudgeId(gameNumber, gameRound, studentId, integerList.get(0));
         List<TestResultDetailVO> testResultDetailVOListTwo = new ArrayList<>();
-        if(integerList.size()==2)
-        {
+        if (integerList.size() == 2) {
             testResultDetailVOListTwo = testResultService.getTestResultDetailByJudgeId(gameNumber, gameRound, studentId, integerList.get(1));
-        }
-        else {
-            testResultDetailVOListTwo=null;
+        } else {
+            testResultDetailVOListTwo = null;
         }
         TestResultDetailByJudgeIdVO testResultDetailByJudgeIdVO = new TestResultDetailByJudgeIdVO();
         testResultDetailByJudgeIdVO.setTestResultDetailVOListOne(testResultDetailVOListOne);
@@ -476,24 +472,23 @@ public class TestResultController {
     @GetMapping("/checkCountCondition")
     public String checkCountCondition() {
         String tip = "";
-        Double sum= studentService.checkComputerTestResult();
-        System.out.println("sum="+sum);
-        if(sum==0)
-        {
-            return   "机考成绩异常，查询是否正确导入!";
+        Double sum = studentService.checkComputerTestResult();
+        System.out.println("sum=" + sum);
+        if (sum == 0) {
+            return "机考成绩异常，查询是否正确导入!";
         }
         //此处用于只能获取已进行的场次的成绩汇总
         Config config = configService.getById(1);
         int tempNumber = config.getGameNumber();
         if (tempNumber == 1) {
-            return"第二场比赛开始，才能对分数进行统计！";
+            return "第二场比赛开始，才能对分数进行统计！";
         }
         if (config.getGameNumber() > 1 && config.getGameRound() == 3 && config.getState() == 4) {
             tempNumber = config.getGameNumber();
         } else {
             tempNumber = config.getGameNumber() - 1;
         }
-         tip = "条件满足，可以进行成绩汇总！注：此时可以进行" + tempNumber + "场(包含)以前的成绩汇总！";
+        tip = "条件满足，可以进行成绩汇总！注：此时可以进行" + tempNumber + "场(包含)以前的成绩汇总！";
         //临时表，得到所有场次和轮次的结果 ，理论上一个考生有3个结果，在这个list里
         List<FinalResultVO> finalTempResultVOList = new ArrayList<>();
         for (int gameNumber = 1; gameNumber <= tempNumber; gameNumber++) {
@@ -522,9 +517,8 @@ public class TestResultController {
                             Integer useTime = 0;
                             //获取到指定场次轮次下 的比赛用时
                             if (seatDrawList.size() == 1) {
-                                if(seatDrawList.get(0).getUseTime()==null)
-                                {
-                                    tip+="请检查赛位抽签表" + gameNumber + "场" + gameRound + "轮的考生" + testResultVO.getStudentName() + "缺少比赛用时！";
+                                if (seatDrawList.get(0).getUseTime() == null) {
+                                    tip += "请检查赛位抽签表" + gameNumber + "场" + gameRound + "轮的考生" + testResultVO.getStudentName() + "缺少比赛用时！";
                                 }
                             }
                             testResultVOArrayList.add(testResultVO);
@@ -533,7 +527,7 @@ public class TestResultController {
                     //表示结果异常，正常情况下一个考生应该有两条成绩
                     if (testResultVOArrayList.size() < 2) {
                         //throw new StudentException("第" + gameNumber + "场，第" + gameRound + "轮的考生" + num + "号考生缺少成绩（每个考生需要有两个裁判打分成绩）");
-                        tip+="第" + gameNumber + "场，第" + gameRound + "轮的考生" + num + "号考生缺少成绩（每个考生需要有两个裁判打分成绩）";
+                        tip += "第" + gameNumber + "场，第" + gameRound + "轮的考生" + num + "号考生缺少成绩（每个考生需要有两个裁判打分成绩）";
                     }
                 }
             }
@@ -545,47 +539,48 @@ public class TestResultController {
      * 获取成绩补录 评分列表
      *
      * @param gameNumber 场次
-     * @param gameRound 轮次
-     * @param seatId 裁判编号
+     * @param gameRound  轮次
+     * @param seatId     裁判编号
      * @return
      */
     @GetMapping("/getWriteResultStandardVO")
-    public List<TestQuestionStandardVO> getWriteResultStandardVO(Integer gameNumber,Integer gameRound,Integer seatId){
-        log.info("gameNumber {}",gameNumber);
-        log.info("gameRound {}",gameRound);
-        log.info("seatId {}",seatId);
+    public List<TestQuestionStandardVO> getWriteResultStandardVO(Integer gameNumber, Integer gameRound, Integer seatId) {
+        log.info("gameNumber {}", gameNumber);
+        log.info("gameRound {}", gameRound);
+        log.info("seatId {}", seatId);
         // 根据 seatId 在judge_draw_result表中找到 judge_id
         QueryWrapper<JudgeDrawResult> judgeDrawResultQueryWrapper = new QueryWrapper<>();
-        judgeDrawResultQueryWrapper.eq("seat_id",seatId);
+        judgeDrawResultQueryWrapper.eq("seat_id", seatId);
         Integer judgeId = judgeDrawResultService.getOne(judgeDrawResultQueryWrapper).getJudgeId();
         // 在 judge_submit_state 中找到 是否允许补录状态
         QueryWrapper<JudgeSubmitState> judgeSubmitStateQueryWrapper = new QueryWrapper<>();
-        judgeSubmitStateQueryWrapper.eq("game_number",gameNumber)
-                .eq("game_round",gameRound)
-                .eq("judge_id",judgeId);
+        judgeSubmitStateQueryWrapper.eq("game_number", gameNumber)
+                .eq("game_round", gameRound)
+                .eq("judge_id", judgeId);
         JudgeSubmitState judgeSubmitState = judgeSubmitStateService.getOne(judgeSubmitStateQueryWrapper);
-        if(judgeSubmitState == null){
-            throw new TestResultException(gameNumber+" 场"+gameRound+" 轮未开考，不允许录入成绩 ");
-        }else {
-            if(judgeSubmitState.getState().equals(READY_WRITE_RESULT_STATE)){
+        if (judgeSubmitState == null) {
+            throw new TestResultException(gameNumber + " 场" + gameRound + " 轮未开考，不允许录入成绩 ");
+        } else {
+            if (judgeSubmitState.getState().equals(READY_WRITE_RESULT_STATE)) {
                 // test_result 表中根据 gameNumber gameRound judgeId 获取评分标准
-                return testResultService.getWriteResultStandards(gameNumber,gameRound,judgeId);
-            }else {
-                throw new TestResultException("[ " +gameNumber+" 场"+gameRound+" 轮 "+ seatId+ " 座位裁判 ]当前状态不允许手动录入成绩，请核验后重试");
+                return testResultService.getWriteResultStandards(gameNumber, gameRound, judgeId);
+            } else {
+                throw new TestResultException("[ " + gameNumber + " 场" + gameRound + " 轮 " + seatId + " 座位裁判 ]当前状态不允许手动录入成绩，请核验后重试");
             }
         }
     }
 
     /**
      * 录入一条记录
-     * @param id 录入成绩id
+     *
+     * @param id   录入成绩id
      * @param cent 录入成绩
      * @return
      */
     @GetMapping("/writeOneTestResult")
-    Boolean writeOneTestResult(Integer id, double cent){
-        log.info("id {}",id);
-        log.info("cent {}",cent);
+    Boolean writeOneTestResult(Integer id, double cent) {
+        log.info("id {}", id);
+        log.info("cent {}", cent);
         TestResult testResult = testResultService.getById(id);
         testResult.setCent(cent);
         return testResultService.updateById(testResult);
@@ -593,28 +588,108 @@ public class TestResultController {
 
     /**
      * 成绩补录完成
+     *
      * @param gameNumber 场次
-     * @param gameRound 轮次
-     * @param seatId 裁判编号
+     * @param gameRound  轮次
+     * @param seatId     裁判编号
      * @return
      */
     @GetMapping("/writeTestResultEnd")
-    Boolean writeTestResultEnd(Integer gameNumber,Integer gameRound,Integer seatId){
-        log.info("gameNumber {}",gameNumber);
-        log.info("gameRound {}",gameRound);
-        log.info("seatId {}",seatId);
+    Boolean writeTestResultEnd(Integer gameNumber, Integer gameRound, Integer seatId) {
+        log.info("gameNumber {}", gameNumber);
+        log.info("gameRound {}", gameRound);
+        log.info("seatId {}", seatId);
         // 根据 seatId 在judge_draw_result表中找到 judge_id
         QueryWrapper<JudgeDrawResult> judgeDrawResultQueryWrapper = new QueryWrapper<>();
-        judgeDrawResultQueryWrapper.eq("seat_id",seatId);
+        judgeDrawResultQueryWrapper.eq("seat_id", seatId);
         Integer judgeId = judgeDrawResultService.getOne(judgeDrawResultQueryWrapper).getJudgeId();
         QueryWrapper<JudgeSubmitState> judgeSubmitStateQueryWrapper = new QueryWrapper<>();
-        judgeSubmitStateQueryWrapper.eq("game_number",gameNumber)
-                .eq("game_round",gameRound)
-                .eq("judge_id",judgeId);
+        judgeSubmitStateQueryWrapper.eq("game_number", gameNumber)
+                .eq("game_round", gameRound)
+                .eq("judge_id", judgeId);
         JudgeSubmitState judgeSubmitState = judgeSubmitStateService.getOne(judgeSubmitStateQueryWrapper);
         judgeSubmitState.setState(END_WRITE_RESULT_STATE);
         return judgeSubmitStateService.updateById(judgeSubmitState);
     }
+
+    /***
+     * @Description 获取次考生暂停列表
+     * @param name
+     * @return java.util.List<com.njmetro.evaluation.domain.PauseRecord>
+     * @date 2020-11-5 14:29
+     * @auther zc
+     */
+    @GetMapping("/getPauseAdjustList")
+    public List<PauseRecordVO> getPauseAdjustList(@RequestParam("name") String name) {
+        return pauseRecordService.getPauseAdjustList(name);
+    }
+/***
+ * @Description 修改暂停 从无效变有效，同时从比赛用时中减去这个时间
+ * @param id
+ * @return java.lang.Boolean
+ * @date 2020-11-6 10:35
+ * @auther zc
+ */
+    @GetMapping("/changeFlag")
+    public Boolean changeFlag(@RequestParam("id") Integer id)
+    {
+        UpdateWrapper<PauseRecord> pauseRecordUpdateWrapper = new UpdateWrapper<>();
+        pauseRecordUpdateWrapper.eq("id",id).set("flag",true);
+        PauseRecord pauseRecord = pauseRecordService.getById(id);
+        QueryWrapper<SeatDraw> seatDrawQueryWrapper = new QueryWrapper<>();
+        seatDrawQueryWrapper.eq("game_number",pauseRecord.getGameNumber())
+                             .eq("game_round",pauseRecord.getGameNumber())
+                             .eq("student_id",pauseRecord.getStudentId());
+        SeatDraw seatDraw = seatDrawService.getOne(seatDrawQueryWrapper);
+        UpdateWrapper<SeatDraw> seatDrawUpdateWrapper = new UpdateWrapper<>();
+        seatDrawUpdateWrapper.eq("game_number",pauseRecord.getGameNumber())
+                .eq("game_round",pauseRecord.getGameNumber())
+                .eq("student_id",pauseRecord.getStudentId())
+                .set("use_time",seatDraw.getUseTime()-pauseRecord.getPauseTime());
+        seatDrawService.update(seatDrawUpdateWrapper);
+        ;
+
+        return  pauseRecordService.update(pauseRecordUpdateWrapper);
+    }
+
+
+    /**
+     * @return java.lang.Integer
+     * @Description 获取机考成绩中不合理的结果
+     * @date 2020-11-4 10:33
+     * @auther zc
+     */
+    @GetMapping("/getComputerTestResultZero")
+    public List<String> getComputerTestResultZero() {
+        List<String> resList = new ArrayList<>();
+        QueryWrapper<Student> studentQueryWrapper = new QueryWrapper<>();
+        studentQueryWrapper.eq("computer_test_result", 0);
+        List<Student> studentList = studentService.list(studentQueryWrapper);
+        for (Student item : studentList) {
+            resList.add(item.getCompanyName() + "的" + item.getName() + "的成绩为0分");
+        }
+        return resList;
+    }
+
+    /***
+     * @Description 获取考试用时为null的考生
+     * @return java.util.List<java.lang.String>
+     * @date 2020-11-4 10:53
+     * @auther zc
+     */
+
+    @GetMapping("/getUseTimeNull")
+    public List<String> getUseTimeNull() {
+        List<String> resList = new ArrayList<>();
+        QueryWrapper<SeatDraw> studentQueryWrapper = new QueryWrapper<>();
+        studentQueryWrapper.isNull("use_time");
+        List<SeatDraw> seatDrawList = seatDrawService.list(studentQueryWrapper);
+        for (SeatDraw item : seatDrawList) {
+            resList.add("第" + item.getGameNumber() + "场" + item.getGameRound() + "的" + item.getStudentId() + "号考生用时为空");
+        }
+        return resList;
+    }
+
 
 }
 

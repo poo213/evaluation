@@ -163,7 +163,7 @@ public class CodeStateController {
                 }
                 if (student.getTestDayState() != 3) {
                     codeStateService.removeById(codeStateList.get(0).getId());
-                    throw new StudentException("必须是考试中的考生，才能在此设备上扫码进入候考区！");
+                    throw new StudentException("必须是考试中的考生，才能在此设备上扫码离场！");
                 }
                 SignVO signVO = new SignVO();
                 signVO.setUrl(PHOTO_URL + student.getIdCard() + ".png");
