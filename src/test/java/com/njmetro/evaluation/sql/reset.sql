@@ -6,11 +6,10 @@
 #TRUNCATE TABLE judge;
 #TRUNCATE TABLE company;j
 #TRUNCATE TABLE pad;
-#TRUNCATE TABLE menu;
+TRUNCATE TABLE menu;
 TRUNCATE TABLE config;
 TRUNCATE TABLE draw_state;
 TRUNCATE TABLE judge_draw_result;
-
 
 #重置数据库(不需要重新初始化)
 TRUNCATE TABLE seat_draw;
@@ -419,7 +418,7 @@ VALUES (1, '****01', '南京地铁', '南京地铁', '张三', '15032329999', 0)
        (41, '****41', '呼和浩特地铁', '呼和浩特地铁', '张三', '15032329999', 0);*/
 
 #### 初始化目录
-/*INSERT INTO menu (id, parent_id, name, path, redirect, component, icon, title)
+INSERT INTO menu (id, parent_id, name, path, redirect, component, icon, title)
 VALUES (1, 0, 'index', '/', '/home', 'BasicLayout', ' ', '首页'),
        (2, 1, 'home', '/home', '', 'home', 'home', '首页'),
        (3, 1, 'system', '/system', '/system/student', 'RouteView', 'robot', '基础信息管理'),
@@ -454,6 +453,6 @@ VALUES (1, 0, 'index', '/', '/home', 'BasicLayout', ' ', '首页'),
        (26, 6, 'companyResult', '/chairUmpire/companyResult', '', 'chairUmpire/companyResult', '', '团体总分汇总'),
        (27, 6, 'judgeChange', '/chairUmpire/judgeChange', '', 'chairUmpire/judgeChange', '', '裁判调整'),
        (28, 6, 'pauseAdjust', '/chairUmpire/pauseAdjust', '', 'chairUmpire/pauseAdjust', '', '暂停调整'),
-       (29, 6, 'writeResult', '/chairUmpire/writeResult', '', 'chairUmpire/writeResult', '', '成绩补录');*/
+       (29, 6, 'writeResult', '/chairUmpire/writeResult', '', 'chairUmpire/writeResult', '', '成绩补录');
 
 

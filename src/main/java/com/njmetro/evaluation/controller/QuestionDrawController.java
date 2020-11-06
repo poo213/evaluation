@@ -100,31 +100,35 @@ public class QuestionDrawController {
             seatDrawQueryWrapper.eq("game_number",config.getGameNumber())
                     .eq("game_round",config.getGameRound())
                     .eq("seat_id",SeatUtil.getStudentSeatIdByJudgeSeatId(judgeSeatId));
-            Integer studentId = seatDrawService.getOne(seatDrawQueryWrapper).getStudentId();
-            // 获取试题
-            String gameType = SeatUtil.getTypeNameByJudgeSeatId(judgeSeatId);
-            QueryWrapper<QuestionDraw> questionDrawQueryWrapper = new QueryWrapper<>();
-            questionDrawQueryWrapper.eq("game_type",gameType)
-                    .eq("game_number",config.getGameNumber());
-            QuestionDraw questionDraw = questionDrawService.getOne(questionDrawQueryWrapper);
-            // 获取试题评分标准
-            QueryWrapper<TestQuestionStandard> testQuestionStandardQueryWrapper = new QueryWrapper<>();
-            testQuestionStandardQueryWrapper.eq("test_question_id",questionDraw.getQuestionId());
-            List<TestQuestionStandard> testQuestionStandardList = testQuestionStandardService.list(testQuestionStandardQueryWrapper);
-            // 模拟裁判写入成绩
-            for(TestQuestionStandard testQuestionStandard :testQuestionStandardList){
-                TestResult testResult = new TestResult();
-                testResult.setGameNumber(config.getGameNumber());
-                testResult.setGameRound(config.getGameRound());
-                // 默认得分为 0 分
-                testResult.setCent(0);
-                testResult.setQuestionStandardId(testQuestionStandard.getId());
-                testResult.setState(0);
-                testResult.setJudgeId(judgeId);
-                testResult.setQuestionId(questionDraw.getQuestionId());
-                testResult.setStudentId(studentId);
-                log.info("{} ,testResult",testResult);
-                testResultService.save(testResult);
+            SeatDraw seatDraw = seatDrawService.getOne(seatDrawQueryWrapper);
+            // 第七场 第六赛位没有学生考试
+            if(seatDraw != null){
+                Integer studentId = seatDrawService.getOne(seatDrawQueryWrapper).getStudentId();
+                // 获取试题
+                String gameType = SeatUtil.getTypeNameByJudgeSeatId(judgeSeatId);
+                QueryWrapper<QuestionDraw> questionDrawQueryWrapper = new QueryWrapper<>();
+                questionDrawQueryWrapper.eq("game_type",gameType)
+                        .eq("game_number",config.getGameNumber());
+                QuestionDraw questionDraw = questionDrawService.getOne(questionDrawQueryWrapper);
+                // 获取试题评分标准
+                QueryWrapper<TestQuestionStandard> testQuestionStandardQueryWrapper = new QueryWrapper<>();
+                testQuestionStandardQueryWrapper.eq("test_question_id",questionDraw.getQuestionId());
+                List<TestQuestionStandard> testQuestionStandardList = testQuestionStandardService.list(testQuestionStandardQueryWrapper);
+                // 模拟裁判写入成绩
+                for(TestQuestionStandard testQuestionStandard :testQuestionStandardList){
+                    TestResult testResult = new TestResult();
+                    testResult.setGameNumber(config.getGameNumber());
+                    testResult.setGameRound(config.getGameRound());
+                    // 默认得分为 0 分
+                    testResult.setCent(0);
+                    testResult.setQuestionStandardId(testQuestionStandard.getId());
+                    testResult.setState(0);
+                    testResult.setJudgeId(judgeId);
+                    testResult.setQuestionId(questionDraw.getQuestionId());
+                    testResult.setStudentId(studentId);
+                    log.info("{} ,testResult",testResult);
+                    testResultService.save(testResult);
+                }
             }
         }
         return true;
