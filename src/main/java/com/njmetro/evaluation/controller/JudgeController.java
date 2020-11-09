@@ -46,6 +46,9 @@ public class JudgeController {
     private final DrawStateService drawStateService;
     private final SeatDrawService seatDrawService;
     private final ConfigService configService;
+    private final StudentService studentService;
+    private static final Integer GROUP_NUMBER = 6;
+    private static final Integer GAME_NUMBER_LAST = 7;
 
     /**
      * 执行裁判抽签算法的常量
@@ -174,14 +177,21 @@ public class JudgeController {
 
         // 获取当前时间
         bigShowVO.setDateTime(LocalDateTime.now());
-        bigShowVO.setTotalNumber(123);
-        bigShowVO.setLeaveNumber(11);
-        bigShowVO.setWaitNumber(112);
+        bigShowVO.setWaitNumber(studentService.getStudentNumberByState(1));
+        bigShowVO.setReadyNumber(studentService.getStudentNumberByState(2));
+        bigShowVO.setTestNumber(studentService.getStudentNumberByState(3));
+        bigShowVO.setLeaveNumber(studentService.getStudentNumberByState(4));
         // 遍历6个赛组
         List<GroupShowVO> groupJudgeVOList = new ArrayList<>();
         List<SeatGroup> seatGroupList = seatGroupService.list();
-        for (SeatGroup seatGroup : seatGroupList) {
-            groupJudgeVOList.add(new GroupShowVO(seatGroup.getGroupName(), getTypeShowVO(seatGroup.getId(), config.getGameNumber(), config.getGameRound())));
+        Integer groupNumber = 0;
+        if(config.getGameNumber().equals(GAME_NUMBER_LAST)){
+            groupNumber = GROUP_NUMBER - 1;
+        }else {
+            groupNumber = GROUP_NUMBER;
+        }
+        for (int i = 0 ; i < groupNumber ; i++) {
+            groupJudgeVOList.add(new GroupShowVO(seatGroupList.get(i).getGroupName(), getTypeShowVO(seatGroupList.get(i).getId(), config.getGameNumber(), config.getGameRound())));
         }
         bigShowVO.setGroupShowVOList(groupJudgeVOList);
         return bigShowVO;

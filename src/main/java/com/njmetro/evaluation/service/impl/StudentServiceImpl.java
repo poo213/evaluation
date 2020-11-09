@@ -41,4 +41,9 @@ public class StudentServiceImpl extends ServiceImpl<StudentMapper, Student> impl
     public Double checkComputerTestResult() {
         return studentMapper.checkComputerTestResult();
     }
+
+    @Override
+    public Integer getStudentNumberByState(Integer state) {
+        return studentMapper.getStudentNumberByState(state);
+    }
 }

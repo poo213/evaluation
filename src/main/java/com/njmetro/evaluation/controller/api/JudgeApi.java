@@ -118,7 +118,7 @@ public class JudgeApi {
             QueryWrapper<JudgeDrawResult> judgeDrawResultQueryWrapper = new QueryWrapper<>();
             judgeDrawResultQueryWrapper.eq("pad_id", pad.getId());
             JudgeDrawResult judgeDrawResult = judgeDrawResultService.getOne(judgeDrawResultQueryWrapper);
-            if(judgeDrawResult.getState().equals(0)){
+            if(judgeDrawResult.getState().equals(0) || judgeDrawResult.getState().equals(1)){
                 // 修改就绪状态为 1
                 judgeDrawResult.setState(1);
                 return judgeDrawResultService.updateById(judgeDrawResult);

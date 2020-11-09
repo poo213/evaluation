@@ -18,17 +18,23 @@ public class BigShowVO {
     /**
      * 当前时间
      */
-    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm")
     public LocalDateTime dateTime;
     /**
-     * 总人数
-     */
-    public Integer totalNumber;
-    /**
-     * 等候区人数
+     * 候考区人数
      */
     public Integer waitNumber;
     /**
+     * 备考区人数
+     */
+    public Integer readyNumber;
+
+    /**
+     * 考试中人数
+     */
+    public Integer testNumber;
+    /**
+     * 立场人数
      */
     public Integer leaveNumber;
     public Integer gameNumber;

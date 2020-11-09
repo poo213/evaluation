@@ -22,4 +22,11 @@ public interface StudentService extends IService<Student> {
     List<SignVO> getSignVOList();
     //获取机考成绩求和，如果和为0，表示没有上传成功
     Double checkComputerTestResult();
+
+    /**
+     * 获取考生处于不同状态时的人数
+     * @param state
+     * @return
+     */
+    Integer getStudentNumberByState(Integer state);
 }
