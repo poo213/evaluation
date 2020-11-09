@@ -37,4 +37,14 @@ public interface StudentMapper extends BaseMapper<Student> {
 
     @Select("select sum(computer_test_result) as res from student")
    Double checkComputerTestResult();
+
+    /**
+     * 获取考生处于不同状态时的人数
+     * @param state
+     * @return
+     */
+    @Select("SELECT  COUNT(*)\n" +
+            "FROM student\n" +
+            "WHERE test_day_state = #{state};")
+    Integer getStudentNumberByState(Integer state);
 }

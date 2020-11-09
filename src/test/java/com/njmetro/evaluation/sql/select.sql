@@ -65,6 +65,12 @@ WHERE test_result.question_standard_id = test_question_standard.id and game_numb
 
 
 INSERT INTO pause_record(game_number, game_round, type, seat_draw_id, student_id, pause_time, flag)
-value (1,1,1,1,1,1,true)
+value (1,1,1,1,1,1,true);
+
+SELECT  COUNT(*)
+FROM student
+WHERE test_day_state = 1;
+
+
 
 

@@ -46,6 +46,7 @@ public class JudgeController {
     private final DrawStateService drawStateService;
     private final SeatDrawService seatDrawService;
     private final ConfigService configService;
+    private final StudentService studentService;
     private static final Integer GROUP_NUMBER = 6;
     private static final Integer GAME_NUMBER_LAST = 7;
 
@@ -176,9 +177,10 @@ public class JudgeController {
 
         // 获取当前时间
         bigShowVO.setDateTime(LocalDateTime.now());
-        bigShowVO.setTotalNumber(123);
-        bigShowVO.setLeaveNumber(11);
-        bigShowVO.setWaitNumber(112);
+        bigShowVO.setWaitNumber(studentService.getStudentNumberByState(1));
+        bigShowVO.setReadyNumber(studentService.getStudentNumberByState(2));
+        bigShowVO.setTestNumber(studentService.getStudentNumberByState(3));
+        bigShowVO.setLeaveNumber(studentService.getStudentNumberByState(4));
         // 遍历6个赛组
         List<GroupShowVO> groupJudgeVOList = new ArrayList<>();
         List<SeatGroup> seatGroupList = seatGroupService.list();
