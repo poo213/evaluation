@@ -20,6 +20,8 @@ public class FinalResultVO {
     private String companyName;
     @TableField("student_code")
     private String studentCode;
+    @TableField("id_card")
+    private String idCard;
     @TableField("student_name")
     private String studentName;
     /**

@@ -11,8 +11,8 @@ import lombok.Data;
  **/
 @Data
 public class ComputerTestResultExcelDTO {
-    @Excel(name="code")
-    private String code;
-    @Excel(name="cent")
+    @Excel(name="身份证号")
+    private String idCard;
+    @Excel(name="成绩")
     private Double cent;
 }

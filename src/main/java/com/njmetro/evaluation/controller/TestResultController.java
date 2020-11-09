@@ -38,6 +38,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -186,12 +187,12 @@ public class TestResultController {
                 log.info("获取指定场次的所有考生的考试结果：{}", testResultVOList);
 
                 List<Integer> studentIdList = testResultService.getStudentIdList(gameNumber, gameRound);
-                //System.out.println("studentIdList="+studentIdList);
-                //获取违纪的考生，本场本轮不应该计算成绩的人
+                //获取违纪的考生，本场本轮不应该计算成绩的人,todo  ,违纪的人，直接0分
                 List<Integer> breakRuleStudentList = seatDrawService.getBreakRuleStudentList(gameNumber, gameRound);
                 //将违纪的考生直接去除，下方不计算成绩
                 studentIdList.removeAll(breakRuleStudentList);
                 log.info("获取指定场次的考生：{}", studentIdList);
+
                 for (Integer num : studentIdList) {
                     log.info("计算得分时遍历考生id：{}", num);
                     //将两个裁判的打分存入该list
@@ -231,7 +232,20 @@ public class TestResultController {
                     finalResultVO.setStudentCode(testResultVOArrayList.get(0).getStudentCode());
                     finalResultVO.setStudentName(testResultVOArrayList.get(0).getStudentName());
                     finalResultVO.setCompanyName(testResultVOArrayList.get(0).getCompanyName());
+                    finalResultVO.setIdCard(testResultVOArrayList.get(0).getIdCard());
                     finalResultVO.setResult(res);
+                    finalTempResultVOList.add(finalResultVO);
+                }
+                for(Integer lackPeopleId : breakRuleStudentList)//缺考违纪的考生
+                {
+                    Student student = studentService.getById(lackPeopleId);
+                    FinalResultVO finalResultVO = new FinalResultVO();
+                    finalResultVO.setStudentId(lackPeopleId);
+                    finalResultVO.setStudentCode(student.getCode());
+                    finalResultVO.setStudentName(student.getName());
+                    finalResultVO.setCompanyName(student.getCompanyName());
+                    finalResultVO.setIdCard(student.getIdCard());
+                    finalResultVO.setResult(new BigDecimal("0"));
                     finalTempResultVOList.add(finalResultVO);
                 }
             }
@@ -261,6 +275,7 @@ public class TestResultController {
                 finalResultVO.setStudentCode(tempList.get(0).getStudentCode());
                 finalResultVO.setStudentName(tempList.get(0).getStudentName());
                 finalResultVO.setCompanyName(tempList.get(0).getCompanyName());
+                finalResultVO.setIdCard(tempList.get(0).getIdCard());
                 finalResultVO.setResult(finalResult.divide(new BigDecimal("3"), 2, RoundingMode.HALF_UP));
                 finaResultVOList.add(finalResultVO);
             }
@@ -268,6 +283,7 @@ public class TestResultController {
         //将机考成绩一起汇总进来
         for (FinalResultVO item :
                 finaResultVOList) {
+
             Student student = studentService.getById(item.getStudentId());
             if (student.getComputerTestResult() == null) {
                 throw new StudentException(student.getName() + "的机考成绩未导入！");
@@ -275,11 +291,20 @@ public class TestResultController {
             //机考成绩
             item.setComputerTestResult(new BigDecimal(student.getComputerTestResult()));
             item.setComprehensiveResult((new BigDecimal(student.getComputerTestResult())).multiply(new BigDecimal("0.3")).add(item.getResult().multiply(new BigDecimal("0.7"))).setScale(2, RoundingMode.HALF_UP));
+
         }
-        ObjectMapper objectMapper = new ObjectMapper();
-        String json = objectMapper.writeValueAsString(finaResultVOList);
-        log.info("得分结果json字符串：{}", json);
-        return finaResultVOList;
+        List<FinalResultVO>  finaResultVOListSort = finaResultVOList.stream().sorted((Comparator.comparing(FinalResultVO::getComprehensiveResult)).reversed()).collect(Collectors.toList());
+        Integer id = 1 ;
+        for (FinalResultVO item :
+                finaResultVOListSort) {
+            item.setId(id);
+            id++;
+        }
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        String json = objectMapper.writeValueAsString(finaResultVOList);
+//        log.info("得分结果json字符串：{}", json);
+
+        return finaResultVOListSort;
     }
 
     /**
@@ -355,7 +380,20 @@ public class TestResultController {
                     finalResultVO.setStudentCode(testResultVOArrayList.get(0).getStudentCode());
                     finalResultVO.setStudentName(testResultVOArrayList.get(0).getStudentName());
                     finalResultVO.setCompanyName(testResultVOArrayList.get(0).getCompanyName());
+                    finalResultVO.setIdCard(testResultVOArrayList.get(0).getIdCard());
                     finalResultVO.setResult(res);
+                    finalTempResultVOList.add(finalResultVO);
+                }
+                for(Integer lackPeopleId : breakRuleStudentList)//缺考违纪的考生
+                {
+                    Student student = studentService.getById(lackPeopleId);
+                    FinalResultVO finalResultVO = new FinalResultVO();
+                    finalResultVO.setStudentId(lackPeopleId);
+                    finalResultVO.setStudentCode(student.getCode());
+                    finalResultVO.setStudentName(student.getName());
+                    finalResultVO.setCompanyName(student.getCompanyName());
+                    finalResultVO.setIdCard(student.getIdCard());
+                    finalResultVO.setResult(new BigDecimal("0"));
                     finalTempResultVOList.add(finalResultVO);
                 }
             }
@@ -386,6 +424,7 @@ public class TestResultController {
                 finalResultVO.setStudentCode(tempList.get(0).getStudentCode());
                 finalResultVO.setStudentName(tempList.get(0).getStudentName());
                 finalResultVO.setCompanyName(tempList.get(0).getCompanyName());
+                finalResultVO.setIdCard(tempList.get(0).getIdCard());
                 finalResultVO.setResult(finalResult.divide(new BigDecimal("3"), 2, RoundingMode.HALF_UP));
                 finaResultVOList.add(finalResultVO);
             }
@@ -401,29 +440,39 @@ public class TestResultController {
             item.setComputerTestResult(new BigDecimal(student.getComputerTestResult()));
             item.setComprehensiveResult((new BigDecimal(student.getComputerTestResult())).multiply(new BigDecimal("0.3")).add(item.getResult().multiply(new BigDecimal("0.7"))).setScale(2, RoundingMode.HALF_UP));
         }
-        ObjectMapper objectMapper = new ObjectMapper();
-        String json = objectMapper.writeValueAsString(finaResultVOList);
-        log.info("得分结果json字符串：{}", json);
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        String json = objectMapper.writeValueAsString(finaResultVOList);
+//        log.info("得分结果json字符串：{}", json);
+
+        List<FinalResultVO>  finaResultVOListSort = finaResultVOList.stream().sorted((Comparator.comparing(FinalResultVO::getComprehensiveResult)).reversed()).collect(Collectors.toList());
+
+        Integer id = 1 ;
+        for (FinalResultVO item :
+                finaResultVOListSort) {
+            item.setId(id);
+            id++;
+        }
 
         TemplateExportParams params = new TemplateExportParams(
                 "c:/结果汇总.xlsx");
         Map<String, Object> map = new HashMap<String, Object>();
-        List<Map<String, String>> listMap = new ArrayList<Map<String, String>>();
-        for (FinalResultVO item : finaResultVOList
+        List<Map<String, Object>> listMap = new ArrayList<Map<String, Object>>();
+        for (FinalResultVO item : finaResultVOListSort
         ) {
 
-            Map<String, String> lm = new HashMap<String, String>();
+            Map<String, Object> lm = new HashMap<String, Object>();
+            lm.put("id", item.getId());
             lm.put("studentId", item.getStudentId() + "");
             lm.put("studentName", item.getStudentName());
             lm.put("companyName", item.getCompanyName());
-            lm.put("result", item.getResult() + "");
-            lm.put("computerTestResult", item.getComputerTestResult() + "");
-            lm.put("comprehensiveResult", item.getComprehensiveResult() + "");
+            lm.put("idCard", item.getIdCard());
+            lm.put("result", item.getResult());
+            lm.put("computerTestResult", item.getComputerTestResult());
+            lm.put("comprehensiveResult", item.getComprehensiveResult());
             listMap.add(lm);
         }
 
         map.put("maplist", listMap);
-        System.out.println(map);
         Workbook workbook = ExcelExportUtil.exportExcel(params, map);
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         workbook.write(outputStream);
@@ -448,13 +497,13 @@ public class TestResultController {
             File file = new File("C:/UploadFile/机考得分表.xlsx");
             uploadFile.transferTo(file);
             ImportParams importParams = new ImportParams();
-            importParams.setHeadRows(1);
+            importParams.setHeadRows(2);
             List<ComputerTestResultExcelDTO> computerTestResultExcelList = ExcelImportUtil.importExcel(file, ComputerTestResultExcelDTO.class, importParams);
             log.info("{}", computerTestResultExcelList);
             for (ComputerTestResultExcelDTO item : computerTestResultExcelList
             ) {
                 UpdateWrapper<Student> studentUpdateWrapper = new UpdateWrapper<>();
-                studentUpdateWrapper.eq("code", item.getCode()).set("computer_test_result", item.getCent());
+                studentUpdateWrapper.eq("id_card", item.getIdCard()).set("computer_test_result", item.getCent());
                 studentService.update(studentUpdateWrapper);
             }
         } catch (Exception e) {
@@ -633,21 +682,23 @@ public class TestResultController {
     @GetMapping("/changeFlag")
     public Boolean changeFlag(@RequestParam("id") Integer id)
     {
+        System.out.println(id);
         UpdateWrapper<PauseRecord> pauseRecordUpdateWrapper = new UpdateWrapper<>();
         pauseRecordUpdateWrapper.eq("id",id).set("flag",true);
         PauseRecord pauseRecord = pauseRecordService.getById(id);
+        System.out.println("pauseRecord = " + pauseRecord);
         QueryWrapper<SeatDraw> seatDrawQueryWrapper = new QueryWrapper<>();
         seatDrawQueryWrapper.eq("game_number",pauseRecord.getGameNumber())
-                             .eq("game_round",pauseRecord.getGameNumber())
+                             .eq("game_round",pauseRecord.getGameRound())
                              .eq("student_id",pauseRecord.getStudentId());
         SeatDraw seatDraw = seatDrawService.getOne(seatDrawQueryWrapper);
+        System.out.println("seatDraw = " + seatDraw);
         UpdateWrapper<SeatDraw> seatDrawUpdateWrapper = new UpdateWrapper<>();
         seatDrawUpdateWrapper.eq("game_number",pauseRecord.getGameNumber())
-                .eq("game_round",pauseRecord.getGameNumber())
+                .eq("game_round",pauseRecord.getGameRound())
                 .eq("student_id",pauseRecord.getStudentId())
                 .set("use_time",seatDraw.getUseTime()-pauseRecord.getPauseTime());
         seatDrawService.update(seatDrawUpdateWrapper);
-        ;
 
         return  pauseRecordService.update(pauseRecordUpdateWrapper);
     }
@@ -681,9 +732,9 @@ public class TestResultController {
     @GetMapping("/getUseTimeNull")
     public List<String> getUseTimeNull() {
         List<String> resList = new ArrayList<>();
-        QueryWrapper<SeatDraw> studentQueryWrapper = new QueryWrapper<>();
-        studentQueryWrapper.isNull("use_time");
-        List<SeatDraw> seatDrawList = seatDrawService.list(studentQueryWrapper);
+        QueryWrapper<SeatDraw> seatDrawQueryWrapper = new QueryWrapper<>();
+        seatDrawQueryWrapper.isNull("use_time");
+        List<SeatDraw> seatDrawList = seatDrawService.list(seatDrawQueryWrapper);
         for (SeatDraw item : seatDrawList) {
             resList.add("第" + item.getGameNumber() + "场" + item.getGameRound() + "的" + item.getStudentId() + "号考生用时为空");
         }

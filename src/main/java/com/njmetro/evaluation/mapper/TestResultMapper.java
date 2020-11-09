@@ -21,7 +21,7 @@ import java.util.List;
  */
 public interface TestResultMapper extends BaseMapper<TestResult> {
     //获取指定场次和轮次的所有考生的总分,包含两个裁判的结果，用于前台成绩核验用
-    @Select("select * from (SELECT student_id,student.company_name as company_name,student.code as student_code,student.name as student_name,sum(cent) as result ,judge_id,judge.name as judge_name FROM test_result,student,judge where test_result.game_number = #{gameNumber} and test_result.game_round = #{gameRound}  and judge.id = test_result.judge_id and student.id = test_result.student_id GROUP BY judge_id,student_id) as t order by student_id")
+    @Select("select * from (SELECT student_id,student.company_name as company_name,student.id_card as id_card,student.code as student_code,student.name as student_name,sum(cent) as result ,judge_id,judge.name as judge_name FROM test_result,student,judge where test_result.game_number = #{gameNumber} and test_result.game_round = #{gameRound}  and judge.id = test_result.judge_id and student.id = test_result.student_id GROUP BY judge_id,student_id) as t order by student_id")
     List<TestResultVO> getTempResult(@Param("gameNumber") Integer gameNumber, @Param("gameRound") Integer gameRound);
 
     //获取指定场次和轮次的所有考生
