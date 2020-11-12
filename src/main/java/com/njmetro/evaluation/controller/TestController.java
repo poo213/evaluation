@@ -92,6 +92,20 @@ public class TestController {
         return true;
     }
 
+    /**
+     * 重置 student 数据库状态
+     * @return
+     */
+    @GetMapping("/resetStudent")
+    public Boolean resetStudent() {
+        List<Student>  studentList = studentService.list();
+        for(Student student : studentList){
+            student.setTestDayState(0);
+            studentService.updateById(student);
+        }
+        return true;
+    }
+
 
     /**
      *  常用的四种 请求方式

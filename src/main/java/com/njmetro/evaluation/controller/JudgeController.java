@@ -85,9 +85,24 @@ public class JudgeController {
         typeShowVO.setTypeName(typeName);
         // 设置裁判信息
         List<JudgeShowVO> judgeShowVOList = seatGroupService.getGroupTypeJudgeVOByGroupId(groupId, typeName);
-        for (JudgeShowVO judgeShowVO : judgeShowVOList) {
+        // for 循环修改裁判照片
+        /*for (JudgeShowVO judgeShowVO : judgeShowVOList) {
             judgeShowVO.setIdCard(SystemCommon.PHOTO_URL + judgeShowVO.getIdCard() + ".png");
             judgeShowVO.setStateColor(NumberToColorUtil.getJudgeBackColor(judgeShowVO.getState()));
+        }*/
+        /**
+         * 修改为裁判一 和裁判二的早照片
+         */
+        for(int i = 0; i < judgeShowVOList.size();i++){
+            switch (i){
+                case 0:
+                    judgeShowVOList.get(i).setIdCard(SystemCommon.PHOTO_URL+ "1.png");
+                    break;
+                case 1:
+                    judgeShowVOList.get(i).setIdCard(SystemCommon.PHOTO_URL+ "2.png");
+                    break;
+            }
+            judgeShowVOList.get(i).setStateColor(NumberToColorUtil.getJudgeBackColor( judgeShowVOList.get(i).getState()));
         }
         typeShowVO.setJudgeShowVOList(judgeShowVOList);
         // 设置 考生信息

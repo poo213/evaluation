@@ -12,3 +12,9 @@ Accept: application/json
 ### 5 成绩全部提交成功
 GET http://localhost:8889/test/doEnd
 Accept: application/json
+### 5 成绩全部提交成功
+GET http://localhost:8889/test/resetStudent
+Accept: application/json
+
+
+

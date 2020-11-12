@@ -9,6 +9,7 @@ import com.njmetro.evaluation.vo.QuestionDrawVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.weaver.patterns.TypePatternQuestions;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -139,6 +140,7 @@ public class QuestionDrawController {
      * @return
      */
     @GetMapping("doDraw")
+    @Transactional
     public Boolean doDraw() {
         // 根据比赛场次判断是否已经抽题
         Config config = configService.getById(1);

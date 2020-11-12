@@ -76,8 +76,6 @@ public class ConfigController {
 
     }
 
-
-
     /**
      * 切换下一场
      * @return
@@ -86,6 +84,7 @@ public class ConfigController {
     public Boolean doNext() {
         Config config = configService.getById(1);
         Integer gameRound = config.getGameRound() + 1;
+        log.info("config1 {}",config);
         if (gameRound.equals(INDEX_OUT_ROUND)) {
             Integer gameNumber = config.getGameNumber() + 1 ;
             if(gameNumber.equals(INDEX_OUT_NUMBER)){
@@ -94,12 +93,19 @@ public class ConfigController {
             }else {
                 config.setGameNumber(gameNumber);
                 config.setGameRound(1);
+                log.info("切换下一场");
             }
+            log.info("正常切换场次~~~");
         }else {
+            log.info("正常切换轮次~~~");
             config.setGameRound(gameRound);
         }
         config.setState(0);
-        configService.updateById(config);
+        log.info("config {}",config);
+        log.info("下发config{}",config);
+        Boolean flag = configService.updateById(config);
+        log.info("flag {}",flag);
+        log.info("修改config成功");
         // 将裁判抽签结果表中的就绪状态全部设为 0
         List<JudgeDrawResult> judgeDrawResultList = judgeDrawResultService.list();
         for(JudgeDrawResult judgeDrawResult : judgeDrawResultList){
