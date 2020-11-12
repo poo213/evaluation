@@ -1,8 +1,9 @@
 package com.njmetro.evaluation.util;
 
 import com.njmetro.evaluation.common.SystemCommon;
-import com.njmetro.evaluation.domain.JudgeDrawResult;
 import lombok.Data;
+
+import java.awt.desktop.SystemSleepEvent;
 
 /**
  * 赛位信息转换
@@ -157,13 +158,13 @@ public class SeatUtil {
         String typeName = "";
         switch (studentSeatId % 3){
             case 0:
-                typeName = "视频搭建";
+                typeName = SystemCommon.VIDEO_TYPE;
                 break;
             case 1:
-                typeName = "光缆接续";
+                typeName = SystemCommon.OPTICAL_TYPE;
                 break;
             case 2:
-                typeName = "交换机组网";
+                typeName = SystemCommon.SWITCH_TYPE;
                 break;
         }
         return typeName;

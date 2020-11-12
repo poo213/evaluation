@@ -323,10 +323,10 @@ INSERT INTO config(game_number, game_round, state) value (0, 3, 4);
 # draw_state
 
 INSERT INTO draw_state(draw_name, state)
-values ('参赛队抽签', true),
-       ('考生赛位抽签', false),
+values ('参赛队抽签', false),
+       ('考生赛位抽签', true),
        ('裁判类型抽签', false),
-       ('执行裁判抽签', false),
+       ('执行裁判抽签', true),
        ('裁判位置抽签', false);
 
 # 裁判抽签结果

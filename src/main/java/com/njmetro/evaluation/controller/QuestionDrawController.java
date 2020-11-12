@@ -89,50 +89,58 @@ public class QuestionDrawController {
     public Boolean writeTestResult(){
         // 获取当前场次轮次信息
         Config config = configService.getById(1);
-        // 最外层循环 36个执行裁判
-        List<JudgeDrawResult> judgeDrawResultList = judgeDrawResultService.list();
-        for(JudgeDrawResult judgeDrawResult : judgeDrawResultList){
-            // 获取该裁判对应的试题 及 评分标准，最后写入 test_result 表中
-            Integer judgeSeatId = judgeDrawResult.getSeatId();
-            // 获取裁判id
-            Integer judgeId = judgeDrawResultService.getById(judgeSeatId).getJudgeId();
-            // 获取考生id
-            QueryWrapper<SeatDraw> seatDrawQueryWrapper = new QueryWrapper<>();
-            seatDrawQueryWrapper.eq("game_number",config.getGameNumber())
-                    .eq("game_round",config.getGameRound())
-                    .eq("seat_id",SeatUtil.getStudentSeatIdByJudgeSeatId(judgeSeatId));
-            SeatDraw seatDraw = seatDrawService.getOne(seatDrawQueryWrapper);
-            // 第七场 第六赛位没有学生考试
-            if(seatDraw != null){
-                Integer studentId = seatDrawService.getOne(seatDrawQueryWrapper).getStudentId();
-                // 获取试题
-                String gameType = SeatUtil.getTypeNameByJudgeSeatId(judgeSeatId);
-                QueryWrapper<QuestionDraw> questionDrawQueryWrapper = new QueryWrapper<>();
-                questionDrawQueryWrapper.eq("game_type",gameType)
-                        .eq("game_number",config.getGameNumber());
-                QuestionDraw questionDraw = questionDrawService.getOne(questionDrawQueryWrapper);
-                // 获取试题评分标准
-                QueryWrapper<TestQuestionStandard> testQuestionStandardQueryWrapper = new QueryWrapper<>();
-                testQuestionStandardQueryWrapper.eq("test_question_id",questionDraw.getQuestionId());
-                List<TestQuestionStandard> testQuestionStandardList = testQuestionStandardService.list(testQuestionStandardQueryWrapper);
-                // 模拟裁判写入成绩
-                for(TestQuestionStandard testQuestionStandard :testQuestionStandardList){
-                    TestResult testResult = new TestResult();
-                    testResult.setGameNumber(config.getGameNumber());
-                    testResult.setGameRound(config.getGameRound());
-                    // 默认得分为 0 分
-                    testResult.setCent(0);
-                    testResult.setQuestionStandardId(testQuestionStandard.getId());
-                    testResult.setState(0);
-                    testResult.setJudgeId(judgeId);
-                    testResult.setQuestionId(questionDraw.getQuestionId());
-                    testResult.setStudentId(studentId);
-                    log.info("{} ,testResult",testResult);
-                    testResultService.save(testResult);
+        QueryWrapper<TestResult> testResultQueryWrapper = new QueryWrapper<>();
+        testResultQueryWrapper.eq("game_number",config.getGameNumber())
+                .eq("game_round",config.getGameRound());
+        List<TestResult> testResultList = testResultService.list(testResultQueryWrapper);
+        if(testResultList.isEmpty()){
+            // 最外层循环 36个执行裁判
+            List<JudgeDrawResult> judgeDrawResultList = judgeDrawResultService.list();
+            for(JudgeDrawResult judgeDrawResult : judgeDrawResultList){
+                // 获取该裁判对应的试题 及 评分标准，最后写入 test_result 表中
+                Integer judgeSeatId = judgeDrawResult.getSeatId();
+                // 获取裁判id
+                Integer judgeId = judgeDrawResultService.getById(judgeSeatId).getJudgeId();
+                // 获取考生id
+                QueryWrapper<SeatDraw> seatDrawQueryWrapper = new QueryWrapper<>();
+                seatDrawQueryWrapper.eq("game_number",config.getGameNumber())
+                        .eq("game_round",config.getGameRound())
+                        .eq("seat_id",SeatUtil.getStudentSeatIdByJudgeSeatId(judgeSeatId));
+                SeatDraw seatDraw = seatDrawService.getOne(seatDrawQueryWrapper);
+                // 第七场 第六赛位没有学生考试
+                if(seatDraw != null){
+                    Integer studentId = seatDrawService.getOne(seatDrawQueryWrapper).getStudentId();
+                    // 获取试题
+                    String gameType = SeatUtil.getTypeNameByJudgeSeatId(judgeSeatId);
+                    QueryWrapper<QuestionDraw> questionDrawQueryWrapper = new QueryWrapper<>();
+                    questionDrawQueryWrapper.eq("game_type",gameType)
+                            .eq("game_number",config.getGameNumber());
+                    QuestionDraw questionDraw = questionDrawService.getOne(questionDrawQueryWrapper);
+                    // 获取试题评分标准
+                    QueryWrapper<TestQuestionStandard> testQuestionStandardQueryWrapper = new QueryWrapper<>();
+                    testQuestionStandardQueryWrapper.eq("test_question_id",questionDraw.getQuestionId());
+                    List<TestQuestionStandard> testQuestionStandardList = testQuestionStandardService.list(testQuestionStandardQueryWrapper);
+                    // 模拟裁判写入成绩
+                    for(TestQuestionStandard testQuestionStandard :testQuestionStandardList){
+                        TestResult testResult = new TestResult();
+                        testResult.setGameNumber(config.getGameNumber());
+                        testResult.setGameRound(config.getGameRound());
+                        // 默认得分为 0 分
+                        testResult.setCent(0);
+                        testResult.setQuestionStandardId(testQuestionStandard.getId());
+                        testResult.setState(0);
+                        testResult.setJudgeId(judgeId);
+                        testResult.setQuestionId(questionDraw.getQuestionId());
+                        testResult.setStudentId(studentId);
+                        log.info("{} ,testResult",testResult);
+                        testResultService.save(testResult);
+                    }
                 }
             }
+            return true;
+        }else {
+            throw new QuestionDrawException("抽签结果已产生，请勿重新抽签");
         }
-        return true;
     }
 
     /**

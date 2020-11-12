@@ -4,6 +4,7 @@ package com.njmetro.evaluation.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.njmetro.evaluation.domain.*;
 import com.njmetro.evaluation.exception.ConfigException;
+import com.njmetro.evaluation.exception.JudgeSubmitStateException;
 import com.njmetro.evaluation.service.*;
 import com.njmetro.evaluation.util.SeatUtil;
 import com.njmetro.evaluation.vo.ConfigVO;
@@ -44,25 +45,37 @@ public class ConfigController {
     }
 
 
+    /**
+     * 将抽签结果写入系统中
+     */
     public void writeJudgeSubmitState(){
         Config config = configService.getById(1);
-        QueryWrapper<SeatDraw>seatDrawQueryWrapper = new QueryWrapper<>();
-        seatDrawQueryWrapper.eq("game_number",config.getGameNumber())
+        QueryWrapper<JudgeSubmitState> judgeSubmitStateQueryWrapper = new QueryWrapper<>();
+        judgeSubmitStateQueryWrapper.eq("game_number",config.getGameNumber())
                 .eq("game_round",config.getGameRound());
-        List<SeatDraw> seatDrawList = seatDrawService.list(seatDrawQueryWrapper);
-        // 根据 studentSeatId->judgeSeatId(2个)-> 场次轮次对应的 judgeId
-        for(SeatDraw seatDraw : seatDrawList){
-            Integer leftJudgeSeatId = SeatUtil.getLeftJudgeSeatIdByStudentSeatId(seatDraw.getSeatId());
-            Integer RightJudgeSeatId = SeatUtil.getRightJudgeSeatIdByStudentSeatId(seatDraw.getSeatId());
-            //  查找 leftJudgeId  rightJudgeId
-            Integer leftJudgeId = getJudgeId(leftJudgeSeatId);
-            Integer rightJudgeId = getJudgeId(RightJudgeSeatId);
-            JudgeSubmitState leftJudgeSubmitState = new JudgeSubmitState(seatDraw,leftJudgeId);
-            JudgeSubmitState rightJudgeSubmitState = new JudgeSubmitState(seatDraw,rightJudgeId);
-            judgeSubmitStateService.save(leftJudgeSubmitState);
-            judgeSubmitStateService.save(rightJudgeSubmitState);
+        List<JudgeSubmitState> judgeSubmitStateList = judgeSubmitStateService.list(judgeSubmitStateQueryWrapper);
+        if(judgeSubmitStateList.isEmpty()){
+            QueryWrapper<SeatDraw>seatDrawQueryWrapper = new QueryWrapper<>();
+            seatDrawQueryWrapper.eq("game_number",config.getGameNumber())
+                    .eq("game_round",config.getGameRound());
+            List<SeatDraw> seatDrawList = seatDrawService.list(seatDrawQueryWrapper);
+            // 根据 studentSeatId->judgeSeatId(2个)-> 场次轮次对应的 judgeId
+            for(SeatDraw seatDraw : seatDrawList){
+                Integer leftJudgeSeatId = SeatUtil.getLeftJudgeSeatIdByStudentSeatId(seatDraw.getSeatId());
+                Integer RightJudgeSeatId = SeatUtil.getRightJudgeSeatIdByStudentSeatId(seatDraw.getSeatId());
+                //  查找 leftJudgeId  rightJudgeId
+                Integer leftJudgeId = getJudgeId(leftJudgeSeatId);
+                Integer rightJudgeId = getJudgeId(RightJudgeSeatId);
+                JudgeSubmitState leftJudgeSubmitState = new JudgeSubmitState(seatDraw,leftJudgeId);
+                JudgeSubmitState rightJudgeSubmitState = new JudgeSubmitState(seatDraw,rightJudgeId);
+                judgeSubmitStateService.save(leftJudgeSubmitState);
+                judgeSubmitStateService.save(rightJudgeSubmitState);
 
+            }
+        }else {
+            throw new JudgeSubmitStateException("下一场切换成功，请勿重新切换");
         }
+
     }
 
 

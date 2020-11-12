@@ -49,4 +49,10 @@ public class TestQuestionStandardExcelDTO {
     @Excel(name = "评分标准")
     private String standard;
 
+    /**
+     * 评分标准
+     */
+    @Excel(name = "步长")
+    private Double step;
+
 }

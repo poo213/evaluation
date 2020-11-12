@@ -1,0 +1,11 @@
+###  评分标准录入
+GET http://localhost:8889/testQuestionStandard/readExcel
+Accept: application/json
+
+###
+GET http://localhost:8889/testQuestion/readExcel
+Accept: application/json
+
+
+
+

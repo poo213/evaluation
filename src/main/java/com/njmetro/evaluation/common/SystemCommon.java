@@ -36,9 +36,7 @@ public class SystemCommon {
     public static final String LOGO_SAVE_PATH="C:\\evaluation\\";
 
     public static final String OPTICAL_TYPE = "光缆接续";
-    public static final String SWITCH_TYPE = "交换机组网";
-    public static final String VIDEO_TYPE = "视频搭建";
-
-
+    public static final String SWITCH_TYPE = "视频搭建";
+    public static final String VIDEO_TYPE = "交换机组网";
 
 }

@@ -39,7 +39,7 @@ public class TestQuestionController {
         log.info("上传评分标准");
         try {
             //存储并解析Excel
-            File file = new File("C:/evaluation/excel/test.xlsx");
+            File file = new File("C:/excel/test.xlsx");
             ImportParams importParams = new ImportParams();
             importParams.setHeadRows(1);
             List<TestQuestionExcelDTO> TestQuestionExcelDTOList = ExcelImportUtil.importExcel(file, TestQuestionExcelDTO.class, importParams);

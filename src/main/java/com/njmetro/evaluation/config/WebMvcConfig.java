@@ -47,7 +47,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
         // studentApi judgeApi ip 拦截器
         registry.addInterceptor(ipInterceptor).addPathPatterns("/api/**");
         registry.addInterceptor(readyInterceptor).addPathPatterns("/**/beReady");
-        registry.addInterceptor(endInterceptor).addPathPatterns("/**/submit");
+        registry.addInterceptor(endInterceptor).addPathPatterns("/**/submit")
+                .addPathPatterns("/seatDraw/error/beReady");
     }
 
     /**

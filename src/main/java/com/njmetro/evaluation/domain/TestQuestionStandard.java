@@ -93,8 +93,8 @@ public class TestQuestionStandard implements Serializable {
         this.point = testQuestionStandardDTO.getPoint();
         this.score = testQuestionStandardDTO.getScore();
         this.standard = testQuestionStandardDTO.getStandard();
-        // 默认步长为 0.5
-        this.step = 0.5;
+        this.minScore = testQuestionStandardDTO.getMinScore();
+        this.step = testQuestionStandardDTO.getStep();
 
     }
 
