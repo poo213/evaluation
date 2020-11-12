@@ -212,7 +212,6 @@ public class TestResultController {
                             //获取到指定场次轮次下 的比赛用时
                             if (seatDrawList.size() == 1) {
                                 useTime = seatDrawList.get(0).getUseTime();
-                                log.info("用时：{}", useTime);
                                 //时间分赋值
                                 testResultVO.setTimeCent(StatisticUtil.getTimeCent(useTime, testResultVO.getResult()));
                             }
