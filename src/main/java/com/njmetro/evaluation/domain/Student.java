@@ -81,7 +81,7 @@ public class Student implements Serializable {
      * 考生手机号
      */
     @TableField("phone")
-    @Excel(name="手机")
+    @Excel(name="手机号码")
     private String phone;
 
     /**
