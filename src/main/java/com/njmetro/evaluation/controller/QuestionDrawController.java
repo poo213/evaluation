@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -135,7 +136,6 @@ public class QuestionDrawController {
                         testResult.setJudgeId(judgeId);
                         testResult.setQuestionId(questionDraw.getQuestionId());
                         testResult.setStudentId(studentId);
-                        log.info("{} ,testResult",testResult);
                         testResultService.save(testResult);
                     }
                 }
@@ -181,6 +181,7 @@ public class QuestionDrawController {
      * @return
      */
     public Boolean doDrawOneType(String type) {
+        log.info("开始写时间 {}", LocalDateTime.now());
         // 根据考试类型查找所有试题
         QueryWrapper<TestQuestion> testQuestionQueryWrapper = new QueryWrapper<>();
         testQuestionQueryWrapper.eq("seat_type", type);
@@ -197,6 +198,7 @@ public class QuestionDrawController {
             Integer drawQuestionId = KnuthUtil.result(arr)[0];
             // 插入七场抽签结果
             for(int i = 1 ; i <= 7 ; i++){
+                log.info("2");
                 QuestionDraw questionDraw = new QuestionDraw();
                 questionDraw.setGameNumber(i);
                 questionDraw.setGameType(type);
@@ -204,6 +206,7 @@ public class QuestionDrawController {
                 questionDrawService.save(questionDraw);
             }
         }
+        log.info("结束时间 {}", LocalDateTime.now());
         log.info("type {} 类型抽题成功，七轮抽题结果全部写入数据库中",type);
         return true;
     }
@@ -215,20 +218,21 @@ public class QuestionDrawController {
     @GetMapping("doDraw")
     @Transactional
     public Boolean doDraw() {
+        Config config = configService.getById(1);
         // 获取抽签列表
-        List<QuestionDraw> questionDraws = questionDrawService.list();
-        if(questionDraws.isEmpty()){
+        List<QuestionDrawVO> questionDrawList = questionDrawService.selectQuestionDrawList(config.getGameNumber());
+        if(questionDrawList.isEmpty()){
             // 没有抽签，需要抽签
             doDrawOneType("光缆接续");
             doDrawOneType("交换机组网");
             doDrawOneType("视频搭建");
+            log.info("抽提");
         }else {
             log.info("已抽题，无需再抽");
         }
         // 抽题全部完成，将裁判打分结果全部写入数据库中
         writeTestResult();
         // 抽题结束，改变抽题状态，不允许再次抽题
-        Config config = configService.getById(1);
         config.setState(2);
         log.info("抽题完成");
         return  configService.updateById(config);
