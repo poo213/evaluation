@@ -9,10 +9,13 @@ import com.njmetro.evaluation.vo.QuestionDrawVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.weaver.patterns.TypePatternQuestions;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -44,7 +47,7 @@ public class QuestionDrawController {
      * @param type 考试类型
      * @return
      */
-    public Boolean doDrawOneType(Integer gameNumber,String type) {
+    public Boolean doDrawOneType1(Integer gameNumber,String type) {
         // 根据考试类型查找所有试题
         QueryWrapper<TestQuestion> testQuestionQueryWrapper = new QueryWrapper<>();
         testQuestionQueryWrapper.eq("seat_type", type);
@@ -147,9 +150,9 @@ public class QuestionDrawController {
      * 裁判抽签
      * @return
      */
-    @GetMapping("doDraw")
+    @GetMapping("doDraw1")
     @Transactional
-    public Boolean doDraw() {
+    public Boolean doDraw1() {
         // 根据比赛场次判断是否已经抽题
         Config config = configService.getById(1);
         Integer gameNumber = config.getGameNumber();
@@ -157,9 +160,9 @@ public class QuestionDrawController {
         if(questionDrawList.isEmpty()){
             log.info("进去抽题");
             // 列表为空，说明是第一轮，需要重新抽题
-            doDrawOneType(gameNumber,"光缆接续");
-            doDrawOneType(gameNumber,"交换机组网");
-            doDrawOneType(gameNumber,"视频搭建");
+            doDrawOneType1(gameNumber,"光缆接续");
+            doDrawOneType1(gameNumber,"交换机组网");
+            doDrawOneType1(gameNumber,"视频搭建");
             log.info("抽题结束");
         }else {
             log.info("已抽题，无需再抽");
@@ -168,6 +171,66 @@ public class QuestionDrawController {
         // 抽题结束，改变抽题状态，不允许再次抽题
         config.setState(2);
         log.info("抽题： {}",config);
+        return  configService.updateById(config);
+    }
+
+    /**
+     * 根据考试类型和比赛场次抽取赛题
+     *
+     * @param type 考试类型
+     * @return
+     */
+    public Boolean doDrawOneType(String type) {
+        // 根据考试类型查找所有试题
+        QueryWrapper<TestQuestion> testQuestionQueryWrapper = new QueryWrapper<>();
+        testQuestionQueryWrapper.eq("seat_type", type);
+        List<TestQuestion> testQuestionList = testQuestionService.list(testQuestionQueryWrapper);
+        if (testQuestionList.isEmpty()) {
+            throw new QuestionDrawException(type + "类型考试试题数目为空,抽签失败");
+        } else {
+            // 采用抽签算法，挑选试题ID
+            Integer[] arr = new Integer[testQuestionList.size()];
+            for (int i = 0 ; i < testQuestionList.size() ; i++){
+                arr[i] = testQuestionList.get(i).getId();
+            }
+            // 选取打乱后的第一个值，作为抽签结果
+            Integer drawQuestionId = KnuthUtil.result(arr)[0];
+            // 插入七场抽签结果
+            for(int i = 1 ; i <= 7 ; i++){
+                QuestionDraw questionDraw = new QuestionDraw();
+                questionDraw.setGameNumber(i);
+                questionDraw.setGameType(type);
+                questionDraw.setQuestionId(drawQuestionId);
+                questionDrawService.save(questionDraw);
+            }
+        }
+        log.info("type {} 类型抽题成功，七轮抽题结果全部写入数据库中",type);
+        return true;
+    }
+
+    /**
+     * 裁判抽签
+     * @return
+     */
+    @GetMapping("doDraw")
+    @Transactional
+    public Boolean doDraw() {
+        // 获取抽签列表
+        List<QuestionDraw> questionDraws = questionDrawService.list();
+        if(questionDraws.isEmpty()){
+            // 没有抽签，需要抽签
+            doDrawOneType("光缆接续");
+            doDrawOneType("交换机组网");
+            doDrawOneType("视频搭建");
+        }else {
+            log.info("已抽题，无需再抽");
+        }
+        // 抽题全部完成，将裁判打分结果全部写入数据库中
+        writeTestResult();
+        // 抽题结束，改变抽题状态，不允许再次抽题
+        Config config = configService.getById(1);
+        config.setState(2);
+        log.info("抽题完成");
         return  configService.updateById(config);
     }
 
