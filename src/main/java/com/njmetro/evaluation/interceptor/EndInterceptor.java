@@ -56,7 +56,7 @@ public class EndInterceptor implements HandlerInterceptor {
             List<JudgeSubmitState> judgeSubmitStateList = judgeSubmitStateService.list(judgeSubmitStateQueryWrapper);
             for(JudgeSubmitState judgeSubmitState : judgeSubmitStateList){
                 // 上报成功是 1  待补录是2，两种状态都算裁判提交成绩完成
-                if(!(judgeSubmitState.getState().equals(1) || judgeSubmitState.getState().equals(2))){
+                if(!(judgeSubmitState.getState().equals(1) || judgeSubmitState.getState().equals(2) || judgeSubmitState.getState().equals(3))){
                     log.info("裁判成绩没有全部提交");
                     flag = false;
                     break;
