@@ -52,7 +52,7 @@ GET http://192.168.96.9:8889/api/student/beReady?gameNumber=1&gameRound=1
 ### api  6.考生提交
 GET http://192.168.96.7:8889/api/student/submit?remainingTime=1100&gameNumber=1&gameRound=1
 ### api  6.二维码写库
-GET http://192.168.96.9:8889/api/student/writeQRcode?qrcode=sdasdxxx
+GET http://172.18.10.69:8889/api/student/writeQRcode?qrcode=7D0DD591
 
 
 GET  http://192.168.96.7:8889/api/student/beReday?GameNumber=1&GameRound=1

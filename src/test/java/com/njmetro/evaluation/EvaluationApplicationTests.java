@@ -175,6 +175,12 @@ class EvaluationApplicationTests {
         }
     }
 
-
+    @Autowired
+    Configurl configurl;
+    @Test
+    void getUrl()
+    {
+        System.out.println(configurl.getUrl());
+    }
 
 }

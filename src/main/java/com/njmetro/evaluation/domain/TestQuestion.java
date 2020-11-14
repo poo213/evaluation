@@ -57,7 +57,11 @@ public class TestQuestion implements Serializable {
      */
     @TableField("url")
     private String url;
-
+    /**
+     * 故障点
+     */
+    @TableField("wrong_point")
+    private String wrongPoint;
     /**
      * 考试时长
      */

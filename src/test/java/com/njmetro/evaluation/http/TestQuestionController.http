@@ -1,2 +1,2 @@
-GET http://localhost:8889/testQuestionStandard/readExcel
+GET http://172.18.10.201:8889/testQuestionStandard/readExcel
 Accept: application/json
