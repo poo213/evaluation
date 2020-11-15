@@ -3,6 +3,7 @@ package com.njmetro.evaluation.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.njmetro.evaluation.domain.*;
+import com.njmetro.evaluation.exception.BaseException;
 import com.njmetro.evaluation.service.*;
 import com.njmetro.evaluation.util.IpUtil;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,7 @@ public class TestController {
     private final SeatDrawService seatDrawService;
     private final JudgeDrawResultService judgeDrawResultService;
     private final ConfigService configService;
+    private final TestQuestionService testQuestionService;
 
     @GetMapping("/student/beReady")
     public void studentBeReady() {
@@ -106,6 +108,38 @@ public class TestController {
         return true;
     }
 
+    /**
+     * 移除掉不用的试题
+     * @param name
+     * @param typeName
+     * @return
+     */
+    @GetMapping("/remove")
+    Boolean remove(String name, String typeName){
+        // 找到试题
+        QueryWrapper<TestQuestion> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("seat_type",typeName)
+                .eq("name",name);
+        List<TestQuestion> testQuestions  = testQuestionService.list(queryWrapper);
+        if(testQuestions.isEmpty()){
+            throw new BaseException("要保留的试题未找到，请核对后再次请求");
+        }else {
+            // 根据试题类型获取全部考题
+            QueryWrapper<TestQuestion> testQuestionQueryWrapper = new QueryWrapper<>();
+            testQuestionQueryWrapper.eq("seat_type",typeName);
+            List<TestQuestion> testQuestionList = testQuestionService.list(testQuestionQueryWrapper);
+            for(TestQuestion testQuestion : testQuestionList)
+            {
+                if(testQuestion.getName().equals(name)){
+                    log.info("不删除试题 {}",testQuestion);
+                }else {
+                    testQuestionService.removeById(testQuestion.getId());
+                    log.info("试题 {} 删除成功",testQuestion);
+                }
+            }
+        }
+        return true;
+    }
 
     /**
      *  常用的四种 请求方式
