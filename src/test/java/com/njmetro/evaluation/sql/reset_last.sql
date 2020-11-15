@@ -4,7 +4,6 @@
 #1.手动修改数据库，参赛队的顺序
 #2.student表里的报道状态改为0，test_day_state改为0
 
-
 TRUNCATE TABLE config;
 TRUNCATE TABLE draw_state;
 TRUNCATE TABLE judge_draw_result;
