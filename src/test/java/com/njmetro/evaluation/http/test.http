@@ -17,8 +17,8 @@ GET http://localhost:8889/test/resetStudent
 Accept: application/json
 
 
-### 删除其他试题    name: 要保留的试题名称； typeName: 试题的考试类型
-GET http://localhost:8889/test/remove?name=试题名称&typeName=光缆接续
+### 删除其他试题    name: 要保留的试题名称； typeName: 试题的考试类型   交换机组网  视频搭建
+GET http://localhost:8889/test/remove?name=视频系统平台搭建（卷一）&typeName=视频搭建
 Accept: application/json
 
 
