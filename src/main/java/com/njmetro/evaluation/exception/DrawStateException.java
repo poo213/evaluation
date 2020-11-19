@@ -12,8 +12,7 @@ public class DrawStateException extends BaseException{
     /**
      *  创建一个无参构造函数
      */
-    public DrawStateException() {
-    }
+    public DrawStateException() {}
 
     /**
      * 有参构造函数
