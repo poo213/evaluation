@@ -2,6 +2,7 @@ package com.njmetro.evaluation.mapper;
 
 import com.njmetro.evaluation.domain.TestResult;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.njmetro.evaluation.dto.DetailTempDTO;
 import com.njmetro.evaluation.vo.FinalResultVO;
 import com.njmetro.evaluation.vo.TestResultDetailVO;
 import com.njmetro.evaluation.vo.TestResultVO;
@@ -51,5 +52,8 @@ public interface TestResultMapper extends BaseMapper<TestResult> {
             "FROM test_result,test_question_standard\n" +
             "WHERE test_result.question_standard_id = test_question_standard.id and game_number = #{gameNumber} and game_round = #{gameRound} and judge_id =#{judgeId};")
     List<TestQuestionStandardVO> getWriteResultStandards(Integer gameNumber,Integer gameRound,Integer judgeId);
+
+    @Select("select test_result.game_number,test_result.game_round,test_result.judge_id,judge.name as judge_name,student.id as student_id,student.name as student_name,question_id,sum(cent) as cent from test_result,student,judge where test_result.student_id=student.id and test_result.judge_id = judge.id and question_id=#{questionNum} GROUP BY judge_id,student_id,question_id")
+    List<DetailTempDTO> getDetailTempResult(@Param("questionNum") Integer questionNum);
 
 }

@@ -11,6 +11,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.njmetro.evaluation.domain.*;
 import com.njmetro.evaluation.dto.ComputerTestResultExcelDTO;
+import com.njmetro.evaluation.dto.DetailTempDTO;
 import com.njmetro.evaluation.exception.StudentException;
 import com.njmetro.evaluation.exception.TestResultException;
 import com.njmetro.evaluation.service.*;
@@ -235,7 +236,7 @@ public class TestResultController {
                     finalResultVO.setResult(res);
                     finalTempResultVOList.add(finalResultVO);
                 }
-                for(Integer lackPeopleId : breakRuleStudentList)//缺考违纪的考生
+                for (Integer lackPeopleId : breakRuleStudentList)//缺考违纪的考生
                 {
                     Student student = studentService.getById(lackPeopleId);
                     FinalResultVO finalResultVO = new FinalResultVO();
@@ -292,8 +293,8 @@ public class TestResultController {
             item.setComprehensiveResult((new BigDecimal(student.getComputerTestResult())).multiply(new BigDecimal("0.3")).add(item.getResult().multiply(new BigDecimal("0.7"))).setScale(2, RoundingMode.HALF_UP));
 
         }
-        List<FinalResultVO>  finaResultVOListSort = finaResultVOList.stream().sorted((Comparator.comparing(FinalResultVO::getComprehensiveResult)).reversed()).collect(Collectors.toList());
-        Integer id = 1 ;
+        List<FinalResultVO> finaResultVOListSort = finaResultVOList.stream().sorted((Comparator.comparing(FinalResultVO::getComprehensiveResult)).reversed()).collect(Collectors.toList());
+        Integer id = 1;
         for (FinalResultVO item :
                 finaResultVOListSort) {
             item.setId(id);
@@ -383,7 +384,7 @@ public class TestResultController {
                     finalResultVO.setResult(res);
                     finalTempResultVOList.add(finalResultVO);
                 }
-                for(Integer lackPeopleId : breakRuleStudentList)//缺考违纪的考生
+                for (Integer lackPeopleId : breakRuleStudentList)//缺考违纪的考生
                 {
                     Student student = studentService.getById(lackPeopleId);
                     FinalResultVO finalResultVO = new FinalResultVO();
@@ -443,9 +444,9 @@ public class TestResultController {
 //        String json = objectMapper.writeValueAsString(finaResultVOList);
 //        log.info("得分结果json字符串：{}", json);
 
-        List<FinalResultVO>  finaResultVOListSort = finaResultVOList.stream().sorted((Comparator.comparing(FinalResultVO::getComprehensiveResult)).reversed()).collect(Collectors.toList());
+        List<FinalResultVO> finaResultVOListSort = finaResultVOList.stream().sorted((Comparator.comparing(FinalResultVO::getComprehensiveResult)).reversed()).collect(Collectors.toList());
 
-        Integer id = 1 ;
+        Integer id = 1;
         for (FinalResultVO item :
                 finaResultVOListSort) {
             item.setId(id);
@@ -671,35 +672,35 @@ public class TestResultController {
     public List<PauseRecordVO> getPauseAdjustList(@RequestParam("name") String name) {
         return pauseRecordService.getPauseAdjustList(name);
     }
-/***
- * @Description 修改暂停 从无效变有效，同时从比赛用时中减去这个时间
- * @param id
- * @return java.lang.Boolean
- * @date 2020-11-6 10:35
- * @auther zc
- */
+
+    /***
+     * @Description 修改暂停 从无效变有效，同时从比赛用时中减去这个时间
+     * @param id
+     * @return java.lang.Boolean
+     * @date 2020-11-6 10:35
+     * @auther zc
+     */
     @GetMapping("/changeFlag")
-    public Boolean changeFlag(@RequestParam("id") Integer id)
-    {
+    public Boolean changeFlag(@RequestParam("id") Integer id) {
         System.out.println(id);
         UpdateWrapper<PauseRecord> pauseRecordUpdateWrapper = new UpdateWrapper<>();
-        pauseRecordUpdateWrapper.eq("id",id).set("flag",true);
+        pauseRecordUpdateWrapper.eq("id", id).set("flag", true);
         PauseRecord pauseRecord = pauseRecordService.getById(id);
         System.out.println("pauseRecord = " + pauseRecord);
         QueryWrapper<SeatDraw> seatDrawQueryWrapper = new QueryWrapper<>();
-        seatDrawQueryWrapper.eq("game_number",pauseRecord.getGameNumber())
-                             .eq("game_round",pauseRecord.getGameRound())
-                             .eq("student_id",pauseRecord.getStudentId());
+        seatDrawQueryWrapper.eq("game_number", pauseRecord.getGameNumber())
+                .eq("game_round", pauseRecord.getGameRound())
+                .eq("student_id", pauseRecord.getStudentId());
         SeatDraw seatDraw = seatDrawService.getOne(seatDrawQueryWrapper);
         System.out.println("seatDraw = " + seatDraw);
         UpdateWrapper<SeatDraw> seatDrawUpdateWrapper = new UpdateWrapper<>();
-        seatDrawUpdateWrapper.eq("game_number",pauseRecord.getGameNumber())
-                .eq("game_round",pauseRecord.getGameRound())
-                .eq("student_id",pauseRecord.getStudentId())
-                .set("use_time",seatDraw.getUseTime()-pauseRecord.getPauseTime());
+        seatDrawUpdateWrapper.eq("game_number", pauseRecord.getGameNumber())
+                .eq("game_round", pauseRecord.getGameRound())
+                .eq("student_id", pauseRecord.getStudentId())
+                .set("use_time", seatDraw.getUseTime() - pauseRecord.getPauseTime());
         seatDrawService.update(seatDrawUpdateWrapper);
 
-        return  pauseRecordService.update(pauseRecordUpdateWrapper);
+        return pauseRecordService.update(pauseRecordUpdateWrapper);
     }
 
 
@@ -740,6 +741,297 @@ public class TestResultController {
         return resList;
     }
 
+
+    /**
+     * 获取包含各项成绩的list
+     */
+
+    @GetMapping("/getDetailResult")
+    public List<DetailResultVO> getDetailResult(@RequestParam("one") Integer one, @RequestParam("two") Integer two, @RequestParam("three") Integer three) {
+        //保存最终的查询结果
+        List<DetailResultVO> detailResultVOList = new ArrayList<>();
+        List<Student> studentIdList = studentService.list();
+
+        for (Student student : studentIdList) {
+            DetailResultVO detailResultVO = new DetailResultVO();
+            detailResultVO.setId(student.getId());
+            detailResultVO.setCode(student.getCode());
+            detailResultVO.setName(student.getName());
+            detailResultVO.setCompanyName(student.getCompanyName());
+            detailResultVO.setIdCard(student.getIdCard());
+            detailResultVOList.add(detailResultVO);
+        }
+        //光缆接续
+        one = 1;
+        //视频搭建
+        two = 10;
+        //交换机
+        three = 4;
+        //所有考生在一道题目上的得分，包含场次、伦次、裁判id ，裁判姓名，学生id，学生姓名，题目号
+        List<DetailTempDTO> detailTempDTOList = testResultService.getDetailTempResult(one);
+        for (DetailTempDTO item : detailTempDTOList) {
+            //计算出时间分，塞进去
+            QueryWrapper<SeatDraw> seatDrawQueryWrapper = new QueryWrapper<>();
+            seatDrawQueryWrapper.eq("game_number", item.getGameNumber())
+                    .eq("game_round", item.getGameRound()).eq("student_id", item.getStudentId());
+            SeatDraw seatDraw = seatDrawService.getOne(seatDrawQueryWrapper);
+            //时间分
+            item.setTimeCent(StatisticUtil.getTimeCent(seatDraw.getUseTime(), item.getCent()));
+            //包含时间分
+            item.setAllCent(item.getCent().add(StatisticUtil.getTimeCent(seatDraw.getUseTime(), item.getCent())));
+        }
+        for (Student student : studentIdList) {
+            BigDecimal i = new BigDecimal("0");
+            for (DetailTempDTO detailTempDTO : detailTempDTOList) {
+                if (detailTempDTO.getStudentId().equals(student.getId())) {
+//                    System.out.println(detailTempDTO.getStudentId());
+//                    System.out.println(student.getId());
+//                    System.out.println(detailTempDTO.getAllCent());
+                    i=i.add(detailTempDTO.getAllCent());//两个裁判打分求和
+//                    System.out.println(i);
+                }
+            }
+            i=i.divide(new BigDecimal("2"));
+            for (DetailResultVO item : detailResultVOList) {
+                if (item.getId().equals(student.getId())) {
+                    item.setOne(i);
+                }
+            }
+        }
+        List<DetailTempDTO> detailTempDTOList2 = testResultService.getDetailTempResult(two);
+        for (DetailTempDTO item : detailTempDTOList2) {
+            //计算出时间分，塞进去
+            QueryWrapper<SeatDraw> seatDrawQueryWrapper2 = new QueryWrapper<>();
+            seatDrawQueryWrapper2.eq("game_number", item.getGameNumber())
+                    .eq("game_round", item.getGameRound()).eq("student_id", item.getStudentId());
+            SeatDraw seatDraw2 = seatDrawService.getOne(seatDrawQueryWrapper2);
+            //时间分
+            item.setTimeCent(StatisticUtil.getTimeCent(seatDraw2.getUseTime(), item.getCent()));
+            //包含时间分
+            item.setAllCent(item.getCent().add(StatisticUtil.getTimeCent(seatDraw2.getUseTime(), item.getCent())));
+        }
+        for (Student student : studentIdList) {
+            BigDecimal i = new BigDecimal("0");
+            for (DetailTempDTO detailTempDTO : detailTempDTOList2) {
+                if (detailTempDTO.getStudentId().equals(student.getId())) {
+                    i=i.add(detailTempDTO.getAllCent());//两个裁判打分求和
+                }
+            }
+            i=i.divide(new BigDecimal("2"));
+            for (DetailResultVO item : detailResultVOList) {
+                if (item.getId().equals(student.getId())) {
+                    item.setTwo(i);
+                }
+            }
+        }
+        List<DetailTempDTO> detailTempDTOList3 = testResultService.getDetailTempResult(three);
+        for (DetailTempDTO item : detailTempDTOList3) {
+            //计算出时间分，塞进去
+            QueryWrapper<SeatDraw> seatDrawQueryWrapper3 = new QueryWrapper<>();
+            seatDrawQueryWrapper3.eq("game_number", item.getGameNumber())
+                    .eq("game_round", item.getGameRound()).eq("student_id", item.getStudentId());
+            SeatDraw seatDraw2 = seatDrawService.getOne(seatDrawQueryWrapper3);
+            //时间分
+            item.setTimeCent(StatisticUtil.getTimeCent(seatDraw2.getUseTime(), item.getCent()));
+            //包含时间分
+            item.setAllCent(item.getCent().add(StatisticUtil.getTimeCent(seatDraw2.getUseTime(), item.getCent())));
+        }
+        for (Student student : studentIdList) {
+            BigDecimal i = new BigDecimal("0");
+            for (DetailTempDTO detailTempDTO : detailTempDTOList3) {
+                if (detailTempDTO.getStudentId().equals(student.getId())) {
+                    i=i.add(detailTempDTO.getAllCent());//两个裁判打分求和
+                }
+            }
+            i=i.divide(new BigDecimal("2"));
+            for (DetailResultVO item : detailResultVOList) {
+                if (item.getId().equals(student.getId())) {
+                    item.setThree(i);
+                }
+            }
+        }
+        BigDecimal res = new BigDecimal("0");
+       for(DetailResultVO item :detailResultVOList) {
+           res = ((item.getOne()).add(item.getTwo()).add(item.getThree()));
+           res = res.divide(new BigDecimal("3"), 2, RoundingMode.HALF_UP);
+           System.out.println(res);
+       }
+        System.out.println(detailResultVOList);
+        System.out.println(detailTempDTOList);
+        return detailResultVOList;
+    }
+
+    /**
+     * 导出包含各项成绩
+     */
+
+    @GetMapping("/exportDetailResult")
+    public ResponseEntity<byte[]> exportDetailResult() throws IOException {
+        System.out.println(11);
+        //保存最终的查询结果
+        List<DetailResultVO> detailResultVOList = new ArrayList<>();
+        List<Student> studentIdList = studentService.list();
+
+        for (Student student : studentIdList) {
+            DetailResultVO detailResultVO = new DetailResultVO();
+            detailResultVO.setId(student.getId());
+            detailResultVO.setCode(student.getCode());
+            detailResultVO.setName(student.getName());
+            detailResultVO.setCompanyName(student.getCompanyName());
+            detailResultVO.setIdCard(student.getIdCard());
+            detailResultVOList.add(detailResultVO);
+        }
+        //光缆接续
+        Integer one = 1;
+        //视频搭建
+        Integer two = 11;
+        //交换机
+        Integer three = 7;
+        //所有考生在一道题目上的得分，包含场次、伦次、裁判id ，裁判姓名，学生id，学生姓名，题目号
+        List<DetailTempDTO> detailTempDTOList = testResultService.getDetailTempResult(one);
+        for (DetailTempDTO item : detailTempDTOList) {
+            //计算出时间分，塞进去
+            QueryWrapper<SeatDraw> seatDrawQueryWrapper = new QueryWrapper<>();
+            seatDrawQueryWrapper.eq("game_number", item.getGameNumber())
+                    .eq("game_round", item.getGameRound()).eq("student_id", item.getStudentId());
+            SeatDraw seatDraw = seatDrawService.getOne(seatDrawQueryWrapper);
+            //时间分
+            if(seatDraw.getState().equals(4))
+            {
+                item.setTimeCent(StatisticUtil.getTimeCent(seatDraw.getUseTime(), item.getCent()));
+                item.setAllCent(item.getCent().add(StatisticUtil.getTimeCent(seatDraw.getUseTime(), item.getCent())));
+            }
+            else{
+                item.setAllCent(new BigDecimal("0"));
+            }
+            //包含时间分
+        }
+        for (Student student : studentIdList) {
+            BigDecimal i = new BigDecimal("0");
+            for (DetailTempDTO detailTempDTO : detailTempDTOList) {
+                if (detailTempDTO.getStudentId().equals(student.getId())) {
+//                    System.out.println(detailTempDTO.getStudentId());
+//                    System.out.println(student.getId());
+//                    System.out.println(detailTempDTO.getAllCent());
+                    i=i.add(detailTempDTO.getAllCent());//两个裁判打分求和
+//                    System.out.println(i);
+                }
+            }
+            i=i.divide(new BigDecimal("2"));
+            for (DetailResultVO item : detailResultVOList) {
+                if (item.getId().equals(student.getId())) {
+                    item.setOne(i);
+                }
+            }
+        }
+        List<DetailTempDTO> detailTempDTOList2 = testResultService.getDetailTempResult(two);
+        for (DetailTempDTO item : detailTempDTOList2) {
+            //计算出时间分，塞进去
+            QueryWrapper<SeatDraw> seatDrawQueryWrapper2 = new QueryWrapper<>();
+            seatDrawQueryWrapper2.eq("game_number", item.getGameNumber())
+                    .eq("game_round", item.getGameRound()).eq("student_id", item.getStudentId());
+            SeatDraw seatDraw2 = seatDrawService.getOne(seatDrawQueryWrapper2);
+            //时间分
+            if(seatDraw2.getState().equals(4))
+            {
+                item.setTimeCent(StatisticUtil.getTimeCent(seatDraw2.getUseTime(), item.getCent()));
+                item.setAllCent(item.getCent().add(StatisticUtil.getTimeCent(seatDraw2.getUseTime(), item.getCent())));
+            }
+            else{
+                item.setAllCent(new BigDecimal("0"));
+             }
+            //包含时间分
+
+        }
+        for (Student student : studentIdList) {
+            BigDecimal i = new BigDecimal("0");
+            for (DetailTempDTO detailTempDTO : detailTempDTOList2) {
+                if (detailTempDTO.getStudentId().equals(student.getId())) {
+                    i=i.add(detailTempDTO.getAllCent());//两个裁判打分求和
+                }
+            }
+            i=i.divide(new BigDecimal("2"));
+            for (DetailResultVO item : detailResultVOList) {
+                if (item.getId().equals(student.getId())) {
+                    item.setTwo(i);
+                }
+            }
+        }
+        List<DetailTempDTO> detailTempDTOList3 = testResultService.getDetailTempResult(three);
+        for (DetailTempDTO item : detailTempDTOList3) {
+            //计算出时间分，塞进去
+            QueryWrapper<SeatDraw> seatDrawQueryWrapper3 = new QueryWrapper<>();
+            seatDrawQueryWrapper3.eq("game_number", item.getGameNumber())
+                    .eq("game_round", item.getGameRound()).eq("student_id", item.getStudentId());
+            SeatDraw seatDraw3 = seatDrawService.getOne(seatDrawQueryWrapper3);
+            if(seatDraw3.getState().equals(4))
+            {
+                item.setTimeCent(StatisticUtil.getTimeCent(seatDraw3.getUseTime(), item.getCent()));
+                item.setAllCent(item.getCent().add(StatisticUtil.getTimeCent(seatDraw3.getUseTime(), item.getCent())));
+            }
+            else{
+            //时间分
+                item.setAllCent(new BigDecimal("0"));
+            }
+            //包含时间分
+
+        }
+        for (Student student : studentIdList) {
+            BigDecimal i = new BigDecimal("0");
+            for (DetailTempDTO detailTempDTO : detailTempDTOList3) {
+                if (detailTempDTO.getStudentId().equals(student.getId())) {
+                    i=i.add(detailTempDTO.getAllCent());//两个裁判打分求和
+                }
+            }
+            i=i.divide(new BigDecimal("2"));
+            for (DetailResultVO item : detailResultVOList) {
+                if (item.getId().equals(student.getId())) {
+                    item.setThree(i);
+                }
+            }
+        }
+        BigDecimal res = new BigDecimal("0");
+        for(DetailResultVO item :detailResultVOList) {
+            res = ((item.getOne()).add(item.getTwo()).add(item.getThree()));
+            res = res.divide(new BigDecimal("3"), 2, RoundingMode.HALF_UP);
+            item.setAll(res);
+        }
+
+
+        TemplateExportParams params = new TemplateExportParams(
+                "c:/结果汇总（分项）.xlsx");
+        Map<String, Object> map = new HashMap<String, Object>();
+        List<Map<String, Object>> listMap = new ArrayList<Map<String, Object>>();
+        for (DetailResultVO item : detailResultVOList
+        ) {
+
+            Map<String, Object> lm = new HashMap<String, Object>();
+            lm.put("id", item.getId());
+            lm.put("code", item.getCode() + "");
+            lm.put("name", item.getName());
+            lm.put("idCard", item.getIdCard());
+            lm.put("companyName", item.getCompanyName());
+            lm.put("one", item.getOne());
+            lm.put("two", item.getTwo());
+            lm.put("three", item.getThree());
+            lm.put("all", item.getAll());
+            listMap.add(lm);
+        }
+
+        map.put("maplist", listMap);
+        Workbook workbook = ExcelExportUtil.exportExcel(params, map);
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        workbook.write(outputStream);
+        Map<String, Object> resultMap = new HashMap<>(2);
+        resultMap.put("fileName", "结果汇总（分项）.xlsx");
+        resultMap.put("fileStream", outputStream.toByteArray());
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.setContentDisposition(ContentDisposition.builder("attachment").filename(new String(String.valueOf(resultMap.get("fileName")).getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1)).build());
+        return ResponseEntity.ok().headers(headers).body((byte[]) resultMap.get("fileStream"));
+
+    }
 
 }
 

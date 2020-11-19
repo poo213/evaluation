@@ -17,4 +17,6 @@ GET http://localhost:8889/test/resetStudent
 Accept: application/json
 
 
+GET  http://localhost:8889/test-result/getDetailResult?one=2
+
 
