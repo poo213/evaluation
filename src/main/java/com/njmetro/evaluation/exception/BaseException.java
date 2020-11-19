@@ -6,19 +6,23 @@ package com.njmetro.evaluation.exception;
  * @Description TODO
  * @Date 2020-09-21 15:05
  */
-public class BaseException extends RuntimeException{
+public class BaseException extends RuntimeException {
 
     /**
-     * 异常信息
+     * 自定义错误信息
      */
     private String message;
 
-    public BaseException() {
-    }
+    public BaseException() {}
 
+    /**
+     *
+     * @param message 自定义构造函数
+     */
     public BaseException(String message) {
         this.message = message;
     }
+
 
     @Override
     public String getMessage() {

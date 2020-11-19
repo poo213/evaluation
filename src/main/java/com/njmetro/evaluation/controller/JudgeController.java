@@ -518,8 +518,8 @@ public class JudgeController {
     public Boolean judgeDraw() {
         // 获取三种类型对应的 赛组列表
         List<SeatGroupEntity> opticalSeatGroupList = getSeatGroupListByType("光缆接续");
-        List<SeatGroupEntity> switchSeatGroupList = getSeatGroupListByType("交换机组网");
-        List<SeatGroupEntity> videoSeatGroupList = getSeatGroupListByType("视频搭建");
+        List<SeatGroupEntity> switchSeatGroupList = getSeatGroupListByType("交换机组网"); // 之前交换机组网
+        List<SeatGroupEntity> videoSeatGroupList = getSeatGroupListByType("视频搭建"); // 之前视频搭建
         // 获取三种考试类型 对应的裁判列表
         List<JudgeEntity> opticalJudgeEntityList = getJudgeEntityListByType("光缆接续");
         List<JudgeEntity> switchJudgeEntityList = getJudgeEntityListByType("交换机组网");
@@ -534,8 +534,8 @@ public class JudgeController {
         videoSeatGroupList = JudgeDrawAlgorithm.run(videoSeatGroupList, videoJudgeEntityList);
         // 将抽签结果写入数据库
         saveSeatGroupEntity(opticalSeatGroupList, "光缆接续");
-        saveSeatGroupEntity(switchSeatGroupList, "交换机组网");
-        saveSeatGroupEntity(videoSeatGroupList, "视频搭建");
+        saveSeatGroupEntity(switchSeatGroupList, "视频搭建");  //交换机组网
+        saveSeatGroupEntity(videoSeatGroupList, "交换机组网"); //视频搭建
 
         // 修改抽签状态
         DrawState drawState = drawStateService.getById(5);
