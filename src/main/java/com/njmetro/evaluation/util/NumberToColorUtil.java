@@ -12,7 +12,7 @@ public class NumberToColorUtil {
      * 考生状态 对应颜色
      */
     public static final String studentNoReadyColor = "#ffffff";
-    public static final String studentReadyColor = "#254000";
+    public static final String studentReadyColor = "#00baff";
     public static final String studentTestColor = "#ffc530";
     public static final String studentBreakColor = "#3de7c9";
     public static final String studentEndColor = "#a0d911";

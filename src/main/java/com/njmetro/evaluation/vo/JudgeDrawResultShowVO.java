@@ -14,5 +14,5 @@ public class JudgeDrawResultShowVO {
     public String code;
     public Integer seatId;
     public Integer groupId;
-    public String typeName;
+    public String judgeType;
 }

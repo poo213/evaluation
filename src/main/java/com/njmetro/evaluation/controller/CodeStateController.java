@@ -49,7 +49,6 @@ public class CodeStateController {
     @GetMapping("/getInfoAndSign")
     public SignVO getInfoAndSign(HttpServletRequest httpServletRequest) {
         String ipAddress = IpUtil.getIpAddr(httpServletRequest);//获取IP
-        //ipAddress="172.18.10.56";
         log.info("调用次接口的IP:{}", ipAddress);
         List<String> ipListOne = codeStateService.getIpList(3);
         List<String> ipListTwo = codeStateService.getIpList(4);

@@ -1,6 +1,7 @@
 package com.njmetro.evaluation.service.impl;
 
 import com.njmetro.evaluation.domain.TestResult;
+import com.njmetro.evaluation.dto.DetailTempDTO;
 import com.njmetro.evaluation.mapper.TestResultMapper;
 import com.njmetro.evaluation.service.TestResultService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -60,5 +61,10 @@ public class TestResultServiceImpl extends ServiceImpl<TestResultMapper, TestRes
     @Override
     public List<TestQuestionStandardVO> getWriteResultStandards(Integer gameNumber, Integer gameRound, Integer judgeId) {
         return testResultMapper.getWriteResultStandards(gameNumber,gameRound,judgeId);
+    }
+
+    @Override
+    public List<DetailTempDTO> getDetailTempResult(Integer questionNum) {
+        return testResultMapper.getDetailTempResult(questionNum);
     }
 }

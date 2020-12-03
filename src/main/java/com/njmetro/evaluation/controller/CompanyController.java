@@ -94,7 +94,9 @@ public class CompanyController {
      */
     @GetMapping("/drawCompany")
     public List<Company> drawCompany() {
+        System.out.println("111");
         List<String> haveSighCompanyList = studentService.getHaveSighCompanyList();
+        System.out.println();
         List<Company> companyList = DrawUtil.getCompanyDrawResult(haveSighCompanyList);
         for(Company item : companyList)
         {

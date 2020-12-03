@@ -55,5 +55,11 @@ public class TestQuestionController {
         }
     }
 
+    @GetMapping("/getQuestion")
+    public List<TestQuestion> getQuestion(){
+
+      return  testQuestionService.getQuestion();
+    }
+
 }
 

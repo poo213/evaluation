@@ -2,6 +2,7 @@ package com.njmetro.evaluation.service;
 
 import com.njmetro.evaluation.domain.TestResult;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.njmetro.evaluation.dto.DetailTempDTO;
 import com.njmetro.evaluation.vo.FinalResultVO;
 import com.njmetro.evaluation.vo.TestResultDetailVO;
 import com.njmetro.evaluation.vo.TestResultVO;
@@ -53,4 +54,9 @@ public interface TestResultService extends IService<TestResult> {
      * @return
      */
     List<TestQuestionStandardVO> getWriteResultStandards(Integer gameNumber, Integer gameRound, Integer judgeId);
+
+    //获取指定题号的所有打分结果
+    List<DetailTempDTO> getDetailTempResult(Integer questionNum);
+
+
 }

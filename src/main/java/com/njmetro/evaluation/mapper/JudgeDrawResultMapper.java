@@ -34,7 +34,7 @@ public interface JudgeDrawResultMapper extends BaseMapper<JudgeDrawResult> {
      *  当前主裁列表
      * @return
      */
-    @Select("SELECT judge_draw_result.id,code,seat_id,group_id,type_name\n" +
+    @Select("SELECT judge_draw_result.id,code,seat_id,group_id,judge_type\n" +
             "FROM judge_draw_result,judge\n" +
             "WHERE judge_draw_result.judge_id = judge.id order by seat_id")
     public List<JudgeDrawResultShowVO> selectJudgeDrawResultShowVOList();

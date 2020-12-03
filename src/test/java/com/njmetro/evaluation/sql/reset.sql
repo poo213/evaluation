@@ -6,7 +6,7 @@
 #TRUNCATE TABLE judge;
 #TRUNCATE TABLE company;j
 #TRUNCATE TABLE pad;
-TRUNCATE TABLE menu;
+#TRUNCATE TABLE menu;
 TRUNCATE TABLE config;
 TRUNCATE TABLE draw_state;
 TRUNCATE TABLE judge_draw_result;
@@ -418,41 +418,41 @@ VALUES (1, '****01', '南京地铁', '南京地铁', '张三', '15032329999', 0)
        (41, '****41', '呼和浩特地铁', '呼和浩特地铁', '张三', '15032329999', 0);*/
 
 #### 初始化目录
-INSERT INTO menu (id, parent_id, name, path, redirect, component, icon, title)
-VALUES (1, 0, 'index', '/', '/home', 'BasicLayout', ' ', '首页'),
-       (2, 1, 'home', '/home', '', 'home', 'home', '首页'),
-       (3, 1, 'system', '/system', '/system/student', 'RouteView', 'robot', '基础信息管理'),
-       (4, 1, 'competition', '/competition', '', 'RouteView', 'solution', '签到管理'),
-       (5, 1, 'drawManage', '/drawManage', '', 'RouteView', 'table', '抽签管理'),
-       (6, 1, 'chairUmpire', '/chairUmpire', '', 'RouteView', 'audit', '主裁管理页面'),
-
-       (7, 3, 'student', '/system/student', '', 'system/student', '', '考生管理'),
-       (8, 3, 'judge', '/system/judge', '', 'system/judge', '', '裁判管理'),
-       (9, 3, 'test', '/system/test', '', 'system/test', '', '试题管理'),
-       (10, 3, 'company', '/system/company', '', 'system/company', '', '参赛单位管理'),
-       (11, 3, 'syncComputerTestResult', '/chairUmpire/syncComputerTestResult', '',
-        'chairUmpire/syncComputerTestResult', '', '上传机考成绩'),
-
-
-       (12, 4, 'studentSign', '/competition/studentSign', '', 'competition/studentSign', '', '考生签到（报到）'),
-       (13, 4, 'judgeSign', '/competition/judgeSign', '', 'competition/judgeSign', '', '裁判签到（报到）'),
-       (14, 4, 'studentSignOne', '/competition/studentSignOne', '', 'competition/studentSignOne', '', '候考签到'),
-       (15, 4, 'studentSignTwo', '/competition/studentSignTwo', '', 'competition/studentSignTwo', '', '备考签到'),
-       (16, 4, 'studentSignAway', '/competition/studentSignAway', '', 'competition/studentSignAway', '', '离场签到'),
-       (17, 4, 'qrSign', '/competition/qrSign', '', 'competition/qrSign', '', '二维码签到'),
-
-       (18, 5, 'drawStateManage', '/drawManage/drawStateManage', '', 'drawManage/drawStateManage', '', '抽签状态管理'),
-       (19, 5, 'drawCompany', '/drawManage/drawCompany', '', 'drawManage/drawCompany', '', '代表队抽签'),
-       (20, 5, 'chairDraw', '/drawManage/chairDraw', '', 'drawManage/chairDraw', '', '赛位抽签'),
-       (21, 5, 'judgeDraw', '/drawManage/judgeDraw', '', 'drawManage/judgeDraw', '', '裁判抽签'),
-       (22, 5, 'judgeDrawResult', '/drawManage/judgeDrawResult', '', 'drawManage/judgeDrawResult', '', '裁判抽签结果'),
-
-       (23, 6, 'roundManage', '/chairUmpire/roundManage', '', 'chairUmpire/roundManage', '', '比赛管理'),
-       (24, 6, 'checkResult', '/chairUmpire/checkResult', '', 'chairUmpire/checkResult', '', '成绩核验'),
-       (25, 6, 'collectScore', '/chairUmpire/collectScore', '', 'chairUmpire/collectScore', '', '打分汇总'),
-       (26, 6, 'companyResult', '/chairUmpire/companyResult', '', 'chairUmpire/companyResult', '', '团体总分汇总'),
-       (27, 6, 'judgeChange', '/chairUmpire/judgeChange', '', 'chairUmpire/judgeChange', '', '裁判调整'),
-       (28, 6, 'pauseAdjust', '/chairUmpire/pauseAdjust', '', 'chairUmpire/pauseAdjust', '', '暂停调整'),
-       (29, 6, 'writeResult', '/chairUmpire/writeResult', '', 'chairUmpire/writeResult', '', '成绩补录');
+# INSERT INTO menu (id, parent_id, name, path, redirect, component, icon, title)
+# VALUES (1, 0, 'index', '/', '/home', 'BasicLayout', ' ', '首页'),
+#        (2, 1, 'home', '/home', '', 'home', 'home', '首页'),
+#        (3, 1, 'system', '/system', '/system/student', 'RouteView', 'robot', '基础信息管理'),
+#        (4, 1, 'competition', '/competition', '', 'RouteView', 'solution', '签到管理'),
+#        (5, 1, 'drawManage', '/drawManage', '', 'RouteView', 'table', '抽签管理'),
+#        (6, 1, 'chairUmpire', '/chairUmpire', '', 'RouteView', 'audit', '主裁管理页面'),
+#
+#        (7, 3, 'student', '/system/student', '', 'system/student', '', '考生管理'),
+#        (8, 3, 'judge', '/system/judge', '', 'system/judge', '', '裁判管理'),
+#        (9, 3, 'test', '/system/test', '', 'system/test', '', '试题管理'),
+#        (10, 3, 'company', '/system/company', '', 'system/company', '', '参赛单位管理'),
+#        (11, 3, 'syncComputerTestResult', '/chairUmpire/syncComputerTestResult', '',
+#         'chairUmpire/syncComputerTestResult', '', '上传机考成绩'),
+#
+#
+#        (12, 4, 'studentSign', '/competition/studentSign', '', 'competition/studentSign', '', '考生签到（报到）'),
+#        (13, 4, 'judgeSign', '/competition/judgeSign', '', 'competition/judgeSign', '', '裁判签到（报到）'),
+#        (14, 4, 'studentSignOne', '/competition/studentSignOne', '', 'competition/studentSignOne', '', '候考签到'),
+#        (15, 4, 'studentSignTwo', '/competition/studentSignTwo', '', 'competition/studentSignTwo', '', '备考签到'),
+#        (16, 4, 'studentSignAway', '/competition/studentSignAway', '', 'competition/studentSignAway', '', '离场签到'),
+#        (17, 4, 'qrSign', '/competition/qrSign', '', 'competition/qrSign', '', '二维码签到'),
+#
+#        (18, 5, 'drawStateManage', '/drawManage/drawStateManage', '', 'drawManage/drawStateManage', '', '抽签状态管理'),
+#        (19, 5, 'drawCompany', '/drawManage/drawCompany', '', 'drawManage/drawCompany', '', '代表队抽签'),
+#        (20, 5, 'chairDraw', '/drawManage/chairDraw', '', 'drawManage/chairDraw', '', '赛位抽签'),
+#        (21, 5, 'judgeDraw', '/drawManage/judgeDraw', '', 'drawManage/judgeDraw', '', '裁判抽签'),
+#        (22, 5, 'judgeDrawResult', '/drawManage/judgeDrawResult', '', 'drawManage/judgeDrawResult', '', '裁判抽签结果'),
+#
+#        (23, 6, 'roundManage', '/chairUmpire/roundManage', '', 'chairUmpire/roundManage', '', '比赛管理'),
+#        (24, 6, 'checkResult', '/chairUmpire/checkResult', '', 'chairUmpire/checkResult', '', '成绩核验'),
+#        (25, 6, 'collectScore', '/chairUmpire/collectScore', '', 'chairUmpire/collectScore', '', '打分汇总'),
+#        (26, 6, 'companyResult', '/chairUmpire/companyResult', '', 'chairUmpire/companyResult', '', '团体总分汇总'),
+#        (27, 6, 'judgeChange', '/chairUmpire/judgeChange', '', 'chairUmpire/judgeChange', '', '裁判调整'),
+#        (28, 6, 'pauseAdjust', '/chairUmpire/pauseAdjust', '', 'chairUmpire/pauseAdjust', '', '暂停调整'),
+#        (29, 6, 'writeResult', '/chairUmpire/writeResult', '', 'chairUmpire/writeResult', '', '成绩补录');
 
 
