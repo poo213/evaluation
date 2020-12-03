@@ -1,9 +1,9 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://172.18.10.202:3300/evaluation?characterEncoding=UTF-8&serverTimezone=GMT%2B8&sslMode=DISABLED&allowMultiQueries=true&allowPublicKeyRetrieval=true
-    username: nj_evaluation
-    password: hkl42yOOhduXurnF
+    url: jdbc:mysql://***.***.***.***:****/evaluation?characterEncoding=UTF-8&serverTimezone=GMT%2B8&sslMode=DISABLED&allowMultiQueries=true&allowPublicKeyRetrieval=true
+    username: ***
+    password: ***
   mvc:
     throw-exception-if-no-handler-found: true
   resources:
